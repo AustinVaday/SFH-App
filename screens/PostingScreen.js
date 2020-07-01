@@ -1,14 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
-const SearchScreen = (props) => {
+const PostingScreen = (props) => {
   return (
     <View style={styles.screen}>
-      <Text>Search Screen</Text>
+      <Text>Posting Screen</Text>
       <Button
-        title="List Search Results"
+        title="Finish posting"
         onPress={() => {
-          props.navigation.navigate({ routeName: "ListSearchResults" });
+          props.navigation.pop();
         }}
       />
     </View>
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default PostingScreen;
