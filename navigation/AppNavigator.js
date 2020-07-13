@@ -13,6 +13,7 @@ import ViewGuestProfileScreen from "../screens/ViewGuestProfileScreen";
 import ViewPostingScreen from "../screens/ViewPostingScreen";
 import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
 import PostingScreen from "../screens/PostingScreen";
+import FederatedLoginScreen from "../screens/FederatedLoginScreen";
 
 const HomeNavigator = createStackNavigator({
   Home: {
