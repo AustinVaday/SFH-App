@@ -3,20 +3,47 @@ import { enableScreens } from "react-native-screens";
 import AppContainer from "./navigation";
 import * as firebase from "firebase/app";
 import { firebaseConfig } from "./Config/config";
+import { AppLoading } from "expo";
+import * as Font from 'expo-font';
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 
 enableScreens();
 
-class App extends React.Component {
+export default class App extends React.Component {
+  //Custom fonts
+
+
+  //Setup Firebase
   constructor() {
     super();
     this.initializeFirebase();
   }
+
+  state = {
+    fontLoaded: false,
+  };
+
+  async componentDidMount() {
+      await Font.loadAsync({
+        "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+        "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+        "alfaSlabOne": require("./assets/fonts/AlfaSlabOne-Regular.ttf"),
+      });
+      this.setState({ fontLoaded: true});
+    }
+
   initializeFirebase = () => {
     firebase.initializeApp(firebaseConfig);
   };
+
   render() {
-    return <AppContainer />;
+    const {fontLoaded} = this.state;
+
+    if (fontLoaded) {
+      return <AppContainer />;
+    }
+      return <AppLoading />;
   }
 }
 
-export default App;
+//export default App;
