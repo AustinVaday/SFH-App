@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import firebase from 'firebase';
 
 const SettingScreen = (props) => {
   return (
     <View style={styles.screen}>
       <Text>Setting Screen</Text>
+      <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
     </View>
   );
 };
