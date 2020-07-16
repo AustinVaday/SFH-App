@@ -5,7 +5,11 @@ import * as firebase from "firebase/app";
 import { firebaseConfig } from "./Config/config";
 import { AppLoading } from "expo";
 import * as Font from 'expo-font';
-import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
+
+
+
+//firebase.initializeApp(firebaseConfig);
+
 
 enableScreens();
 
@@ -14,10 +18,10 @@ export default class App extends React.Component {
 
 
   //Setup Firebase
-  constructor() {
-    super();
-    this.initializeFirebase();
-  }
+  //constructor() {
+  //  super();
+  //  this.initializeFirebase();
+  //}
 
   state = {
     fontLoaded: false,
@@ -32,9 +36,9 @@ export default class App extends React.Component {
       this.setState({ fontLoaded: true});
     }
 
-  initializeFirebase = () => {
-    firebase.initializeApp(firebaseConfig);
-  };
+  //initializeFirebase = () => {
+  //  firebase.initializeApp(firebaseConfig);
+  //};
 
   render() {
     const {fontLoaded} = this.state;
