@@ -1,4 +1,5 @@
-import * as firebase from "firebase";
+//NOTE: in app.json, add if error for signin auth:
+//"facebookAutoInitEnabled": true,  (for expo-facebook)
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCCH0JpPb-7i5P_ix-LH-vtubh7SOF_HXo",
@@ -10,5 +11,3 @@ export const firebaseConfig = {
   appId: "1:443991699430:web:f62f35079bb93788a9f027",
   measurementId: "G-NXM53NV1PR",
 };
-
-firebase.initializeApp(firebaseConfig);

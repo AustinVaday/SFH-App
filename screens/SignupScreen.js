@@ -3,12 +3,13 @@ import { View, Text, StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 import Colors from "../constants/Colors";
 import { Button } from "react-native-elements";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SignupScreen = (props) => {
   return (
     <View style={styles.screen}>
       <View style={styles.textsStyle}>
-        <Text style={styles.text1}>Create Account,</Text>
+        <Text style={styles.text1}>Create Account</Text>
         <Text style={styles.text2}>Sign up to get started!</Text>
       </View>
       <View>
@@ -77,20 +78,30 @@ const SignupScreen = (props) => {
           }}
         />
       </View>
-      <Button
-        title="Login"
-        titleStyle={{
-          fontSize: 20,
-          fontFamily: "open-sans-bold",
-        }}
-        buttonStyle={{
-          marginTop: 90,
+      <LinearGradient
+        colors={[Colors.primaryColor, "#6dd5ed"]}
+        style={{
+          padding: 15,
+          alignItems: "center",
           borderRadius: 15,
           height: 60,
           width: 340,
-          backgroundColor: Colors.primaryColor,
+          marginTop: 90,
         }}
-      />
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <Text
+          style={{
+            backgroundColor: "transparent",
+            fontSize: 20,
+            color: "#fff",
+            fontFamily: "open-sans-bold",
+          }}
+        >
+          Login
+        </Text>
+      </LinearGradient>
       <View style={styles.textSignInContainer}>
         <Text style={styles.text3}>I'm already a member,</Text>
         <Button
@@ -98,7 +109,7 @@ const SignupScreen = (props) => {
           titleStyle={{
             fontSize: 15,
             bottom: 11,
-            fontFamily: "open-sans"
+            fontFamily: "open-sans",
           }}
           type="clear"
           onPress={() => {
@@ -137,7 +148,7 @@ const styles = StyleSheet.create({
     top: 60,
   },
   text3: {
-    fontFamily: "open-sans"
+    fontFamily: "open-sans",
   },
 });
 
