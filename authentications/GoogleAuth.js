@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { Button, Icon } from "react-native-elements";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
+import { googleConfig } from "../Config/config";
 
-const androidClientId = Expo.Constants.manifest.extra.aClientId;
-const IOSClientId = Expo.Constants.manifest.extra.iClientId;
+const androidClientId = googleConfig.aClientId;
+const IOSClientId = googleConfig.iClientId;
 
 export default class GoogleAuth extends Component {
   isUserEqual = (googleUser, firebaseUser) => {

@@ -4,9 +4,10 @@ import * as AuthSession from "expo-auth-session";
 import { Platform } from "react-native";
 import firebase from "firebase";
 import { Button, Icon } from "react-native-elements";
+import { facebookConfig } from "../Config/config";
 
 
-const FB_APP_ID = Expo.Constants.manifest.extra.fbAppId;
+const FB_APP_ID = facebookConfig.fbAppId;
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -59,10 +60,7 @@ export default function FacebookAuth() {
   const _handlePressAsync = async () => {
     const result = await promptAsync({ useProxy });
 
-    if (result.type !== "success") {
-      alert("Uh oh, something went wrong");
-      return;
-    }
+    if (result.type === "success") {
 
     let accessToken = result.params.access_token;
 
@@ -77,7 +75,9 @@ export default function FacebookAuth() {
     //);
     //const userInfo = await userInfoResponse.json();
     //setUser(userInfo);
+    }
   };
+  //alert("Uh oh, something went wrong");
 
   return (
     <Button
