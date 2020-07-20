@@ -6,7 +6,6 @@ import firebase from "firebase";
 import { Button, Icon } from "react-native-elements";
 import { facebookConfig } from "../Config/config";
 
-
 const FB_APP_ID = facebookConfig.fbAppId;
 
 WebBrowser.maybeCompleteAuthSession();
