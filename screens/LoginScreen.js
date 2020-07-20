@@ -1,35 +1,74 @@
 import React from "react";
 import { View, Text, StyleSheet, Button, TextInput } from "react-native";
+import * as firebase from "firebase/app";
+import "firebase/auth";
 
-const LoginScreen = (props) => {
-  return (
-    <View style={styles.screen}>
-      <Text>Logo (Sign for Humanity)</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Username"
-          style={styles.input}
+class LoginScreen extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      email: "",
+      password: "",
+      isLoading: false,
+    };
+  }
+
+  onSignIn = () => {};
+
+  onSignUp = async () => {
+    if (this.state.email && this.state.password) {
+      try {
+        const response = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(
+            this.state.email,
+            this.state.password
+          );
+      } catch (error) {
+        if (error.code == "auth/email-already-in-use") {
+          alert("User already exists. Try again.");
+        }
+      }
+    } else {
+      alert("Please enter email and password");
+    }
+  };
+
+  render() {
+    return (
+      <View style={styles.screen}>
+        <Text>Logo (Sign for Humanity)</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Username"
+            keyboardType="email-address"
+            onChangeText={(email) => this.setState({ email })}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            secureTextEntry
+            onChangeText={(password) => this.setState({ password })}
+            style={styles.input}
+          />
+        </View>
+        <Button title="Submit" onPress={this.onSignUp} />
+        <Button
+          title="Sign up"
+          onPress={() => {
+            props.navigation.navigate({ routeName: "Signup" });
+          }}
         />
-        <TextInput
-          placeholder="Password"
-          style={styles.input}
+        <Button
+          title="Skip Login"
+          onPress={() => {
+            this.props.navigation.navigate({ routeName: "App" });
+          }}
         />
       </View>
-      <Button
-        title="Submit"
-        onPress={() => {
-          props.navigation.navigate({ routeName: "App" });
-        }}
-      />
-      <Button
-        title="Sign up"
-        onPress={() => {
-          props.navigation.navigate({ routeName: "Signup" });
-        }}
-      />
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   screen: {
