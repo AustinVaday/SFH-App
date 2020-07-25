@@ -1,6 +1,6 @@
 import React from "react";
 import { enableScreens } from "react-native-screens";
-import AppContainer from "./navigation";
+import AppContainer from "./src/navigation";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import { firebaseConfig } from "./Config/config";
@@ -24,9 +24,9 @@ export default class App extends React.Component {
   async componentDidMount() {
     this._isMounted = true;
     await Font.loadAsync({
-      "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
-      "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
-      alfaSlabOne: require("./assets/fonts/AlfaSlabOne-Regular.ttf"),
+      "open-sans": require("./src/assets/fonts/OpenSans-Regular.ttf"),
+      "open-sans-bold": require("./src/assets/fonts/OpenSans-Bold.ttf"),
+      alfaSlabOne: require("./src/assets/fonts/AlfaSlabOne-Regular.ttf"),
     });
     if (this._isMounted) {
       this.setState({ fontLoaded: true });
