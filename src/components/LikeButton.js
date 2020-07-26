@@ -1,6 +1,5 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 
 export default class LikeButton extends React.Component {
   state = {
@@ -14,9 +13,7 @@ export default class LikeButton extends React.Component {
 
   render() {
     const { liked } = this.state;
-    //const colorValue = liked ? "#fb7777" : "#BABBBA";
     const likeValue = liked ? this.props.users + 1 : this.props.users;
-    //const iconValue = liked ? "heart" : "heart-o";
     const iconValue = liked
       ? require("../assets/deaf-clap-icon-blue.png")
       : require("../assets/deaf-clap-icon-grey.png");
@@ -31,8 +28,6 @@ export default class LikeButton extends React.Component {
   }
 }
 
-//<Icon name={iconValue} size={30} color={colorValue} />
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
@@ -45,7 +40,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   iconImage: {
-    width: 35,
-    height: 28,
+    width: 37,
+    height: 30,
   },
 });

@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { Image, Avatar, SearchBar } from "react-native-elements";
 import Colors from "../constants/Colors";
 import LikeButton from "../components/LikeButton";
@@ -39,22 +46,23 @@ export default class HomeScreen extends Component {
           />
           <View>
             <TouchableOpacity onPress={this._onPressViewGuestProfile}>
-            <Text style={styles.cardName}>{item.name}</Text>
+              <Text style={styles.cardName}>{item.name}</Text>
             </TouchableOpacity>
             <Text style={styles.cardDate}>{item.date}</Text>
           </View>
           <PostSettingButton />
         </View>
         <View style={styles.cardPostContainer}>
-          <Image
-            source={{uri: item.url}}
-            style={styles.cardPost}
-          />
+          <Image source={{ uri: item.url }} style={styles.cardPost} />
         </View>
+        <Text style={styles.cardVideoTitle}>{item.videoTitle}</Text>
         <Text style={styles.cardCaption}>{item.caption}</Text>
         <View style={{ flexDirection: "row" }}>
           <LikeButton users={item.likes} />
-          <CommentButton users={item.numComments} navigation={this._onPressViewPosting} />
+          <CommentButton
+            users={item.numComments}
+            navigation={this._onPressViewPosting}
+          />
           <ShareButton users={item.url} />
         </View>
       </View>
@@ -69,7 +77,7 @@ export default class HomeScreen extends Component {
         <FlatList
           ListHeaderComponent={
             <>
-              <Text style={styles.text}>Feed</Text>
+              <Text style={styles.text}>Explore</Text>
               <SearchBar
                 placeholder="Search"
                 onChangeText={this.updateSearch}
@@ -122,7 +130,6 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     marginBottom: 20,
-    //borderWidth: 1, //for test
     width: 370,
     height: "31%",
   },
@@ -130,7 +137,6 @@ const styles = StyleSheet.create({
     padding: 5,
     flexDirection: "row",
     alignItems: "center",
-    //justifyContent: 'space-between'
   },
   cardPostContainer: {
     alignSelf: "center",
@@ -139,13 +145,11 @@ const styles = StyleSheet.create({
     width: 360,
     height: 400,
     borderRadius: 30,
-    //paddingHorizontal: 100,
   },
   cardName: {
     fontFamily: "open-sans-bold",
     fontSize: 20,
     paddingLeft: 15,
-    //paddingBottom: 10,
   },
   cardDate: {
     fontFamily: "open-sans",
@@ -156,8 +160,14 @@ const styles = StyleSheet.create({
   cardCaption: {
     fontFamily: "open-sans",
     fontSize: 15,
-    paddingLeft: 15,
+    paddingLeft: 8,
     paddingBottom: 20,
-    paddingTop: 15,
+    paddingTop: 7,
+  },
+  cardVideoTitle: {
+    fontFamily: "open-sans-bold",
+    fontSize: 30,
+    paddingLeft: 5,
+    paddingTop: 7,
   },
 });

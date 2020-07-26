@@ -1,20 +1,12 @@
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet, Share } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Share } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 export default class ShareButton extends React.Component {
-  state = {
-    liked: false,
-  };
-  likeImage = async () => {
-    const likeState = await !this.state.liked;
-    this.setState({ liked: likeState });
-  };
-
-  onShare () {
+  onShare() {
     try {
       const result = Share.share({
-		  url: this.props.users,
+        url: this.props.users,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -26,12 +18,11 @@ export default class ShareButton extends React.Component {
         // dismissed
       }
     } catch (error) {
-		alert(error.message);
-	  }
-  };
+      alert(error.message);
+    }
+  }
 
   render() {
-    const { liked } = this.state;
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={() => this.onShare()}>

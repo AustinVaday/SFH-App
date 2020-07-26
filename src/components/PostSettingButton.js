@@ -21,12 +21,19 @@ export default class PostSettingButton extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", marginLeft: 200 }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          marginLeft: 200,
+        }}
+      >
         <Menu
           ref={this.setMenuRef}
           button={
             <TouchableOpacity onPress={this.showMenu}>
-              <Icon name="ellipsis-v" size={25} color="#BABBBA"/>
+              <Icon name="ellipsis-v" size={25} color="#BABBBA" />
             </TouchableOpacity>
           }
         >

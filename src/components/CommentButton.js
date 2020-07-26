@@ -12,11 +12,11 @@ export default class CommentButton extends React.Component {
   };
   render() {
     const { commented } = this.state;
-    const commentValue = commented ? (this.props.users + 1) : this.props.users;
+    const commentValue = commented ? this.props.users + 1 : this.props.users;
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={this.props.navigation}>
-        <Icon name="comment" size={30} color="#BABBBA" />
+          <Icon name="comment" size={30} color="#BABBBA" />
         </TouchableOpacity>
         <Text style={styles.likeNumberStyle}>{commentValue}</Text>
       </View>
