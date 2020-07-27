@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 import { Button } from "react-native-elements";
 import FacebookAuth from "../authentications/FacebookAuth";
@@ -11,6 +11,7 @@ import GoogleAuth from "../authentications/GoogleAuth";
 //let provider = new firebase.auth.FacebookAuthProvider();
 
 class FederatedLoginScreen extends Component {
+
   //Issue: Currently not working in verison SDK 38. Might use this if the issue is resolved
   //https://github.com/expo/expo/issues/8951
   /*async loginWithFacebook() {
@@ -48,20 +49,12 @@ class FederatedLoginScreen extends Component {
   render() {
     return (
       <View style={styles.screen}>
-        <View style={styles.logoShadow}>
-            <Image
-              style={styles.stretch}
-              source={require("../assets/sfh-logo.png")}
-            />
-          </View>
-          <Text style={styles.mainTitle}>Signs For Humanity</Text>
-
-          <Text style={styles.messageStyle}>Deaf. Hearing. Together.</Text>
-          <View style={styles.fedButtons}>
-            <FacebookAuth />
-            <GoogleAuth />
-          </View>
-        
+        <Text style={styles.mainTitle}>Signs For Humanity</Text>
+        <Text style={styles.messageStyle}>Deaf. Hearing. Together.</Text>
+        <View style={styles.fedButtons}>
+          <FacebookAuth />
+          <GoogleAuth />
+        </View>
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonsStyle}>
             <Button
@@ -123,9 +116,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondaryColor,
   },
   mainTitle: {
-    textAlign: "center",
     fontSize: 50,
-    paddingBottom: 10,
+    paddingBottom: 30,
     fontFamily: "alfaSlabOne",
     color: Colors.primaryColor,
     shadowColor: "#000",
@@ -139,9 +131,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   messageStyle: {
-    textAlign: "center",
-    paddingBottom: 90,
-    paddingTop: 40,
+    paddingBottom: 60,
     fontFamily: "open-sans-bold",
     fontSize: 25,
     color: "#b3b3b3",
@@ -164,22 +154,6 @@ const styles = StyleSheet.create({
   fedButtons: {
     width: "80%",
     margin: 5,
-  },
-  stretch: {
-    width: 150, 
-    height: 150,
-    resizeMode: "stretch",
-    borderRadius: 15,
-  },
-  logoShadow: {
-    paddingBottom: 30,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 2.49,
   },
 });
 
