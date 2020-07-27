@@ -150,6 +150,20 @@ const styles = StyleSheet.create({
   text3: {
     fontFamily: "open-sans",
   },
+  inputContainer: {
+    justifyContent: "space-between",
+    alignItems: "stretch",
+    margin: 5,
+  },
+  input: {
+    width: 225,
+    height: 45,
+    borderWidth: 1,
+    padding: 10,
+    margin: 10,
+    borderRadius: 45,
+    backgroundColor: "#ECECEC",
+  },
 });
 
 export default SignupScreen;
