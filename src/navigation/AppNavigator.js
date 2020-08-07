@@ -16,6 +16,7 @@ import ViewGuestProfileScreen from "../screens/ViewGuestProfileScreen";
 import ViewPostingScreen from "../screens/ViewPostingScreen";
 import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
 import PostingScreen from "../screens/PostingScreen";
+import FollowListScreen from "../screens/FollowListScreen";
 
 const HomeNavigator = createStackNavigator({
   Home: {
@@ -68,12 +69,21 @@ const InboxNavigator = createStackNavigator({
 const ProfileNavigator = createStackNavigator({
   Profile: {
     screen: ProfileScreen,
+    navigationOptions: {
+      headerShown: false,
+    },
   },
   Setting: {
     screen: SettingScreen,
   },
   EditProfile: {
     screen: EditProfileScreen,
+  },
+  ViewPosting: {
+    screen: ViewPostingScreen,
+  },
+  FollowList: {
+    screen: FollowListScreen,
   },
 });
 
@@ -87,7 +97,7 @@ const AppTabNavigator = createBottomTabNavigator({
       tabBarOptions: {
         showLabel: false,
         activeTintColor: Colors.primaryColor,
-        inactiveTintColor: "gray",
+        inactiveTintColor: Colors.thirdColor,
       },
     },
   },
@@ -100,7 +110,7 @@ const AppTabNavigator = createBottomTabNavigator({
       tabBarOptions: {
         showLabel: false,
         activeTintColor: Colors.primaryColor,
-        inactiveTintColor: "gray",
+        inactiveTintColor: Colors.thirdColor,
       },
     },
   },
@@ -113,7 +123,7 @@ const AppTabNavigator = createBottomTabNavigator({
       tabBarOptions: {
         showLabel: false,
         activeTintColor: Colors.primaryColor,
-        inactiveTintColor: "gray",
+        inactiveTintColor: Colors.thirdColor,
       },
     },
   },
@@ -126,7 +136,7 @@ const AppTabNavigator = createBottomTabNavigator({
       tabBarOptions: {
         showLabel: false,
         activeTintColor: Colors.primaryColor,
-        inactiveTintColor: "gray",
+        inactiveTintColor: Colors.thirdColor,
       },
     },
   },
@@ -139,7 +149,7 @@ const AppTabNavigator = createBottomTabNavigator({
       tabBarOptions: {
         showLabel: false,
         activeTintColor: Colors.primaryColor,
-        inactiveTintColor: "gray",
+        inactiveTintColor: Colors.thirdColor,
       },
     },
   },
