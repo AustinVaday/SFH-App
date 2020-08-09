@@ -3,6 +3,7 @@ import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import FederatedLoginScreen from "../screens/FederatedLoginScreen";
 import LoadingScreen from "../screens/LoadingScreen";
+import ForgetPassword from "../screens/ForgetPassword";
 
 const AuthNavigator = createStackNavigator({
 	Loading: {
@@ -22,6 +23,12 @@ const AuthNavigator = createStackNavigator({
 	},
 	Signup: {
 		screen: SignupScreen,
+		navigationOptions: {
+			headerShown: false,
+		},
+	},
+	ForgetPassword: {
+		screen: ForgetPassword,
 		navigationOptions: {
 			headerShown: false,
 		},
