@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Icon } from "react-native-elements";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
-import { googleConfig } from "../../Config/FirebaseConfig/config";
+import { googleConfig } from "../../firebase/config";
 
 const androidClientId = googleConfig.aClientId;
 const IOSClientId = googleConfig.iClientId;

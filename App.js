@@ -3,7 +3,7 @@ import { enableScreens } from "react-native-screens";
 import AppContainer from "./src/navigation";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
-import { firebaseConfig } from "./Config/FirebaseConfig/config";
+import { firebaseConfig } from "./firebase/config";
 import firebase from "firebase";
 
 enableScreens();

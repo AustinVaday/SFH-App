@@ -4,7 +4,7 @@ import * as AuthSession from "expo-auth-session";
 import { Platform } from "react-native";
 import firebase from "firebase";
 import { Button, Icon } from "react-native-elements";
-import { facebookConfig } from "../../Config/FirebaseConfig/config";
+import { facebookConfig } from "../../firebase/config";
 
 const FB_APP_ID = facebookConfig.fbAppId;
 
