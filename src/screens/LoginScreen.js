@@ -1,154 +1,184 @@
 import React from "react";
 import {
-	View,
-	Text,
-	StyleSheet,
-	Button,
-	Image,
-	SafeAreaView,
-	TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Image,
+  SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 import Colors from "../constants/Colors";
 import { TextInput } from "react-native-paper";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import { LinearGradient } from "expo-linear-gradient";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .label("Email")
+    .email("Enter a valid email")
+    .required("Please enter a registered email"),
+  password: Yup.string()
+    .label("Password")
+    .required()
+    .min(6, "Password should be at least 6 characters "),
+});
 
 export default class LoginScreen extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			email: "",
-			password: "",
-			isLoading: false,
-		};
-	}
+  onSignIn = async (values) => {
+    const { email, password } = values;
+    try {
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-	onSignIn = () => {};
-
-	onSignUp = async () => {
-		if (this.state.email && this.state.password) {
-			try {
-				const response = await firebase
-					.auth()
-					.createUserWithEmailAndPassword(this.state.email, this.state.password);
-			} catch (error) {
-				if (error.code == "auth/email-already-in-use") {
-					alert("User already exists. Try again.");
-				}
-			}
-		} else {
-			alert("Please enter email and password");
-		}
-	};
-
-	render() {
-		return (
-			<SafeAreaView style={styles.screen}>
-				<View>
-					<Text
-						style={{
-							fontFamily: "open-sans-bold",
-							fontSize: 35,
-							marginRight: 180,
-						}}
-					>
-						Welcome
-					</Text>
-				</View>
-				<View>
-					<Text
-						style={{
-							fontFamily: "open-sans",
-							fontSize: 15,
-							marginRight: 205,
-							marginBottom: 100,
-						}}
-					>
-						Log in to continue!
-					</Text>
-				</View>
-				<View style={styles.inputContainer}>
-					<TextInput
-						mode='outlined'
-						label='Email'
-						keyboardType='email-address'
-						onChangeText={(email) => this.setState({ email })}
-						theme={{
-							roundness: 15,
-							colors: {
-								primary: Colors.primaryColor,
-								nderlineColor: "blue",
-								placeholder: "#cecbce",
-								background: Colors.secondaryColor,
-							},
-						}}
-					/>
-					<TextInput
-						mode='outlined'
-						label='Password'
-						secureTextEntry
-						onChangeText={(password) => this.setState({ password })}
-						theme={{
-							roundness: 15,
-							colors: {
-								primary: Colors.primaryColor,
-								nderlineColor: "blue",
-								placeholder: "#cecbce",
-								background: Colors.secondaryColor,
-							},
-						}}
-					/>
-					<Text style={{ marginTop: 2, marginLeft: 220 }}>Forgot password?</Text>
-				</View>
-				<View style={styles.linearGradientButton}>
-					<LinearGradient
-						colors={[Colors.primaryColor, "#6dd5ed"]}
-						style={{
-							padding: 15,
-							alignItems: "center",
-							borderRadius: 15,
-							height: 60,
-							width: 340,
-							marginTop: 30,
-						}}
-						start={{ x: 0, y: 0 }}
-						end={{ x: 1, y: 1 }}
-					>
-						<TouchableOpacity
-							onPress={() => {
-								props.navigation.navigate({ routeName: "HomeScreen" });
-							}}
-						>
-							<Text
-								style={{
-									backgroundColor: "transparent",
-									fontSize: 20,
-									color: "#fff",
-									fontFamily: "open-sans-bold",
-								}}
-							>
-								Login
-							</Text>
-						</TouchableOpacity>
-					</LinearGradient>
-				</View>
-				<View style={styles.signupButton}>
-					<View style={styles.buttonSignUp}>
-						<Text style={{ fontFamily: "open-sans", fontSize: 15, marginTop: 8 }}>New user? </Text>
-					</View>
-					<View style={styles.buttonSignUp}>
-						<Button
-							title='Sign up'
-							onPress={() => {
-								props.navigation.navigate({ routeName: "Signup" });
-							}}
-						/>
-					</View>
-				</View>
-			</SafeAreaView>
-		);
-	}
+  render() {
+    return (
+      <SafeAreaView style={styles.screen}>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          onSubmit={(values) => this.onSignIn(values)}
+          validationSchema={validationSchema}
+        >
+          {({
+            handleChange,
+            values,
+            handleSubmit,
+            errors,
+            touched,
+            handleBlur,
+          }) => (
+            <View>
+              <View style={{marginTop: 10}}>
+                <Text
+                  style={{
+                    fontFamily: "open-sans-bold",
+                    fontSize: 35,
+                  }}
+                >
+                  Welcome
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "open-sans-bold",
+                    fontSize: 25,
+					color: "#bdc3d4",
+                  }}
+                >
+                  Log in to continue!
+                </Text>
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  mode="outlined"
+                  label="Email"
+                  keyboardType="email-address"
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  theme={{
+                    roundness: 15,
+                    colors: {
+                      primary: Colors.primaryColor,
+                      nderlineColor: "blue",
+                      placeholder: "#cecbce",
+                      background: Colors.secondaryColor,
+                    },
+                  }}
+                />
+                <Text style={{ color: "red" }}>
+                  {touched.email && errors.email}
+                </Text>
+                <TextInput
+                  mode="outlined"
+                  label="Password"
+                  secureTextEntry
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  theme={{
+                    roundness: 15,
+                    colors: {
+                      primary: Colors.primaryColor,
+                      nderlineColor: "blue",
+                      placeholder: "#cecbce",
+                      background: Colors.secondaryColor,
+                    },
+                  }}
+                />
+                <Text style={{ color: "red" }}>
+                  {touched.password && errors.password}
+                </Text>
+                <TouchableOpacity
+                  style={{ marginLeft: 220 }}
+                  onPress={() => {
+                    this.props.navigation.navigate("ForgotPassword");
+                  }}
+                >
+                  <Text>Forgot password?</Text>
+                </TouchableOpacity>
+              
+              <View style={{marginTop: 80}}>
+                <TouchableOpacity onPress={handleSubmit}>
+                  <LinearGradient
+                    colors={[Colors.primaryColor, "#6dd5ed"]}
+                    style={{
+                      padding: 15,
+                      alignItems: "center",
+                      borderRadius: 15,
+                      height: 60,
+                    }}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  >
+                    <Text
+                      style={{
+                        backgroundColor: "transparent",
+                        fontSize: 20,
+                        color: "#fff",
+                        fontFamily: "open-sans-bold",
+                      }}
+                    >
+                      Login
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+			  </View>
+              <View style={styles.signupButtonContainer}>
+                <Text
+                  style={{
+                    fontFamily: "open-sans",
+                    fontSize: 16,
+                    marginTop: 8,
+                  }}
+                >
+                  New user?
+                </Text>
+                <Button
+                  title="Sign up"
+                  style={{
+                    fontFamily: "open-sans",
+                    fontSize: 16,
+                  }}
+                  onPress={() => {
+                    this.props.navigation.navigate({ routeName: "Signup" });
+                  }}
+                />
+              </View>
+            </View>
+          )}
+        </Formik>
+      </SafeAreaView>
+    );
+  }
 }
 // FEEDBACK: remove the logo on the login page.
 // below the snippet, its only for sfh logo. (keep it in just a case)
@@ -160,36 +190,21 @@ export default class LoginScreen extends React.Component {
 </View>; */
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#F8F8F8",
-		padding: 20,
-	},
-	inputContainer: {
-		width: 340,
-		height: 100,
-		fontSize: 18,
-		marginVertical: 40,
-		marginTop: 10,
-		marginBottom: 50,
-	},
-	buttonContainer: {
-		flexDirection: "row",
-		marginBottom: 10,
-	},
-	button: {
-		width: 100,
-	},
-	linearGradientButton: {
-		marginBottom: 50,
-	},
-	signupButton: {
-		marginTop: 25,
-		flexDirection: "row",
-	},
-	buttonSignUp: {
-		flexDirection: "row",
-	},
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.secondaryColor,
+    padding: 20,
+  },
+  inputContainer: {
+    width: 340,
+    fontSize: 18,
+    marginTop: 190,
+  },
+  signupButtonContainer: {
+    marginTop: 170,
+    marginLeft: 90,
+    flexDirection: "row",
+  },
 });
