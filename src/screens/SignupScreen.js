@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .label("Password")
     .required()
-    .min(6, "Password should be at least 6 characters "),
+    .min(5, "Password should be at least 5 characters "),
 });
 
 export default class SignupScreen extends Component {
