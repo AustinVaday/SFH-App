@@ -10,6 +10,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.1.0",
     "@react-native-community/masked-view": "0.1.10",
+    "@react-native-community/netinfo": "5.9.2",
     "expo": "^38.0.9",
     "expo-auth-session": "~1.4.0",
     "expo-constants": "~9.1.1",
@@ -24,6 +25,7 @@
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+    "react-native-dropdownalert": "^4.3.0",
     "react-native-elements": "^2.1.0",
     "react-native-formik": "^1.7.8",
     "react-native-gesture-handler": "~1.6.0",
@@ -41,8 +43,7 @@
     "react-navigation": "^4.4.0",
     "react-navigation-stack": "^2.8.2",
     "react-navigation-tabs": "^2.9.0",
-    "yup": "^0.29.3",
-    "@react-native-community/netinfo": "5.9.2"
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
