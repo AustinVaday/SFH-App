@@ -13,3 +13,4 @@ Firebase/config.js
 
 # macOS
 .DS_Store
+.vscode/setting.json
