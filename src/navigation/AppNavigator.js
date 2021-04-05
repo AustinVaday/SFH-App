@@ -17,6 +17,7 @@ import ViewPostingScreen from "../screens/ViewPostingScreen";
 import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
 import PostingScreen from "../screens/PostingScreen";
 import FollowListScreen from "../screens/FollowListScreen";
+import UploadScreen from "../screens/UploadScreen";
 
 const HomeNavigator = createStackNavigator({
   Home: {
@@ -52,8 +53,8 @@ const CameraNavigator = createStackNavigator({
   Camera: {
     screen: CameraScreen,
   },
-  Posting: {
-    screen: PostingScreen,
+  Upload: {
+    screen: UploadScreen,
   },
 });
 
