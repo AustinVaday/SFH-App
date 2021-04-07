@@ -18,6 +18,7 @@ import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
 import PostingScreen from "../screens/PostingScreen";
 import FollowListScreen from "../screens/FollowListScreen";
 import UploadScreen from "../screens/UploadScreen";
+import LibraryScreen from "../screens/LibraryScreen";
 
 const HomeNavigator = createStackNavigator({
   Home: {
@@ -50,6 +51,9 @@ const TreadingNavigator = createStackNavigator({
 });
 
 const CameraNavigator = createStackNavigator({
+  Library: {
+    screen: LibraryScreen,
+  },
   Camera: {
     screen: CameraScreen,
   },
