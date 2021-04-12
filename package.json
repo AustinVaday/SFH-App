@@ -11,6 +11,7 @@
     "@expo-google-fonts/inter": "^0.1.0",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/masked-view": "0.1.10",
+    "@unimodules/core": "^7.0.0",
     "expo": "^38.0.0",
     "expo-auth-session": "~1.4.0",
     "expo-constants": "~9.1.1",
@@ -21,6 +22,7 @@
     "expo-sharing": "~8.2.1",
     "expo-web-browser": "~8.3.1",
     "firebase": "7.9.0",
+    "moment": "^2.29.1",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
@@ -39,7 +41,8 @@
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.4.0",
     "react-navigation-stack": "^2.8.2",
-    "react-navigation-tabs": "^2.9.0"
+    "react-navigation-tabs": "^2.9.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
