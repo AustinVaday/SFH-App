@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  StatusBar,
-  Image,
   StyleSheet,
   ScrollView,
   TextInput,
@@ -12,15 +10,14 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import FadeIn from "react-native-fade-in-image";
+import { Video } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 
-class UploadScreen extends Component {
+export default class UploadScreen extends Component {
   state = {
+    title: "",
     caption: "",
-    location: "",
-    tags: "",
     isSubmitting: false,
   };
 
@@ -32,48 +29,39 @@ class UploadScreen extends Component {
         },
       },
     } = this.props;
-    const {
-        caption,
-        location,
-        tags,
-        isSubmitting,
-      } = this.state;
+
+    const { title, caption } = this.state;
 
     return (
       <View style={styles.container}>
-        <StatusBar hidden={false} />
         <ScrollView>
           <View style={styles.formRow}>
-            <FadeIn style={styles.photoContainer}>
-              <Image source={{ uri: url }} style={styles.photo} />
-            </FadeIn>
+            <View style={styles.videoContainer}>
+              <Video
+                resizeMode="contain"
+                source={{ uri: url }}
+                style={styles.video}
+              />
+            </View>
+          </View>
+          <View style={styles.formRow}>
+            <TextInput
+              value={title}
+              placeholder={"Title"}
+              style={styles.input}
+              multiline={true}
+              placeholderTextColor={"#888"}
+              onChangeText={this._onTitleChange}
+            />
+          </View>
+          <View style={styles.formRow}>
             <TextInput
               value={caption}
               placeholder={"Caption"}
-              style={styles.caption}
+              style={styles.input}
               multiline={true}
               placeholderTextColor={"#888"}
               onChangeText={this._onCaptionChange}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <TextInput
-              value={location}
-              placeholder={"Location"}
-              style={styles.input}
-              placeholderTextColor={"#888"}
-              onChangeText={this._onLocationChange}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <TextInput
-              value={tags}
-              placeholder={"Tags (separated by commas)"}
-              style={styles.input}
-              placeholderTextColor={"#888"}
-              autoCapitalize={"none"}
-              onChangeText={this._onTagsChange}
-              autoCorrect={false}
             />
           </View>
           <TouchableOpacity onPressOut={this._submit}>
@@ -89,38 +77,29 @@ class UploadScreen extends Component {
       </View>
     );
   }
+
+  _onTitleChange = (text) => {
+    this.setState({
+      title: text,
+    });
+  };
+
   _onCaptionChange = (text) => {
     this.setState({
       caption: text,
     });
   };
-  _onLocationChange = (text) => {
-    this.setState({
-      location: text,
-    });
-  };
-  _onTagsChange = (text) => {
-    this.setState({
-      tags: text,
-    });
-  };
+
   _submit = async () => {
-    const { caption, location, tags } = this.state;
-    const {
-      submit,
-      navigation,
-      navigation: {
-        state: {
-          params: { url },
-        },
-      },
-    } = this.props;
-    if (caption && location && tags) {
+    const { title, caption } = this.state;
+    const { navigation } = this.props;
+
+    if (title && caption) {
       this.setState({
         isSubmitting: true,
       });
-      const uploadResult = await submit(url, caption, location, tags);
-      if (uploadResult) {
+      const uploadResult = null;
+      if (!uploadResult) {
         navigation.goBack(null);
         navigation.goBack(null);
         navigation.goBack(null);
@@ -136,11 +115,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-  photoContainer: {
-    height: 80,
-    width: 80,
+  videoContainer: {
+    height: 200,
+    flex: 1,
   },
-  photo: {
+  video: {
     flex: 1,
   },
   formRow: {
@@ -148,10 +127,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth,
     padding: 15,
-  },
-  caption: {
-    marginLeft: 20,
-    flex: 1,
   },
   form: {
     flex: 1,
@@ -162,7 +137,7 @@ const styles = StyleSheet.create({
   uploadBtn: {
     alignSelf: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 80,
     width: width / 2,
     height: 50,
     backgroundColor: "#3E99EE",
@@ -175,5 +150,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-export default UploadScreen;

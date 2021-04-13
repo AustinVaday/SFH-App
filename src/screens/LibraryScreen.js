@@ -6,10 +6,8 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
-  Image,
-  StatusBar,
 } from "react-native";
-// import PropTypes from "prop-types";
+
 import { MaterialIcons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
@@ -17,11 +15,12 @@ import { Video } from "expo-av";
 
 const { width } = Dimensions.get("window");
 
-class LibraryScreen extends Component {
+export default class LibraryScreen extends Component {
   state = {
     hasLibraryPermissions: null,
     videos: null,
     pickedVideo: null,
+    shouldPlay: false,
   };
 
   async componentDidMount() {
@@ -30,7 +29,6 @@ class LibraryScreen extends Component {
       first: 10,
       mediaType: [MediaLibrary.MediaType.video],
     });
-    //   console.log(edges.assets[0])
     this.setState({
       videos: edges.assets,
       pickedVideo: edges.assets[0].uri,
@@ -46,28 +44,54 @@ class LibraryScreen extends Component {
     });
   };
 
+  handlePlayAndPause = () => {
+    this.setState((prevState) => ({
+      shouldPlay: !prevState.shouldPlay,
+    }));
+  };
+
+  _pickVideo = (video) => {
+    this.setState({
+      pickedVideo: video,
+    });
+  };
+
+  _approveVideo = () => {
+    const {
+      navigation: { navigate },
+    } = this.props;
+    const { pickedVideo } = this.state;
+    navigate("Upload", { url: pickedVideo });
+  };
+
   render() {
     if (this.state.hasLibraryPermissions === null) {
-      return <Text>hisdfasdfsdaf sdf sadf asdf asd fas df asdf adsf</Text>;
+      return <View />;
     } else if (this.state.hasLibraryPermissions === false) {
       return <Text>No Access to Library, check your settings</Text>;
     } else {
       return (
         <View style={styles.container}>
-          <StatusBar hidden={true} />
           {this.state.videos && (
-            <View style={styles.pictureContainer}>
-              <Video
-                source={{ uri: this.state.pickedVideo }}
-                rate={1.0}
-                volume={1.0}
-                isMuted={false}
-                resizeMode="cover"
-                shouldPlay
-                isLooping
-                style={{ width: 300, height: 300 }}
-              />
-              <TouchableOpacity onPress={this._approvePhoto}>
+            <View style={styles.videoContainer}>
+              <TouchableOpacity onPress={this.handlePlayAndPause}>
+                <Video
+                  source={{ uri: this.state.pickedVideo }}
+                  isMuted={true}
+                  shouldPlay={this.state.shouldPlay}
+                  resizeMode="cover"
+                  isLooping
+                  style={{ width: width, height: width }}
+                />
+                <View style={styles.controlVideo}>
+                  <MaterialIcons
+                    name={this.state.shouldPlay ? null : "play-arrow"}
+                    size={85}
+                    color="white"
+                  />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this._approveVideo}>
                 <View style={styles.action}>
                   <MaterialIcons name="check-circle" color="white" size={40} />
                 </View>
@@ -75,23 +99,17 @@ class LibraryScreen extends Component {
             </View>
           )}
           {this.state.videos && (
-            <View style={styles.photos}>
-              {console.log("hi")}
+            <View style={styles.videos}>
               <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                 {this.state.videos.map((video, index) => (
                   <TouchableOpacity
                     key={index}
-                    onPress={() => this._pickPhoto(video.uri)}
+                    onPress={() => this._pickVideo(video.uri)}
                   >
                     <Video
                       source={{ uri: video.uri }}
-                      rate={1.0}
-                      volume={1.0}
-                      isMuted={false}
                       resizeMode="cover"
-                      isLooping
-                      style={{ width: 300, height: 300 }}
-                      // style={styles.smallPhoto}
+                      style={styles.smallVideo}
                     />
                   </TouchableOpacity>
                 ))}
@@ -99,54 +117,33 @@ class LibraryScreen extends Component {
             </View>
           )}
         </View>
-        // <LibraryScreen
-        //   {...this.state}
-        //   pickPhoto={this._pickPhoto}
-        //   approvePhoto={this._approvePhoto}
-        // />
       );
     }
   }
-  _pickPhoto = (video) => {
-    this.setState({
-      pickedVideo: video,
-    });
-  };
-  _approvePhoto = () => {
-    const {
-      navigation: { navigate },
-    } = this.props;
-    const { pickedVideo } = this.state;
-    navigate("UploadScreen", { url: pickedVideo.node.video.uri });
-  };
 }
-
-// LibraryScreen.propTypes = {
-//   pickedPhoto: PropTypes.object,
-//   photos: PropTypes.array,
-//   approvePhoto: PropTypes.func.isRequired
-// };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  pictureContainer: {
-    flex: 2,
-  },
-  photos: {
+  videoContainer: {
     flex: 1,
+  },
+  videos: {
+    flex: 1,
+    marginTop: 25,
   },
   scrollViewContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  smallPhoto: {
+  smallVideo: {
     width: width / 3,
     height: width / 3,
   },
   action: {
     backgroundColor: "transparent",
+    color: "white",
     height: 40,
     width: 40,
     alignSelf: "flex-end",
@@ -154,6 +151,12 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
   },
+  controlVideo: {
+    position: "absolute",
+    bottom: "50%",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
-
-export default LibraryScreen;

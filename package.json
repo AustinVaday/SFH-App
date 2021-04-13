@@ -29,8 +29,6 @@
     "react-dom": "16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
     "react-native-elements": "^2.0.4",
-    "react-native-fade-in-image": "^1.5.0",
-    "react-native-fit-image": "^1.5.5",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-indicators": "^0.17.0",
     "react-native-linear-gradient": "^2.5.6",
