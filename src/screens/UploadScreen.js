@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
+  StatusBar,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
@@ -34,6 +35,7 @@ export default class UploadScreen extends Component {
 
     return (
       <View style={styles.container}>
+        <StatusBar backgroundColor="black" barStyle="dark-content" />
         <ScrollView>
           <View style={styles.formRow}>
             <View style={styles.videoContainer}>

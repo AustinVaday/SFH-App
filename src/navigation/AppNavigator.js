@@ -2,13 +2,8 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 
-import {
-  View,
-  TouchableOpacity,
-} from "react-native";
 
 import CameraScreen from "../screens/CameraScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
@@ -59,46 +54,23 @@ const TreadingNavigator = createStackNavigator({
 });
 
 const CameraNavigator = createStackNavigator({
-  Library: {
-    screen: LibraryScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: () => (
-        <View style={{ marginLeft: 10}}>
-           <TouchableOpacity onPress={() => navigation.goBack(null)}>
-          <MaterialIcons name="close" size={30} color="black" />
-        </TouchableOpacity>
-        </View>
-      ),
-      headerRight: () => (
-        <View style={{ marginRight: 10}}>
-           <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
-          <MaterialIcons name="videocam" size={30} color="black" />
-        </TouchableOpacity>
-        </View>
-      )
-    })
-  },
   Camera: {
     screen: CameraScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: () => (
-        <View style={{ marginLeft: 10}}>
-           <TouchableOpacity onPress={() => { navigation.goBack(null); navigation.goBack(null) } }>
-          <MaterialIcons name="close" size={30} color="black" />
-        </TouchableOpacity>
-        </View>
-      ),
-      headerRight: () => (
-        <View style={{ marginRight: 10}}>
-           <TouchableOpacity onPress={() => navigation.goBack(null)}>
-          <MaterialIcons name="video-library" size={30} color="black" />
-        </TouchableOpacity>
-        </View>
-      )
-    })
+    navigationOptions: {
+      headerShown: false,
+    },
+  },
+  Library: {
+    screen: LibraryScreen,
+    navigationOptions: {
+      headerShown: false,
+    },
   },
   Upload: {
     screen: UploadScreen,
+    navigationOptions: {
+      headerBackTitleVisible: false
+    },
   },
 });
 
