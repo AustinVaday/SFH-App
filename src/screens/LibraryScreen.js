@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  ScrollView,
   SafeAreaView,
+  FlatList,
   StatusBar,
   TouchableOpacity,
 } from "react-native";
@@ -80,6 +80,26 @@ export default class LibraryScreen extends Component {
     navigate("Upload", { url: pickedVideo });
   };
 
+  _renderItem = ({ item }) => (
+    <>
+      {this.state.pickedVideo == item.uri ? (
+        <Video
+          source={{ uri: this.state.pickedVideo }}
+          resizeMode="cover"
+          style={styles.smallSelectedVideo}
+        />
+      ) : (
+        <TouchableOpacity key={item} onPress={() => this._pickVideo(item.uri)}>
+          <Video
+            source={{ uri: item.uri }}
+            resizeMode="cover"
+            style={styles.smallVideo}
+          />
+        </TouchableOpacity>
+      )}
+    </>
+  );
+
   render() {
     if (this.state.hasLibraryPermissions === null) {
       return <View />;
@@ -110,7 +130,10 @@ export default class LibraryScreen extends Component {
             </View>
             {this.state.videos && (
               <>
-                <TouchableOpacity onPress={this.handlePlayAndPause}>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={this.handlePlayAndPause}
+                >
                   <Video
                     source={{ uri: this.state.pickedVideo }}
                     isMuted={true}
@@ -136,30 +159,13 @@ export default class LibraryScreen extends Component {
             )}
             {this.state.videos && (
               <View style={styles.videos}>
-                <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                  {this.state.videos.map((video, index) => (
-                    <>
-                      {this.state.pickedVideo == video.uri ? (
-                        <Video
-                          source={{ uri: this.state.pickedVideo }}
-                          resizeMode="cover"
-                          style={styles.smallSelectedVideo}
-                        />
-                      ) : (
-                        <TouchableOpacity
-                          key={index}
-                          onPress={() => this._pickVideo(video.uri)}
-                        >
-                          <Video
-                            source={{ uri: video.uri }}
-                            resizeMode="cover"
-                            style={styles.smallVideo}
-                          />
-                        </TouchableOpacity>
-                      )}
-                    </>
-                  ))}
-                </ScrollView>
+                <FlatList
+                  data={this.state.videos}
+                  renderItem={this._renderItem}
+                  keyExtractor={(item) => item.uri}
+                  numColumns={3}
+                  showsVerticalScrollIndicator={false}
+                />
               </View>
             )}
           </View>
