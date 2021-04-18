@@ -14,3 +14,4 @@ target
 .vscode
 # macOS
 .DS_Store
+.vscode/setting.json
