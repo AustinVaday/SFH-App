@@ -9,7 +9,8 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-Config/config.js
+Firebase/config.js
 
 # macOS
 .DS_Store
+.vscode/setting.json
