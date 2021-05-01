@@ -8,7 +8,7 @@ If you have not installed Expo-Cli, do this:
 1. If you have downloaded Node.js, skip to step 2.
    Download [NodeJS](https://nodejs.org/en/download/current/) (Prefers Current version, not LTS)
 
-2. Go to command line and type `npm install --global expo-cli` (for Mac). If for Windows, 
+2. In your command line, type `npm install --global expo-cli` (for Mac). If for Windows, 
    type `npm install expo-cli --global`.
 
 
