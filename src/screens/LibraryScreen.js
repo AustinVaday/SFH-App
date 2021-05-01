@@ -12,7 +12,6 @@ import {
 
 import { MaterialIcons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
-import * as Permissions from "expo-permissions";
 import { Video } from "expo-av";
 import Colors from "../constants/Colors";
 
@@ -39,9 +38,7 @@ export default class LibraryScreen extends Component {
   }
 
   getPermissionsAsync = async () => {
-    const { status: cameraRoll } = await Permissions.askAsync(
-      Permissions.CAMERA_ROLL
-    );
+    const { status: cameraRoll } = await MediaLibrary.requestPermissionsAsync();
     this.setState({
       hasLibraryPermissions: cameraRoll === "granted",
     });
