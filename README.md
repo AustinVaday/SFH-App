@@ -3,39 +3,18 @@ A new, revolutionary sign language learning experience.
 
 # Instructions:
 
-For downloading if you have not:
+If you have not installed Expo-Cli, do this:
 
 1. If you have downloaded Node.js, skip to step 2.
-   Download [Node JS](https://nodejs.org/en/download/current/) (Prefers Current version, not LTS)
+   Download [NodeJS](https://nodejs.org/en/download/current/) (Prefers Current version, not LTS)
 
-2. Go to command line and type `sudo npm install expo-cli --global` (for Mac). If Windows 
-   user, type `npm install expo-cli --global`. When finishes downloading, don't worry about errors or warnings! If you get at bottom lines something like this:
-
-   `+ expo-cli@3.21.5 added 1823 packages from 850 contributors in 102.2s`
-
-   You are successful installing Expo CLI!
+2. In your command line, type `npm install --global expo-cli` (for Mac). If for Windows, 
+   type `npm install expo-cli --global`.
 
 
-For running the project:
+To run the app:
 
-1. cd to "SFH-App" folder in command line and type `npm start`. Close that webpage if it pops 
-   up, don't worry about that.
+1. After cloning, do `npm install` if your npm version in 6.0.0+ or do `npm install -force` if
+   your npm version in 7.0.0+. If there are errors, delete package-lock.json and node_modules (if the file there) then do again.
 
-2. Look at command line. Now it's running! But to view and run the app. There are two methods 
-   to run the app: simulator/emulator (step 3A) and physcial phone (step 3B). Up to you which 
-   you prefers!
-
-3. (A) Press "a" for Android emulator or "i" for iOS simulator in command line. After loading
-   simulator/emulator, click "Got it" then click "X". There! You see the app running!
-
-   OR
-
-   (B) On your physical phone, download "Expo Client" in App Store or Android store. You don't
-   need to sign up or anything in that app. Go to Camera app and scan QR code on command line
-   and click when it pops up. Click "Got it" then click "X" and there! You see the app running!
-
-
-## Cookbook 
-This site is where we have been building the mobile using [Expo-CLI](https://docs.expo.io/workflow/expo-cli/)
-
-[Facebook's platform](https://reactnative.dev/docs/getting-started) is for documentation where we can look it up. These information is helpful and getting the latest version and documentation 
+2. After that, do `npm start` or `npm start --reset-cache`

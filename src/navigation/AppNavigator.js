@@ -4,6 +4,7 @@ import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Colors from "../constants/Colors";
 
+
 import CameraScreen from "../screens/CameraScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -17,6 +18,10 @@ import ViewPostingScreen from "../screens/ViewPostingScreen";
 import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
 import PostingScreen from "../screens/PostingScreen";
 import FollowListScreen from "../screens/FollowListScreen";
+import UploadScreen from "../screens/UploadScreen";
+import LibraryScreen from "../screens/LibraryScreen";
+
+
 
 const HomeNavigator = createStackNavigator({
   Home: {
@@ -51,9 +56,21 @@ const TreadingNavigator = createStackNavigator({
 const CameraNavigator = createStackNavigator({
   Camera: {
     screen: CameraScreen,
+    navigationOptions: {
+      headerShown: false,
+    },
   },
-  Posting: {
-    screen: PostingScreen,
+  Library: {
+    screen: LibraryScreen,
+    navigationOptions: {
+      headerShown: false,
+    },
+  },
+  Upload: {
+    screen: UploadScreen,
+    navigationOptions: {
+      headerBackTitleVisible: false
+    },
   },
 });
 
@@ -117,6 +134,7 @@ const AppTabNavigator = createBottomTabNavigator({
   Camera: {
     screen: CameraNavigator,
     navigationOptions: {
+      tabBarVisible: false,
       tabBarIcon: ({ tintColor }) => (
         <Icon name="plus-square" size={30} color={tintColor} />
       ),

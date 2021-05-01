@@ -1,52 +1,46 @@
 import React from "react";
-import { enableScreens } from "react-native-screens";
 import AppContainer from "./src/navigation";
-import { AppLoading } from "expo";
+import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
-import { firebaseConfig } from "./Config/config";
-import firebase from "firebase";
-
-enableScreens();
+import { Asset } from "expo-asset";
 
 export default class App extends React.Component {
-  _isMounted = false;
-
   //Custom fonts
   state = {
-    fontLoaded: false,
+    isReady: false,
   };
 
-  constructor() {
-    super();
-    this.initializeFirebase();
-  }
+  async _cacheResourcesAsync() {
+    return new Promise(async (resolve) => {
+      try {
+        await Font.loadAsync({
+          "open-sans": require("./src/assets/fonts/OpenSans-Regular.ttf"),
+          "open-sans-bold": require("./src/assets/fonts/OpenSans-Bold.ttf"),
+          alfaSlabOne: require("./src/assets/fonts/AlfaSlabOne-Regular.ttf"),
+        });
+      } catch (error) {
+        console.log(error);
+      }
 
-  async componentDidMount() {
-    this._isMounted = true;
-    await Font.loadAsync({
-      "open-sans": require("./src/assets/fonts/OpenSans-Regular.ttf"),
-      "open-sans-bold": require("./src/assets/fonts/OpenSans-Bold.ttf"),
-      alfaSlabOne: require("./src/assets/fonts/AlfaSlabOne-Regular.ttf"),
+      resolve();
+      const images = [require("./src/assets/splash.png")];
+
+      const cacheImages = images.map((image) => {
+        return Asset.fromModule(image).downloadAsync();
+      });
     });
-    if (this._isMounted) {
-      this.setState({ fontLoaded: true });
-    }
-  }
-
-  initializeFirebase = () => {
-    firebase.initializeApp(firebaseConfig);
-  };
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   render() {
-    const { fontLoaded } = this.state;
-
-    if (fontLoaded) {
-      return <AppContainer />;
+    if (!this.state.isReady) {
+      return (
+        <AppLoading
+          startAsync={this._cacheResourcesAsync}
+          onFinish={() => this.setState({ isReady: true })}
+          onError={console.warn}
+        />
+      );
     }
-    return <AppLoading />;
+    return <AppContainer />;
   }
 }
