@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { Image, Avatar, SearchBar } from "react-native-elements";
+import { Image, Avatar } from "react-native-elements";
 import Colors from "../constants/Colors";
 import LikeButton from "../components/LikeButton";
 import CommentButton from "../components/CommentButton";
@@ -18,13 +18,6 @@ import PostSettingButton from "../components/PostSettingButton";
 const users = user;
 
 export default class HomeScreen extends Component {
-  state = {
-    search: "",
-  };
-
-  updateSearch = (search) => {
-    this.setState({ search });
-  };
 
   _onPressViewPosting = () => {
     this.props.navigation.navigate("ViewPosting");
@@ -70,7 +63,6 @@ export default class HomeScreen extends Component {
   };
 
   render() {
-    const { search } = this.state;
 
     return (
       <SafeAreaView style={styles.screen}>
@@ -78,30 +70,6 @@ export default class HomeScreen extends Component {
           ListHeaderComponent={
             <>
               <Text style={styles.text}>Explore</Text>
-              <SearchBar
-                placeholder="Search"
-                onChangeText={this.updateSearch}
-                value={search}
-                lightTheme
-                containerStyle={{
-                  backgroundColor: "white",
-                  borderBottomColor: "transparent",
-                  borderTopColor: "transparent",
-                  paddingBottom: 20,
-                }}
-                inputContainerStyle={{
-                  backgroundColor: "#F6F6F6",
-                  height: 60,
-                  borderRadius: 30,
-                }}
-                searchIcon={{
-                  size: 35,
-                }}
-                inputStyle={{
-                  fontSize: 20,
-                  fontFamily: "open-sans",
-                }}
-              />
             </>
           }
           data={users}

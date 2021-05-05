@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Button,
-  Image,
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
@@ -15,7 +14,6 @@ import "firebase/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import TreadingScreen from "./TreadingScreen";
 import NetInfo from "@react-native-community/netinfo";
 import DropdownAlert from "react-native-dropdownalert";
 
