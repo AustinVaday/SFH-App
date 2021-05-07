@@ -17,11 +17,13 @@ import { Button } from "react-native-paper";
 import dataTrending from "../data/dataTrending";
 
 const { width } = Dimensions.get("window");
+const mostViewsData = dataTrending.sort((a, b) => (b.views - a.views));
 
 export default class TrendingScreen extends Component {
   state = {
     loading: false,
     data: [],
+    searchData: dataTrending,
     length: 10,
     error: false,
     refreshing: false,
@@ -36,8 +38,8 @@ export default class TrendingScreen extends Component {
 
   makeRemoteRequest = () => {
     const { length } = this.state;
-    const newData = dataTrending;
-    console.log(length);
+    const newData = mostViewsData;
+
     try {
       this.setState(
         {
@@ -52,24 +54,26 @@ export default class TrendingScreen extends Component {
         () => this.searchFilterFunction("")
       );
     } catch (error) {
-      console.log(error);
       this.setState({ error, loading: false });
     }
   };
 
   searchFilterFunction = (text) => {
     this.inputSearch = text;
-    const newData = this.state.data.filter((item) => {
-      const itemData = `${item.videoTitle.toUpperCase()}`;
-      const textData = text.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({ filteredData: newData });
+
+    if(text === "") {
+      this.setState({ filteredData: this.state.data });
+    } else {
+      const newData = this.state.searchData.filter((item) => {
+        const itemData = `${item.videoTitle.toUpperCase()}`;
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      this.setState({ filteredData: newData });
+    }
   };
 
-  handleOnEndReached = (info) => {
-    console.log(info.distanceFromEnd);
-    if (info.distanceFromEnd >= -10) {
+  handleOnEndReached = () => {
       this.inputSearch.length === 0 &&
         !this.state.loading &&
         this.setState(
@@ -78,7 +82,6 @@ export default class TrendingScreen extends Component {
           },
           () => this.makeRemoteRequest()
         );
-    }
   };
 
   renderHeader = () => {
@@ -115,7 +118,6 @@ export default class TrendingScreen extends Component {
   };
 
   renderFooter = () => {
-    console.log(this.state.loading);
     if (this.state.loading && this.state.length !== 0) {
       return (
         <View
@@ -146,7 +148,7 @@ export default class TrendingScreen extends Component {
         <View style={styles.imageContainer}>
           <TouchableOpacity
             key={item}
-            onPress={this.props.navigationViewPosting}
+            onPress={this.props.navigation.ViewPosting}
           >
             <Image
               PlaceholderContent={<BallIndicator color={Colors.primaryColor} />}
@@ -188,7 +190,7 @@ export default class TrendingScreen extends Component {
         <FlatList
           data={this.state.filteredData}
           renderItem={this._renderItem}
-          keyExtractor={(item) => item.url}
+          keyExtractor={(item) => item.id}
           numColumns={2}
           ListHeaderComponent={this.renderHeader}
           ListFooterComponent={this.renderFooter}
