@@ -142,13 +142,20 @@ export default class TrendingScreen extends Component {
     );
   };
 
-  _renderItem = ({ item }) => (
-    <>
+  _goToViewPosting = async () => {
+    const {
+      navigation: { navigate },
+    } = this.props;
+    navigate("ViewPosting");
+  };
+
+  _renderItem = ({ item }) => {
+    return (
       <View style={{ width: width / 2, height: width / 2 }}>
         <View style={styles.imageContainer}>
           <TouchableOpacity
             key={item}
-            onPress={this.props.navigation.ViewPosting}
+            onPress={this._goToViewPosting}
           >
             <Image
               PlaceholderContent={<BallIndicator color={Colors.primaryColor} />}
@@ -179,8 +186,8 @@ export default class TrendingScreen extends Component {
           </TouchableOpacity>
         </View>
       </View>
-    </>
-  );
+    );
+              };
 
   render() {
     const { search } = this.state;

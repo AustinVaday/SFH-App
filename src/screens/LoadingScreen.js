@@ -1,18 +1,12 @@
 import React, { Component } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+} from "react-native";
 import firebase from "firebase";
+import LottieView from 'lottie-react-native';
 
 class LoadingScreen extends Component {
-  componentDidMount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.props.navigation.navigate({ routeName: "Home" });
-      } else {
-        this.props.navigation.navigate({ routeName: "FederatedLogin" });
-      }
-    });
-  }
-
   componentDidMount() {
     this.checkIfLoggedIn();
   }
@@ -33,7 +27,7 @@ class LoadingScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" />
+        <LottieView style={{ height: 300}} source={require("../assets/loading-logo.json")} autoPlay loop />
       </View>
     );
   }

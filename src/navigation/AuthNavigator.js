@@ -8,6 +8,9 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 const AuthNavigator = createStackNavigator({
 	Loading: {
 		screen: LoadingScreen,
+		navigationOptions: {
+			headerShown: false,
+		},
 	},
 	FederatedLogin: {
 		screen: FederatedLoginScreen,
