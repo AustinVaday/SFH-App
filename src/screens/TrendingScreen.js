@@ -9,15 +9,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { SearchBar } from "react-native-elements";
 import Colors from "../constants/Colors";
-import { Image } from "react-native-elements";
+import { Image, SearchBar } from "react-native-elements";
 import { BallIndicator } from "react-native-indicators";
 import { Button } from "react-native-paper";
 import dataTrending from "../data/dataTrending";
 
 const { width } = Dimensions.get("window");
-const mostViewsData = dataTrending.sort((a, b) => (b.views - a.views));
+
+// to get the data in the order for the most views
+const mostViewsData = dataTrending.sort((a, b) => b.views - a.views);
 
 export default class TrendingScreen extends Component {
   state = {
@@ -61,7 +62,7 @@ export default class TrendingScreen extends Component {
   searchFilterFunction = (text) => {
     this.inputSearch = text;
 
-    if(text === "") {
+    if (text === "") {
       this.setState({ filteredData: this.state.data });
     } else {
       const newData = this.state.searchData.filter((item) => {
@@ -74,14 +75,14 @@ export default class TrendingScreen extends Component {
   };
 
   handleOnEndReached = () => {
-      this.inputSearch.length === 0 &&
-        !this.state.loading &&
-        this.setState(
-          (state, props) => {
-            return { loading: true, length: state.length + 10 };
-          },
-          () => this.makeRemoteRequest()
-        );
+    this.inputSearch.length === 0 &&
+      !this.state.loading &&
+      this.setState(
+        (state, props) => {
+          return { loading: true, length: state.length + 10 };
+        },
+        () => this.makeRemoteRequest()
+      );
   };
 
   renderHeader = () => {
@@ -153,10 +154,7 @@ export default class TrendingScreen extends Component {
     return (
       <View style={{ width: width / 2, height: width / 2 }}>
         <View style={styles.imageContainer}>
-          <TouchableOpacity
-            key={item}
-            onPress={this._goToViewPosting}
-          >
+          <TouchableOpacity key={item} onPress={this._goToViewPosting}>
             <Image
               PlaceholderContent={<BallIndicator color={Colors.primaryColor} />}
               source={{ uri: item.url }}
@@ -187,7 +185,7 @@ export default class TrendingScreen extends Component {
         </View>
       </View>
     );
-              };
+  };
 
   render() {
     const { search } = this.state;
