@@ -86,7 +86,6 @@ export default function FacebookAuth() {
       titleStyle={{
         padding: 10,
         fontSize: 20,
-        fontFamily: "open-sans",
       }}
       buttonStyle={{
         margin: 10,

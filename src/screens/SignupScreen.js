@@ -23,8 +23,8 @@ const validationSchema = Yup.object().shape({
     .min(5, "Password should be at least 5 characters "),
 });
 
-export default class SignupScreen extends Component {
-  onSignUp = async (values) => {
+export const SignupScreen = () => {
+  const onSignUp = async (values) => {
     const { email, password } = values;
     try {
       const response = await firebase
@@ -35,181 +35,175 @@ export default class SignupScreen extends Component {
     }
   };
 
-  render() {
-    return (
-      <View style={styles.screen}>
-        <Formik
-          initialValues={{ fullname: "", email: "", password: "" }}
-          onSubmit={(values) => this.onSignUp(values)}
-          validationSchema={validationSchema}
-        >
-          {({
-            handleChange,
-            values,
-            handleSubmit,
-            errors,
-            touched,
-            handleBlur,
-          }) => (
+  return (
+    <View style={styles.screen}>
+      <Formik
+        initialValues={{ fullname: "", email: "", password: "" }}
+        onSubmit={(values) => onSignUp(values)}
+        validationSchema={validationSchema}
+      >
+        {({
+          handleChange,
+          values,
+          handleSubmit,
+          errors,
+          touched,
+          handleBlur,
+        }) => (
+          <View>
+            <View style={styles.createTextContainer}>
+              <Text
+                style={{
+                  right: 3,
+                  fontSize: 35,
+                }}
+              >
+                Create Account
+              </Text>
+              <Text
+                style={{
+                  fontSize: 25,
+                  color: "#bdc3d4",
+                }}
+              >
+                Sign up to get started!
+              </Text>
+            </View>
             <View>
-              <View style={styles.createTextContainer}>
-                <Text
+              <TextInput
+                style={{
+                  justifyContent: "center",
+                  width: 340,
+                  height: 60,
+                  fontSize: 18,
+                  margin: 5,
+                }}
+                mode="outlined"
+                onChangeText={handleChange("fullname")}
+                value={values.fullname}
+                onBlur={handleBlur("fullname")}
+                label="Full Name"
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: Colors.primaryColor,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: Colors.secondaryColor,
+                  },
+                }}
+              />
+            </View>
+            <Text style={{ color: "red" }}>
+              {touched.fullname && errors.fullname}
+            </Text>
+            <View>
+              <TextInput
+                style={{
+                  justifyContent: "center",
+                  width: 340,
+                  height: 60,
+                  fontSize: 18,
+                  margin: 5,
+                }}
+                mode="outlined"
+                onChangeText={handleChange("email")}
+                value={values.email}
+                onBlur={handleBlur("email")}
+                label="Email"
+                keyboardType="email-address"
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: Colors.primaryColor,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: Colors.secondaryColor,
+                  },
+                }}
+              />
+            </View>
+            <Text style={{ color: "red" }}>
+              {touched.email && errors.email}
+            </Text>
+            <View>
+              <TextInput
+                style={{
+                  justifyContent: "center",
+                  width: 340,
+                  height: 60,
+                  fontSize: 18,
+                  margin: 5,
+                }}
+                mode="outlined"
+                onChangeText={handleChange("password")}
+                value={values.password}
+                onBlur={handleBlur("password")}
+                label="Password"
+                secureTextEntry
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: Colors.primaryColor,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: Colors.secondaryColor,
+                  },
+                }}
+              />
+            </View>
+            <Text style={{ color: "red" }}>
+              {touched.password && errors.password}
+            </Text>
+            <View>
+              <TouchableOpacity onPress={handleSubmit}>
+                <LinearGradient
+                  colors={[Colors.primaryColor, "#6dd5ed"]}
                   style={{
-                    right: 3,
-                    fontSize: 35,
-                    fontFamily: "open-sans-bold",
+                    padding: 15,
+                    alignItems: "center",
+                    borderRadius: 15,
+                    height: 60,
+                    width: 340,
+                    marginTop: 90,
                   }}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                 >
-                  Create Account
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 25,
-                    fontFamily: "open-sans-bold",
-                    color: "#bdc3d4",
-                  }}
-                >
-                  Sign up to get started!
-                </Text>
-              </View>
-              <View>
-                <TextInput
-                  style={{
-                    justifyContent: "center",
-                    width: 340,
-                    height: 60,
-                    fontSize: 18,
-                    margin: 5,
-                  }}
-                  mode="outlined"
-                  onChangeText={handleChange("fullname")}
-                  value={values.fullname}
-                  onBlur={handleBlur("fullname")}
-                  label="Full Name"
-                  theme={{
-                    roundness: 15,
-                    colors: {
-                      primary: Colors.primaryColor,
-                      nderlineColor: "blue",
-                      placeholder: "#cecbce",
-                      background: Colors.secondaryColor,
-                    },
-                  }}
-                />
-              </View>
-              <Text style={{ color: "red" }}>
-                {touched.fullname && errors.fullname}
-              </Text>
-              <View>
-                <TextInput
-                  style={{
-                    justifyContent: "center",
-                    width: 340,
-                    height: 60,
-                    fontSize: 18,
-                    margin: 5,
-                  }}
-                  mode="outlined"
-                  onChangeText={handleChange("email")}
-                  value={values.email}
-                  onBlur={handleBlur("email")}
-                  label="Email"
-                  keyboardType="email-address"
-                  theme={{
-                    roundness: 15,
-                    colors: {
-                      primary: Colors.primaryColor,
-                      nderlineColor: "blue",
-                      placeholder: "#cecbce",
-                      background: Colors.secondaryColor,
-                    },
-                  }}
-                />
-              </View>
-              <Text style={{ color: "red" }}>
-                {touched.email && errors.email}
-              </Text>
-              <View>
-                <TextInput
-                  style={{
-                    justifyContent: "center",
-                    width: 340,
-                    height: 60,
-                    fontSize: 18,
-                    margin: 5,
-                  }}
-                  mode="outlined"
-                  onChangeText={handleChange("password")}
-                  value={values.password}
-                  onBlur={handleBlur("password")}
-                  label="Password"
-                  secureTextEntry
-                  theme={{
-                    roundness: 15,
-                    colors: {
-                      primary: Colors.primaryColor,
-                      nderlineColor: "blue",
-                      placeholder: "#cecbce",
-                      background: Colors.secondaryColor,
-                    },
-                  }}
-                />
-              </View>
-              <Text style={{ color: "red" }}>
-                {touched.password && errors.password}
-              </Text>
-              <View>
-                <TouchableOpacity onPress={handleSubmit}>
-                  <LinearGradient
-                    colors={[Colors.primaryColor, "#6dd5ed"]}
+                  <Text
                     style={{
-                      padding: 15,
-                      alignItems: "center",
-                      borderRadius: 15,
-                      height: 60,
-                      width: 340,
-                      marginTop: 90,
+                      backgroundColor: "transparent",
+                      fontSize: 20,
+                      color: "#fff",
                     }}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
                   >
-                    <Text
-                      style={{
-                        backgroundColor: "transparent",
-                        fontSize: 20,
-                        color: "#fff",
-                        fontFamily: "open-sans-bold",
-                      }}
-                    >
-                      Login
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-                <View style={styles.textSignInContainer}>
-                  <Text style={{ fontFamily: "open-sans", fontSize: 16}}>
-                    I'm already a member,
+                    Login
                   </Text>
-                  <Button
-                    title="Sign In"
-                    titleStyle={{
-                      fontSize: 16,
-                      bottom: 11,
-                      fontFamily: "open-sans",
-                    }}
-                    type="clear"
-                    onPress={() => {
-                      this.props.navigation.navigate({ routeName: "Login" });
-                    }}
-                  />
-                </View>
+                </LinearGradient>
+              </TouchableOpacity>
+              <View style={styles.textSignInContainer}>
+                <Text style={{fontSize: 16 }}>
+                  I'm already a member,
+                </Text>
+                <Button
+                  title="Sign In"
+                  titleStyle={{
+                    fontSize: 16,
+                    bottom: 11,
+                  }}
+                  type="clear"
+                  onPress={() => {
+                    navigation.navigate("Login");
+                  }}
+                />
               </View>
             </View>
-          )}
-        </Formik>
-      </View>
-    );
-  }
-}
+          </View>
+        )}
+      </Formik>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {

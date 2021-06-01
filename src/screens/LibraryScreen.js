@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,76 +17,85 @@ import Colors from "../constants/Colors";
 
 const { width } = Dimensions.get("window");
 
-export default class LibraryScreen extends Component {
-  state = {
-    hasLibraryPermissions: null,
-    videos: null,
-    pickedVideo: null,
-    shouldPlay: false,
-  };
+export const LibraryScreen = ({ navigation }) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [shouldPlay, setShouldPlay] = useState(false);
+  const [pickedVideo, setPickedVideo] = useState(null);
+  const [videos, setVideos] = useState(null);
 
-  async componentDidMount() {
-    await this.getPermissionsAsync();
-    const edges = await MediaLibrary.getAssetsAsync({
-      first: 10,
-      mediaType: [MediaLibrary.MediaType.video],
-    });
-    this.setState({
-      videos: edges.assets,
-      pickedVideo: edges.assets[0].uri,
-    });
+  useEffect(() => {
+    (async () => {
+      const { status: cameraRoll } =
+        await MediaLibrary.requestPermissionsAsync();
+      setHasPermission(cameraRoll === "granted");
+    })();
+    (async () => {
+      const edges = await MediaLibrary.getAssetsAsync({
+        first: 10,
+        mediaType: 'video',
+      });
+      setVideos(edges.assets);
+      setPickedVideo(edges.assets[0].uri);
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
   }
 
-  getPermissionsAsync = async () => {
-    const { status: cameraRoll } = await MediaLibrary.requestPermissionsAsync();
-    this.setState({
-      hasLibraryPermissions: cameraRoll === "granted",
-    });
+  if (hasPermission === false) {
+    return <Text>No access to library</Text>;
+  }
+
+  // state = {
+  //   hasLibraryPermissions: null,
+  //   videos: null,
+  //   pickedVideo: null,
+  //   shouldPlay: false,
+  // };
+
+  // componentDidMount  = async () => {
+  //   await this.getPermissionsAsync();
+  //   const edges = await MediaLibrary.getAssetsAsync({
+  //     first: 10,
+  //     mediaType: [MediaLibrary.MediaType.video],
+  //   });
+  //   this.setState({
+  //     videos: edges.assets,
+  //     pickedVideo: edges.assets[0].uri,
+  //   });
+  // }
+
+  // getPermissionsAsync = async () => {
+  //   const { status: cameraRoll } = await MediaLibrary.requestPermissionsAsync();
+  //   this.setState({
+  //     hasLibraryPermissions: cameraRoll === "granted",
+  //   });
+  // };
+
+  const handlePlayAndPause = () => {
+    if (shouldPlay) {
+      setShouldPlay(false);
+    }
+    else {
+      setShouldPlay(true);
+    }
   };
 
-  handlePlayAndPause = () => {
-    this.setState((prevState) => ({
-      shouldPlay: !prevState.shouldPlay,
-    }));
-  };
+  // const _pickVideo = (video) => {
+  //   setPickedVideo(video);
+  // };
 
-  _pickVideo = (video) => {
-    this.setState({
-      pickedVideo: video,
-    });
-  };
-
-  _goToCamera = async () => {
-    const {
-      navigation: { navigate },
-    } = this.props;
-    navigate("Camera");
-  };
-
-  _cancelLibrary = async () => {
-    const { navigation } = this.props;
-    navigation.goBack(null);
-    navigation.goBack(null);
-  };
-
-  _approveVideo = () => {
-    const {
-      navigation: { navigate },
-    } = this.props;
-    const { pickedVideo } = this.state;
-    navigate("Upload", { url: pickedVideo });
-  };
-
-  _renderItem = ({ item }) => (
+  const _renderItem = ({ item }) => (
     <>
-      {this.state.pickedVideo == item.uri ? (
+      {pickedVideo == item.uri ? (
         <Video
-          source={{ uri: this.state.pickedVideo }}
+          source={{ uri: pickedVideo }}
           resizeMode="cover"
           style={styles.smallSelectedVideo}
         />
       ) : (
-        <TouchableOpacity key={item} onPress={() => this._pickVideo(item.uri)}>
+        <TouchableOpacity key={item} onPress={() => setPickedVideo(item.uri)}>
           <Video
             source={{ uri: item.uri }}
             resizeMode="cover"
@@ -96,81 +105,69 @@ export default class LibraryScreen extends Component {
       )}
     </>
   );
-
-  render() {
-    if (this.state.hasLibraryPermissions === null) {
-      return <View />;
-    } else if (this.state.hasLibraryPermissions === false) {
-      return <Text>No Access to Library, check your settings</Text>;
-    } else {
-      return (
-        <>
-          <SafeAreaView style={{ flex: 0, backgroundColor: "black" }} />
-          <StatusBar
-            translucent
-            backgroundColor="white"
-            barStyle="light-content"
-          />
-          <View style={styles.container}>
-            <View style={styles.libraryActions}>
-              <TouchableOpacity onPressOut={this._cancelLibrary}>
-                <MaterialIcons name={"close"} size={40} color="white" />
-              </TouchableOpacity>
-              <Text style={styles.libraryTitle}>Library</Text>
-              <TouchableOpacity onPressOut={this._approveVideo}>
+  return (
+    <>
+      <SafeAreaView style={{ flex: 0, backgroundColor: "black" }} />
+      <StatusBar translucent backgroundColor="white" barStyle="light-content" />
+      <View style={styles.container}>
+        <View style={styles.libraryActions}>
+          <TouchableOpacity onPressOut={() => navigation.navigate("Home")}>
+            <MaterialIcons name={"close"} size={40} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.libraryTitle}>Library</Text>
+          <TouchableOpacity
+            onPressOut={() =>
+              navigation.navigate("Upload", { url: pickedVideo })
+            }
+          >
+            <MaterialIcons
+              name={"check-box"}
+              size={40}
+              color={Colors.primaryColor}
+            />
+          </TouchableOpacity>
+        </View>
+        {videos && (
+          <>
+            <TouchableOpacity activeOpacity={1} onPressOut={handlePlayAndPause}>
+              <Video
+                source={{ uri: pickedVideo }}
+                isMuted={true}
+                shouldPlay={shouldPlay}
+                resizeMode="cover"
+                isLooping
+                style={{ width: width, height: width }}
+              />
+              <View style={styles.controlVideo}>
                 <MaterialIcons
-                  name={"check-box"}
-                  size={40}
-                  color={Colors.primaryColor}
-                />
-              </TouchableOpacity>
-            </View>
-            {this.state.videos && (
-              <>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={this.handlePlayAndPause}
-                >
-                  <Video
-                    source={{ uri: this.state.pickedVideo }}
-                    isMuted={true}
-                    shouldPlay={this.state.shouldPlay}
-                    resizeMode="cover"
-                    isLooping
-                    style={{ width: width, height: width }}
-                  />
-                  <View style={styles.controlVideo}>
-                    <MaterialIcons
-                      name={this.state.shouldPlay ? null : "play-arrow"}
-                      size={85}
-                      color="white"
-                    />
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this._goToCamera}>
-                  <View style={styles.action}>
-                    <MaterialIcons name="videocam" color="white" size={30} />
-                  </View>
-                </TouchableOpacity>
-              </>
-            )}
-            {this.state.videos && (
-              <View style={styles.videos}>
-                <FlatList
-                  data={this.state.videos}
-                  renderItem={this._renderItem}
-                  keyExtractor={(item) => item.uri}
-                  numColumns={3}
-                  showsVerticalScrollIndicator={false}
+                  name={shouldPlay ? null : "play-arrow"}
+                  size={85}
+                  color="white"
                 />
               </View>
-            )}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
+              <View style={styles.action}>
+                <MaterialIcons name="videocam" color="white" size={30} />
+              </View>
+            </TouchableOpacity>
+          </>
+        )}
+        {videos && (
+          <View style={styles.videos}>
+            <FlatList
+              data={videos}
+              renderItem={_renderItem}
+              keyExtractor={(item) => item.uri}
+              numColumns={3}
+              showsVerticalScrollIndicator={false}
+            />
           </View>
-        </>
-      );
-    }
-  }
-}
+        )}
+      </View>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -10,8 +10,7 @@ import GoogleAuth from "../authentications/GoogleAuth";
 
 //let provider = new firebase.auth.FacebookAuthProvider();
 
-class FederatedLoginScreen extends Component {
-
+export const FederatedLoginScreen = ({ navigation }) => {
   //Issue: Currently not working in verison SDK 38. Might use this if the issue is resolved
   //https://github.com/expo/expo/issues/8951
   /*async loginWithFacebook() {
@@ -46,67 +45,63 @@ class FederatedLoginScreen extends Component {
     }
   }*/
 
-  render() {
-    return (
-      <View style={styles.screen}>
-        <Text style={styles.mainTitle}>Signs For Humanity</Text>
-        <Text style={styles.messageStyle}>Deaf. Hearing. Together.</Text>
-        <View style={styles.fedButtons}>
-          <FacebookAuth />
-          <GoogleAuth />
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.mainTitle}>Signs For Humanity</Text>
+      <Text style={styles.messageStyle}>Deaf. Hearing. Together.</Text>
+      <View style={styles.fedButtons}>
+        <FacebookAuth />
+        <GoogleAuth />
+      </View>
+      <View style={styles.buttonsContainer}>
+        <View style={styles.buttonsStyle}>
+          <Button
+            title="Login"
+            titleStyle={{
+              fontSize: 15,
+              color: "black",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+
+              elevation: 5,
+            }}
+            type="clear"
+            onPress={() => {
+              navigation.navigate("Login");
+            }}
+          />
         </View>
-        <View style={styles.buttonsContainer}>
-          <View style={styles.buttonsStyle}>
-            <Button
-              title="Login"
-              titleStyle={{
-                fontSize: 15,
-                color: "black",
-                fontFamily: "open-sans",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
+        <View style={styles.buttonsStyle}>
+          <Button
+            title="Sign up with email"
+            titleStyle={{
+              fontSize: 15,
+              color: "black",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
 
-                elevation: 5,
-              }}
-              type="clear"
-              onPress={() => {
-                this.props.navigation.navigate({ routeName: "Login" });
-              }}
-            />
-          </View>
-          <View style={styles.buttonsStyle}>
-            <Button
-              title="Sign up with email"
-              titleStyle={{
-                fontSize: 15,
-                color: "black",
-                fontFamily: "open-sans",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-
-                elevation: 5,
-              }}
-              type="clear"
-              onPress={() => {
-                this.props.navigation.navigate({ routeName: "Signup" });
-              }}
-            />
-          </View>
+              elevation: 5,
+            }}
+            type="clear"
+            onPress={() => {
+              navigation.navigate("Signup");
+            }}
+          />
         </View>
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {
@@ -118,7 +113,6 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 50,
     paddingBottom: 30,
-    fontFamily: "alfaSlabOne",
     color: Colors.primaryColor,
     shadowColor: "#000",
     shadowOffset: {
@@ -132,7 +126,6 @@ const styles = StyleSheet.create({
   },
   messageStyle: {
     paddingBottom: 60,
-    fontFamily: "open-sans-bold",
     fontSize: 25,
     color: "#b3b3b3",
     shadowColor: "#000",

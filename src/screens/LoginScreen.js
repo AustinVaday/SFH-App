@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
 
 // TODO create the network information based on its quality and implement the type of modals for password
 // create the Network Information
-const unsubscribe = NetInfo.addEventListener(state => {
+const unsubscribe = NetInfo.addEventListener((state) => {
   console.log("Connection type", state.type);
   console.log("Is connected?", state.isConnected);
 });
@@ -38,9 +38,10 @@ const unsubscribe = NetInfo.addEventListener(state => {
 // to unsubscribe to these update, just use:
 unsubscribe();
 // TODO END -> network information
-export default class LoginScreen extends React.Component {
+
+export const LoginScreen = ({ navigation }) => {
   // create the component for alert (dropdown)
-  _fetchData = async () => {
+  const _fetchData = async () => {
     try {
       // alertWithType parameters: type, title, message, payload, interval.
       // payload object that includes a source property overrides the image source prop. (optional: object)
@@ -50,21 +51,21 @@ export default class LoginScreen extends React.Component {
       this.dropDownAlertRef.alertWithType(
         "success",
         "Success",
-        "Finish fetch data",
+        "Finish fetch data"
       );
     } catch (error) {
       this.dropDownAlertRef.alertWithType("error", "Error", error);
     }
   };
-  onSignIn = async (values, actions) => {
+
+  const onSignIn = async (values, actions) => {
     const { email, password } = values;
     try {
-      const response = await firebase.auth().signInWithEmailAndPassword(
-        email,
-        password,
-      );
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
       if (response.user) {
-        this.props.navigation.navigate("Hone");
+        navigation.navigate("Hone");
       }
     } catch (error) {
       // this code will hold the error handler to avoid the error message: "the password is invalid or the user does have a password"
@@ -82,174 +83,151 @@ export default class LoginScreen extends React.Component {
     * Highlight of my progress, I complete the task for modals in the terminal as comment. However, I still work on the modals as pop in the actual phone
   */
 
-  //   useEffect((_isMounted) => {
-  //     const subscription = props.source.subscribe();
-  //     console.log("Here")
-  //     return () => {
-  //       subscription.unsubscribe();
-  //     };
-  //   },
-  //     [props.source],
-  // );
-  _isMounted = false;
-  state = {
-    isLoading: true,
-  };
-  componentDidMount() {
-    this._fetchData();
-    this._isMounted = true;
-    // lookup for the onSignIn function
+  useEffect(() => {
+    _fetchData();
+    const subscription = props.source.subscribe();
     console.log("Here");
-    /* skeleton code for this
-    callAPI or DB(...).then(result => {
-    if(this._isMounted){
-    this.setState({isLoading: false})
-    }
-    });
-    */
-  }
-  componentWillUnmount() {
-    this._isMounted = false;
-    //window.removeEventListener("catch the memory", validationSchema)
-  }
-  // TODO END->(avoid the memory leak)
-  render() {
-    return (
-      <SafeAreaView style={styles.screen}>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          onSubmit={(values, actions) => this.onSignIn(values, actions)}
-          validationSchema={validationSchema}
-        >
-          {(
-            { handleChange, values, handleSubmit, errors, touched, handleBlur },
-          ) => (
-              <View>
-                <View style={{ marginTop: 10 }}>
-                  <Text
-                    style={{
-                      fontFamily: "open-sans-bold",
-                      fontSize: 35,
-                    }}
-                  >
-                    Welcome
-                </Text>
-                  <Text
-                    style={{
-                      fontFamily: "open-sans-bold",
-                      fontSize: 25,
-                      color: "#bdc3d4",
-                    }}
-                  >
-                    Log in to continue!
-                </Text>
-                </View>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    mode="outlined"
-                    label="Email"
-                    keyboardType="email-address"
-                    value={values.email}
-                    onChangeText={handleChange("email")}
-                    onBlur={handleBlur("email")}
-                    theme={{
-                      roundness: 15,
-                      colors: {
-                        primary: Colors.primaryColor,
-                        nderlineColor: "blue",
-                        placeholder: "#cecbce",
-                        background: Colors.secondaryColor,
-                      },
-                    }}
-                  />
-                  <Text style={{ color: "red" }}>
-                    {touched.email && errors.email}
-                  </Text>
-                  <TextInput
-                    mode="outlined"
-                    label="Password"
-                    secureTextEntry
-                    value={values.password}
-                    onChangeText={handleChange("password")}
-                    onBlur={handleBlur("password")}
-                    theme={{
-                      roundness: 15,
-                      colors: {
-                        primary: Colors.primaryColor,
-                        nderlineColor: "blue",
-                        placeholder: "#cecbce",
-                        background: Colors.secondaryColor,
-                      },
-                    }}
-                  />
-                  <Text style={{ color: "red" }}>
-                    {touched.password && errors.password}
-                  </Text>
-                  <Text style={{ color: "red" }}>{errors.general}</Text>
-                  <TouchableOpacity
-                    style={{ marginLeft: 220 }}
-                    onPress={() => {
-                      this.props.navigation.navigate("ForgotPassword");
-                    }}
-                  >
-                    <Text>Forgot password?</Text>
-                  </TouchableOpacity>
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [props.source]);
 
-                  <View style={{ marginTop: 80 }}>
-                    <TouchableOpacity onPress={handleSubmit}>
-                      <LinearGradient
-                        colors={[Colors.primaryColor, "#6dd5ed"]}
-                        style={{
-                          padding: 15,
-                          alignItems: "center",
-                          borderRadius: 15,
-                          height: 60,
-                        }}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                      >
-                        <Text
-                          style={{
-                            backgroundColor: "transparent",
-                            fontSize: 20,
-                            color: "#fff",
-                            fontFamily: "open-sans-bold",
-                          }}
-                        >
-                          Login
-                      </Text>
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.signupButtonContainer}>
-                  <Text
+  return (
+    <SafeAreaView style={styles.screen}>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        onSubmit={(values, actions) => onSignIn(values, actions)}
+        validationSchema={validationSchema}
+      >
+        {({
+          handleChange,
+          values,
+          handleSubmit,
+          errors,
+          touched,
+          handleBlur,
+        }) => (
+          <View>
+            <View style={{ marginTop: 10 }}>
+              <Text
+                style={{
+                  fontSize: 35,
+                }}
+              >
+                Welcome
+              </Text>
+              <Text
+                style={{
+                  fontSize: 25,
+                  color: "#bdc3d4",
+                }}
+              >
+                Log in to continue!
+              </Text>
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                mode="outlined"
+                label="Email"
+                keyboardType="email-address"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: Colors.primaryColor,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: Colors.secondaryColor,
+                  },
+                }}
+              />
+              <Text style={{ color: "red" }}>
+                {touched.email && errors.email}
+              </Text>
+              <TextInput
+                mode="outlined"
+                label="Password"
+                secureTextEntry
+                value={values.password}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: Colors.primaryColor,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: Colors.secondaryColor,
+                  },
+                }}
+              />
+              <Text style={{ color: "red" }}>
+                {touched.password && errors.password}
+              </Text>
+              <Text style={{ color: "red" }}>{errors.general}</Text>
+              <TouchableOpacity
+                style={{ marginLeft: 220 }}
+                onPress={() => {
+                  navigation.navigate("ForgotPassword");
+                }}
+              >
+                <Text>Forgot password?</Text>
+              </TouchableOpacity>
+
+              <View style={{ marginTop: 80 }}>
+                <TouchableOpacity onPress={handleSubmit}>
+                  <LinearGradient
+                    colors={[Colors.primaryColor, "#6dd5ed"]}
                     style={{
-                      fontFamily: "open-sans",
-                      fontSize: 16,
-                      marginTop: 8,
+                      padding: 15,
+                      alignItems: "center",
+                      borderRadius: 15,
+                      height: 60,
                     }}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
-                    New user?
-                </Text>
-                  <Button
-                    title="Sign up"
-                    style={{
-                      fontFamily: "open-sans",
-                      fontSize: 16,
-                    }}
-                    onPress={() => {
-                      this.props.navigation.navigate({ routeName: "Signup" });
-                    }}
-                  />
-                </View>
+                    <Text
+                      style={{
+                        backgroundColor: "transparent",
+                        fontSize: 20,
+                        color: "#fff",
+                      }}
+                    >
+                      Login
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
               </View>
-            )}
-        </Formik>
-      </SafeAreaView>
-    );
-  }
-}
+            </View>
+            <View style={styles.signupButtonContainer}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginTop: 8,
+                }}
+              >
+                New user?
+              </Text>
+              <Button
+                title="Sign up"
+                style={{
+                  fontSize: 16,
+                }}
+                onPress={() => {
+                  navigation.navigate({ routeName: "Signup" });
+                }}
+              />
+            </View>
+          </View>
+        )}
+      </Formik>
+    </SafeAreaView>
+  );
+};
+
 // FEEDBACK: remove the logo on the login page.
 // below the snippet, its only for sfh logo. (keep it in just a case)
 /* <View style={{ marginBottom: 20 }}>

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import firebase from 'firebase';
 
-const SettingScreen = (props) => {
+export const SettingScreen = (props) => {
   return (
     <View style={styles.screen}>
       <Text>Setting Screen</Text>
@@ -18,5 +18,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default SettingScreen;

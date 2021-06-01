@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+// Figure out how to navigate back home to dismiss the screens like camera stopped running.
+
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -20,150 +22,123 @@ import Colors from "../constants/Colors";
 
 const { width, height } = Dimensions.get("window");
 
-export default class UploadScreen extends Component {
-  state = {
-    title: "",
-    caption: "",
-    isSubmitting: false,
-    modal: false,
-  };
+export const UploadScreen = ({ navigation, route }) => {
+  const [title, setTitle] = useState("");
+  const [caption, setCaption] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modal, setModal] = useState(false);
 
-  _onTitleChange = (text) => {
-    this.setState({
-      title: text,
-    });
-  };
+  const { url } = route.params;
 
-  _onCaptionChange = (text) => {
-    this.setState({
-      caption: text,
-    });
-  };
-
-  _submit = async () => {
-    const { title, caption } = this.state;
-    const { navigation } = this.props;
-
+  const _submit = async () => {
     if (title && caption) {
-      this.setState({
-        isSubmitting: true,
-      });
+      setIsSubmitting(true);
       const uploadResult = null;
       if (!uploadResult) {
-        navigation.goBack(null);
-        navigation.goBack(null);
-        navigation.goBack(null);
+        navigation.navigate("Home");
       }
     } else {
       Alert.alert("All fields are required");
     }
   };
 
-  render() {
-    const {
-      navigation: {
-        state: {
-          params: { url },
-        },
-      },
-    } = this.props;
-
-    const { title, caption, modal } = this.state;
-
-    return (
-      <View style={styles.container}>
-        <Modal
-          animationType="fade"
-          visible={modal}
-          transparent={true}
-          presentationStyle="overFullScreen"
+  return (
+    <View style={styles.container}>
+      <Modal
+        animationType="fade"
+        visible={modal}
+        transparent={true}
+        presentationStyle="overFullScreen"
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.93)" }}
+          onPress={() => {
+            setModal(false);
+          }}
         >
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.93)" }}
-            onPress={() => {
-              this.setState({ modal: false });
+          <View />
+        </TouchableOpacity>
+        <SafeAreaView
+          style={{
+            marginVertical: "50%",
+            position: "absolute",
+            justifyContent: "center",
+          }}
+        >
+          <VideoPlayer
+            videoProps={{
+              shouldPlay: true,
+              resizeMode: Video.RESIZE_MODE_CONTAIN,
+              source: {
+                uri: url,
+              },
             }}
-          >
-            <View />
-          </TouchableOpacity>
-          <SafeAreaView
-            style={{
-              marginVertical: "50%",
-              position: "absolute",
-              justifyContent: "center",
-            }}
-          >
-            <VideoPlayer
-              videoProps={{
-                shouldPlay: true,
-                resizeMode: Video.RESIZE_MODE_CONTAIN,
-                source: {
-                  uri: url,
-                },
-              }}
-              inFullscreen={true}
-              width={width}
-              height={height / 2}
-            />
-          </SafeAreaView>
-        </Modal>
+            inFullscreen={true}
+            width={width}
+            height={height / 2}
+          />
+        </SafeAreaView>
+      </Modal>
 
-        <StatusBar backgroundColor="black" barStyle="dark-content" />
-        <ScrollView>
-          <View style={styles.formRow}>
-            <View style={styles.videoContainer}>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => {
-                  this.setState({ modal: true });
-                }}
-              >
-                <Video
-                  resizeMode="contain"
-                  source={{ uri: url }}
-                  style={styles.video}
-                />
-              </TouchableOpacity>
-            </View>
+      <StatusBar backgroundColor="black" barStyle="dark-content" />
+      <ScrollView>
+        <View style={styles.formRow}>
+          <View style={styles.videoContainer}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                setModal(true);
+              }}
+            >
+              <Video
+                resizeMode="contain"
+                source={{ uri: url }}
+                style={styles.video}
+              />
+            </TouchableOpacity>
           </View>
-          <View style={styles.formRow}>
-            <TextInput
-              value={title}
-              placeholder={"Title"}
-              style={styles.input}
-              multiline={true}
-              placeholderTextColor={"#888"}
-              onChangeText={this._onTitleChange}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <TextInput
-              value={caption}
-              placeholder={"Caption"}
-              style={styles.input}
-              multiline={true}
-              placeholderTextColor={"#888"}
-              onChangeText={this._onCaptionChange}
-            />
-          </View>
-          <Button
-            style={styles.uploadBtn}
-            contentStyle={{ height: 50, width: width / 2 }}
-            mode="contained"
-            onPress={this._submit}
-          >
-            {this.state.isSubmitting ? (
-              <ActivityIndicator color={Colors.primaryColor} />
-            ) : (
-              <Text>Upload</Text>
-            )}
-          </Button>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+        </View>
+        <View style={styles.formRow}>
+          <TextInput
+            value={title}
+            placeholder={"Title"}
+            style={styles.input}
+            multiline={true}
+            placeholderTextColor={"#888"}
+            onChangeText={(text) => {
+              setTitle(text);
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <TextInput
+            value={caption}
+            placeholder={"Caption"}
+            style={styles.input}
+            multiline={true}
+            placeholderTextColor={"#888"}
+            onChangeText={(text) => {
+              setCaption(text);
+            }}
+          />
+        </View>
+        <Button
+          style={styles.uploadBtn}
+          contentStyle={{ height: 50, width: width / 2 }}
+          mode="contained"
+          onPress={_submit}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={Colors.primaryColor} />
+          ) : (
+            <Text>Upload</Text>
+          )}
+        </Button>
+      </ScrollView>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

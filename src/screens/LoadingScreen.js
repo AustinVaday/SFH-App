@@ -1,38 +1,37 @@
-import React, { Component } from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import firebase from "firebase";
-import LottieView from 'lottie-react-native';
+import LottieView from "lottie-react-native";
 
-class LoadingScreen extends Component {
-  componentDidMount() {
-    this.checkIfLoggedIn();
-  }
+export const LoadingScreen = ({ navigation }) => {
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
 
-  checkIfLoggedIn = () => {
+  const checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged(
       function (user) {
         console.log("AUTH STATE CHANGED CALLED ");
         if (user) {
-          this.props.navigation.navigate({ routeName: "Home" });
+          navigation.navigate("Home");
         } else {
-          this.props.navigation.navigate({ routeName: "FederatedLogin" });
+          navigation.navigate("FederatedLogin");
         }
       }.bind(this)
     );
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <LottieView style={{ height: 300}} source={require("../assets/loading-logo.json")} autoPlay loop />
-      </View>
-    );
-  }
-}
-export default LoadingScreen;
+  return (
+    <View style={styles.container}>
+      <LottieView
+        style={{ height: 300 }}
+        source={require("../assets/loading-logo.json")}
+        autoPlay
+        loop
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

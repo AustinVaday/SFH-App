@@ -1,9 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
 } from "react-native";
@@ -14,20 +12,23 @@ import CommentButton from "../components/CommentButton";
 import ShareButton from "../components/ShareButton";
 import user from "../data/users";
 import PostSettingButton from "../components/PostSettingButton";
+import { Text } from "../components/typography/text.components";
+import { SafeArea } from "../components/utilities/safe-area.components"
+import styled from "styled-components/native";
+
+const ScreenTitle = styled(Text)`
+  text-align: center;
+`;
+
+const PostsListArea = styled(SafeArea)`
+  justify-content: center;
+  align-items: center;
+`;
 
 const users = user;
 
-export default class HomeScreen extends Component {
-
-  _onPressViewPosting = () => {
-    this.props.navigation.navigate("ViewPosting");
-  };
-
-  _onPressViewGuestProfile = () => {
-    this.props.navigation.navigate("ViewGuestProfile");
-  };
-
-  renderItem = ({ item }) => {
+export const HomeScreen = ({ navigation }) => {
+  const renderItem = ({ item }) => {
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -35,26 +36,38 @@ export default class HomeScreen extends Component {
             size="medium"
             rounded
             source={{ uri: item.avatar }}
-            onPress={this._onPressViewGuestProfile}
+            onPress={() => {
+              navigation.navigate("ViewGuestProfile");
+            }}
           />
           <View>
-            <TouchableOpacity onPress={this._onPressViewGuestProfile}>
-              <Text style={styles.cardName}>{item.name}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("ViewGuestProfile");
+              }}
+            >
+              {/* style={styles.cardName} */}
+              <Text>{item.name}</Text>
             </TouchableOpacity>
-            <Text style={styles.cardDate}>{item.date}</Text>
+            {/* style={styles.cardDate} */}
+            <Text>{item.date}</Text>
           </View>
           <PostSettingButton />
         </View>
         <View style={styles.cardPostContainer}>
           <Image source={{ uri: item.url }} style={styles.cardPost} />
         </View>
-        <Text style={styles.cardVideoTitle}>{item.videoTitle}</Text>
-        <Text style={styles.cardCaption}>{item.caption}</Text>
+        {/* style={styles.cardVideoTitle} */}
+        <Text>{item.videoTitle}</Text>
+        {/* style={styles.cardCaption} */}
+        <Text>{item.caption}</Text>
         <View style={{ flexDirection: "row" }}>
           <LikeButton users={item.likes} />
           <CommentButton
             users={item.numComments}
-            navigation={this._onPressViewPosting}
+            navigation={() => {
+              navigation.navigate("ViewPosting");
+            }}
           />
           <ShareButton users={item.url} />
         </View>
@@ -62,39 +75,24 @@ export default class HomeScreen extends Component {
     );
   };
 
-  render() {
-
-    return (
-      <SafeAreaView style={styles.screen}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <Text style={styles.text}>Explore</Text>
-            </>
-          }
-          data={users}
-          renderItem={this.renderItem}
-          keyExtractor={(index) => index.name.toString()}
-          showsVerticalScrollIndicator={false}
-        />
-      </SafeAreaView>
-    );
-  }
-}
+  return (
+    <PostsListArea>
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <ScreenTitle variant="screen_title">Explore</ScreenTitle>
+          </>
+        }
+        data={users}
+        renderItem={renderItem}
+        keyExtractor={(index) => index.name.toString()}
+        showsVerticalScrollIndicator={false}
+      />
+    </PostsListArea>
+  );
+};
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.secondaryColor,
-  },
-  text: {
-    textAlign: "center",
-    fontFamily: "open-sans-bold",
-    fontSize: 50,
-    paddingBottom: 10,
-  },
   card: {
     flex: 1,
     marginBottom: 20,
@@ -115,25 +113,21 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   cardName: {
-    fontFamily: "open-sans-bold",
     fontSize: 20,
     paddingLeft: 15,
   },
   cardDate: {
-    fontFamily: "open-sans",
     paddingLeft: 18,
     paddingBottom: 10,
     color: "#989C98",
   },
   cardCaption: {
-    fontFamily: "open-sans",
     fontSize: 15,
     paddingLeft: 8,
     paddingBottom: 20,
     paddingTop: 7,
   },
   cardVideoTitle: {
-    fontFamily: "open-sans-bold",
     fontSize: 30,
     paddingLeft: 5,
     paddingTop: 7,

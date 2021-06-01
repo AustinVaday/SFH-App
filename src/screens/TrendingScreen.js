@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,106 +20,63 @@ const { width } = Dimensions.get("window");
 // to get the data in the order for the most views
 const mostViewsData = dataTrending.sort((a, b) => b.views - a.views);
 
-export default class TrendingScreen extends Component {
-  state = {
-    loading: false,
-    data: [],
-    searchData: dataTrending,
-    length: 10,
-    error: false,
-    refreshing: false,
-    filteredData: [],
-  };
+export const TrendingScreen = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [videoLength, setVideoLength] = useState(10);
+  const [error, setError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [inputSearch, setInputSearch] = useState("");
 
-  inputSearch = "";
+  useEffect(() => {
+    setLoading(true);
+    makeRemoteRequest();
+  }, []);
 
-  componentDidMount() {
-    this.setState({ loading: true }, () => this.makeRemoteRequest());
-  }
-
-  makeRemoteRequest = () => {
-    const { length } = this.state;
+  const makeRemoteRequest = () => {
     const newData = mostViewsData;
-
+    console.log(videoLength);
     try {
-      this.setState(
-        {
-          data:
-            length === 10
-              ? newData.slice(0, length)
-              : [...this.state.data, ...newData.slice(length - 10, length)],
-          error: null,
-          loading: false,
-          refreshing: false,
-        },
-        () => this.searchFilterFunction("")
+      setData(
+        videoLength === 10
+          ? newData.slice(0, videoLength)
+          : [...data, ...newData.slice(videoLength - 10, videoLength)]
       );
-    } catch (error) {
-      this.setState({ error, loading: false });
+      setError(null);
+      setLoading(false);
+      setRefreshing(false);
+      // searchFilterFunction("");
+    } catch (err) {
+      setError(err);
+      setLoading(false);
     }
   };
 
-  searchFilterFunction = (text) => {
-    this.inputSearch = text;
-
-    if (text === "") {
-      this.setState({ filteredData: this.state.data });
-    } else {
-      const newData = this.state.searchData.filter((item) => {
+  const searchFilterFunction = (text) => {
+    if (text) {
+      const newData = dataTrending.filter((item) => {
         const itemData = `${item.videoTitle.toUpperCase()}`;
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
       });
-      this.setState({ filteredData: newData });
+      setInputSearch(text);
+      setData(newData);
+    } else {
+      setData(data);
+      setInputSearch(text);
     }
   };
 
-  handleOnEndReached = () => {
-    this.inputSearch.length === 0 &&
-      !this.state.loading &&
-      this.setState(
-        (state, props) => {
-          return { loading: true, length: state.length + 10 };
-        },
-        () => this.makeRemoteRequest()
-      );
+  const handleOnEndReached = () => {
+    if (inputSearch.length === 0 && !loading) {
+      const increaseLength = videoLength + 10;
+      setVideoLength(increaseLength);
+      makeRemoteRequest();
+    }
   };
 
-  renderHeader = () => {
-    return (
-      <>
-        <Text style={styles.titleText}>Trending</Text>
-        <SearchBar
-          placeholder="Search"
-          onChangeText={(text) => this.searchFilterFunction(text)}
-          value={this.inputSearch}
-          lightTheme
-          containerStyle={{
-            backgroundColor: "white",
-            borderBottomColor: "transparent",
-            borderTopColor: "transparent",
-            paddingBottom: 10,
-          }}
-          inputContainerStyle={{
-            backgroundColor: "#F6F6F6",
-            height: 60,
-            width: width / 1.05,
-            borderRadius: 30,
-          }}
-          searchIcon={{
-            size: 35,
-          }}
-          inputStyle={{
-            fontSize: 20,
-            fontFamily: "open-sans",
-          }}
-        />
-      </>
-    );
-  };
-
-  renderFooter = () => {
-    if (this.state.loading && this.state.length !== 0) {
+  const renderFooter = () => {
+    if (loading && videoLength !== 0) {
       return (
         <View
           style={{
@@ -137,24 +94,24 @@ export default class TrendingScreen extends Component {
     return null;
   };
 
-  handleRefresh = () => {
-    this.setState({ refreshing: true, length: 10 }, () =>
-      this.makeRemoteRequest()
-    );
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setVideoLength(10);
+    makeRemoteRequest();
   };
 
-  _goToViewPosting = async () => {
+  const _goToViewPosting = async () => {
     const {
       navigation: { navigate },
-    } = this.props;
+    } = props;
     navigate("ViewPosting");
   };
 
-  _renderItem = ({ item }) => {
+  const _renderItem = ({ item }) => {
     return (
       <View style={{ width: width / 2, height: width / 2 }}>
         <View style={styles.imageContainer}>
-          <TouchableOpacity key={item} onPress={this._goToViewPosting}>
+          <TouchableOpacity key={item} onPress={_goToViewPosting}>
             <Image
               PlaceholderContent={<BallIndicator color={Colors.primaryColor} />}
               source={{ uri: item.url }}
@@ -187,32 +144,54 @@ export default class TrendingScreen extends Component {
     );
   };
 
-  render() {
-    const { search } = this.state;
-
-    return (
-      <SafeAreaView style={styles.screen}>
-        <FlatList
-          data={this.state.filteredData}
-          renderItem={this._renderItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          ListHeaderComponent={this.renderHeader}
-          ListFooterComponent={this.renderFooter}
-          onEndReachedThreshold={0.01}
-          onEndReached={this.handleOnEndReached}
-          refreshing={this.state.refreshing}
-          onRefresh={this.handleRefresh}
-          // I comment this out because in case if there is lag while scrolling
-          // uncomment this to fix it for control initial number
-          // of items to render and max render per batch
-          // initialNumToRender={10}
-          // maxToRenderPerBatch={10}
-        />
-      </SafeAreaView>
-    );
-  }
-}
+  return (
+    <SafeAreaView style={styles.screen}>
+      <Text style={styles.titleText}>Trending</Text>
+      <FlatList
+        data={data}
+        renderItem={_renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        ListHeaderComponent={
+          <SearchBar
+            placeholder="Search"
+            onChangeText={(text) => searchFilterFunction(text)}
+            value={inputSearch}
+            lightTheme
+            containerStyle={{
+              backgroundColor: "white",
+              borderBottomColor: "transparent",
+              borderTopColor: "transparent",
+              paddingBottom: 10,
+            }}
+            inputContainerStyle={{
+              backgroundColor: "#F6F6F6",
+              height: 60,
+              width: width / 1.05,
+              borderRadius: 30,
+            }}
+            searchIcon={{
+              size: 35,
+            }}
+            inputStyle={{
+              fontSize: 20,
+            }}
+          />
+        }
+        ListFooterComponent={renderFooter}
+        onEndReachedThreshold={0.01}
+        onEndReached={handleOnEndReached}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        // I comment this out because in case if there is lag while scrolling
+        // uncomment this to fix it for control initial number
+        // of items to render and max render per batch
+        // initialNumToRender={10}
+        // maxToRenderPerBatch={10}
+      />
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {
@@ -222,7 +201,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     textAlign: "center",
-    fontFamily: "open-sans-bold",
     fontSize: 50,
     paddingBottom: 10,
   },
@@ -240,7 +218,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-
     elevation: 3,
   },
 });

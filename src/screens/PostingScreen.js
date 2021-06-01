@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
-const PostingScreen = (props) => {
+export const PostingScreen = (props) => {
   return (
     <View style={styles.screen}>
       <Text>Posting Screen</Text>
@@ -22,5 +22,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default PostingScreen;

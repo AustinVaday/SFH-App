@@ -123,7 +123,6 @@ export default class GoogleAuth extends Component {
         titleStyle={{
           padding: 10,
           fontSize: 20,
-          fontFamily: "open-sans",
         }}
         buttonStyle={{
           margin: 10,

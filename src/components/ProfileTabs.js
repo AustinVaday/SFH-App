@@ -245,7 +245,6 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
     textAlign: "center",
-    fontFamily: "open-sans",
     fontSize: 20,
   },
   textPressStyle: {
@@ -253,7 +252,6 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
     textAlign: "center",
-    fontFamily: "open-sans",
     fontSize: 20,
     color: Colors.primaryColor,
   },
@@ -265,7 +263,6 @@ const styles = StyleSheet.create({
   },
   activeTabLabelStyle: {
     color: Colors.primaryColor,
-    fontFamily: "open-sans-bold",
     fontSize: 16,
   },
   inactiveTabStyle: {
@@ -274,7 +271,6 @@ const styles = StyleSheet.create({
   },
   inactiveTabLabelStyle: {
     color: Colors.thirdColor,
-    fontFamily: "open-sans-bold",
     fontSize: 16,
   },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const ViewGuestProfileScreen = (props) => {
+export const ViewGuestProfileScreen = () => {
   return (
     <View style={styles.screen}>
       <Text>View Guest Profile Screen</Text>
@@ -16,5 +16,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default ViewGuestProfileScreen;

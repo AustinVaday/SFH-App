@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
   },
   likeNumberStyle: {
     fontSize: 22,
-    fontFamily: "open-sans-bold",
     marginLeft: 8,
   },
 });

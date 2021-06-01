@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const EditProfileScreen = (props) => {
+export const EditProfileScreen = (props) => {
   return (
     <View style={styles.screen}>
       <Text>Edit Profile Screen</Text>
@@ -16,5 +16,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default EditProfileScreen;
