@@ -2,8 +2,8 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { InboxScreen } from "../../screens/InboxScreen";
-import { ViewGuestProfileScreen } from "../../screens/ViewGuestProfileScreen";
+import { InboxScreen } from "../../features/inbox/screens/inbox.screen";
+import { ViewGuestProfileScreen } from "../../features/home/screens/view-guest-profile.screen";
 
 const InboxStack = createStackNavigator();
 

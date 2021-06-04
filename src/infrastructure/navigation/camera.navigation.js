@@ -2,9 +2,9 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { CameraScreen } from "../../screens/CameraScreen";
-import { LibraryScreen } from "../../screens/LibraryScreen";
-import { UploadScreen } from "../../screens/UploadScreen";
+import { CameraScreen } from "../../features/upload/screens/camera.screen";
+import { LibraryScreen } from "../../features/upload/screens/library.screen";
+import { UploadScreen } from "../../features/upload/screens/upload.screen";
 
 const CameraStack = createStackNavigator();
 

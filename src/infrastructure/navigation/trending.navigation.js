@@ -2,8 +2,8 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { TrendingScreen } from "../../screens/TrendingScreen";
-import { ViewPostingScreen } from "../../screens/ViewPostingScreen";
+import { TrendingScreen } from "../../features/trending/screens/trending.screen";
+import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
 
 const TrendingStack = createStackNavigator();
 

@@ -10,7 +10,7 @@ const defaultTextStyles = (theme) => `
 `;
 
 const screen_title = (theme) => `
-    font-size: ${theme.fontSizes.h3};
+    font-size: ${theme.fontSizes.h2};
 `;
 
 const body = (theme) => `
@@ -26,14 +26,24 @@ const error = (theme) => `
 `;
 
 const caption = (theme) => `
-    font-size: ${theme.fontSizes.caption};
-    font-weight: ${theme.fontWeights.bold};
+    font-size: ${theme.fontSizes.body};
+    font-weight: ${theme.fontWeights.medium};
 `;
 
 const label = (theme) => `
     font-family: ${theme.fonts.heading};
     font-size: ${theme.fontSizes.body};
     font-weight: ${theme.fontWeights.medium};
+`;
+
+const name = (theme) => `
+    font-size: ${theme.fontSizes.title};
+    font-weight: ${theme.fontWeights.bold};
+`;
+
+const title = (theme) => `
+    font-size: ${theme.fontSizes.h4};
+    font-weight: ${theme.fontWeights.bold};
 `;
 
 const variants = {
@@ -43,6 +53,8 @@ const variants = {
   error,
   hint,
   screen_title,
+  name,
+  title,
 };
 
 export const Text = styled.Text`
