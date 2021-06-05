@@ -41,6 +41,12 @@ const name = (theme) => `
     font-weight: ${theme.fontWeights.bold};
 `;
 
+const small_title = (theme) => `
+color: white;
+    font-size: ${theme.fontSizes.title};
+    font-weight: ${theme.fontWeights.bold};
+`;
+
 const title = (theme) => `
     font-size: ${theme.fontSizes.h4};
     font-weight: ${theme.fontWeights.bold};
@@ -55,6 +61,7 @@ const variants = {
   screen_title,
   name,
   title,
+  small_title
 };
 
 export const Text = styled.Text`
