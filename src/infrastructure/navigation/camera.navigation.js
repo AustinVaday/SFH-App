@@ -11,8 +11,8 @@ const CameraStack = createStackNavigator();
 export const CameraNavigator = () => {
   return (
     <CameraStack.Navigator headerMode="none">
-      <CameraStack.Screen name="Camera" component={CameraScreen} />
       <CameraStack.Screen name="Library" component={LibraryScreen} />
+      <CameraStack.Screen name="Camera" component={CameraScreen} />
       <CameraStack.Screen name="Upload" component={UploadScreen} />
     </CameraStack.Navigator>
   );

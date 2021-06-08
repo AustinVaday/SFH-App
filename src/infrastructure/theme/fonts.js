@@ -1,13 +1,8 @@
 export const fonts = {
   body: "Oswald_400Regular",
+  body_medium: "Oswald_500Medium",
+  body_bold: "Oswald_700Bold",
   heading: "Lato_400Regular",
-  monospace: "Oswald_400Regular",
-};
-
-export const fontWeights = {
-  regular: 400,
-  medium: 500,
-  bold: 700,
 };
 
 export const fontSizes = {

@@ -1,26 +1,57 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
-  StyleSheet,
   Dimensions,
-  SafeAreaView,
   FlatList,
   StatusBar,
   TouchableOpacity,
 } from "react-native";
-
-import { MaterialIcons } from "@expo/vector-icons";
+import { IconButton } from "react-native-paper";
 import * as MediaLibrary from "expo-media-library";
 import { Video } from "expo-av";
+import styled from "styled-components/native";
+
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+
+import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
 const { width } = Dimensions.get("window");
 
+const LibrarySafeArea = styled(SafeArea)`
+  background-color: black;
+`;
+
+const TopTitleSection = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const NewPostText = styled(Text)`
+  color: white;
+  font-size: ${(props) => props.theme.fontSizes.h5};
+`;
+
+const CameraIconButton = styled(IconButton)`
+  background-color: black;
+  align-self: flex-end;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+`;
+
+const PlayIconButton = styled(Icon)`
+  position: absolute;
+  bottom: 40%;
+  align-self: center;
+`;
+
 export const LibraryScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [shouldPlay, setShouldPlay] = useState(false);
-  const [pickedVideo, setPickedVideo] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [videos, setVideos] = useState(null);
 
   useEffect(() => {
@@ -32,10 +63,10 @@ export const LibraryScreen = ({ navigation }) => {
     (async () => {
       const edges = await MediaLibrary.getAssetsAsync({
         first: 10,
-        mediaType: 'video',
+        mediaType: "video",
       });
       setVideos(edges.assets);
-      setPickedVideo(edges.assets[0].uri);
+      setSelectedVideo(edges.assets[0].uri);
     })();
   }, []);
 
@@ -47,177 +78,97 @@ export const LibraryScreen = ({ navigation }) => {
     return <Text>No access to library</Text>;
   }
 
-  // state = {
-  //   hasLibraryPermissions: null,
-  //   videos: null,
-  //   pickedVideo: null,
-  //   shouldPlay: false,
-  // };
-
-  // componentDidMount  = async () => {
-  //   await this.getPermissionsAsync();
-  //   const edges = await MediaLibrary.getAssetsAsync({
-  //     first: 10,
-  //     mediaType: [MediaLibrary.MediaType.video],
-  //   });
-  //   this.setState({
-  //     videos: edges.assets,
-  //     pickedVideo: edges.assets[0].uri,
-  //   });
-  // }
-
-  // getPermissionsAsync = async () => {
-  //   const { status: cameraRoll } = await MediaLibrary.requestPermissionsAsync();
-  //   this.setState({
-  //     hasLibraryPermissions: cameraRoll === "granted",
-  //   });
-  // };
-
   const handlePlayAndPause = () => {
     if (shouldPlay) {
       setShouldPlay(false);
-    }
-    else {
+    } else {
       setShouldPlay(true);
     }
   };
 
-  // const _pickVideo = (video) => {
-  //   setPickedVideo(video);
-  // };
-
-  const _renderItem = ({ item }) => (
+  const renderItem = ({ item }) => (
     <>
-      {pickedVideo == item.uri ? (
+      {selectedVideo == item.uri ? (
         <Video
-          source={{ uri: pickedVideo }}
+          source={{ uri: selectedVideo }}
           resizeMode="cover"
-          style={styles.smallSelectedVideo}
+          style={{
+            width: width / 3,
+            height: width / 3,
+            borderWidth: 5,
+            borderColor: colors.brand.primary,
+          }}
         />
       ) : (
-        <TouchableOpacity key={item} onPress={() => setPickedVideo(item.uri)}>
+        <TouchableOpacity key={item} onPress={() => setSelectedVideo(item.uri)}>
           <Video
             source={{ uri: item.uri }}
             resizeMode="cover"
-            style={styles.smallVideo}
+            style={{ width: width / 3, height: width / 3 }}
           />
         </TouchableOpacity>
       )}
     </>
   );
+
   return (
-    <>
-      <SafeAreaView style={{ flex: 0, backgroundColor: "black" }} />
+    <LibrarySafeArea>
       <StatusBar translucent backgroundColor="white" barStyle="light-content" />
-      <View style={styles.container}>
-        <View style={styles.libraryActions}>
-          <TouchableOpacity onPressOut={() => navigation.navigate("Home")}>
-            <MaterialIcons name={"close"} size={40} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.libraryTitle}>Library</Text>
-          <TouchableOpacity
-            onPressOut={() =>
-              navigation.navigate("Upload", { url: pickedVideo })
-            }
-          >
-            <MaterialIcons
-              name={"check-box"}
-              size={40}
-              color={colors.brand.primary}
-            />
-          </TouchableOpacity>
-        </View>
-        {videos && (
-          <>
-            <TouchableOpacity activeOpacity={1} onPressOut={handlePlayAndPause}>
+      <TopTitleSection>
+        <IconButton
+          size={35}
+          icon="close"
+          color="white"
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        />
+        <NewPostText>New Post</NewPostText>
+        <IconButton
+          size={35}
+          icon="checkbox-marked"
+          color={colors.brand.primary}
+          onPress={() => {
+            navigation.navigate("Upload", { url: selectedVideo });
+          }}
+        />
+      </TopTitleSection>
+      {videos && (
+        <>
+          <View>
+            <TouchableOpacity activeOpacity={1} onPress={handlePlayAndPause}>
               <Video
-                source={{ uri: pickedVideo }}
+                source={{ uri: selectedVideo }}
                 isMuted={true}
                 shouldPlay={shouldPlay}
                 resizeMode="cover"
                 isLooping
                 style={{ width: width, height: width }}
               />
-              <View style={styles.controlVideo}>
-                <MaterialIcons
-                  name={shouldPlay ? null : "play-arrow"}
-                  size={85}
-                  color="white"
-                />
-              </View>
+              <PlayIconButton
+                name={shouldPlay ? null : "play"}
+                size={85}
+                color="white"
+              />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Camera")}>
-              <View style={styles.action}>
-                <MaterialIcons name="videocam" color="white" size={30} />
-              </View>
-            </TouchableOpacity>
-          </>
-        )}
-        {videos && (
-          <View style={styles.videos}>
-            <FlatList
-              data={videos}
-              renderItem={_renderItem}
-              keyExtractor={(item) => item.uri}
-              numColumns={3}
-              showsVerticalScrollIndicator={false}
+            <CameraIconButton
+              size={30}
+              icon="camera"
+              color="white"
+              onPress={() => {
+                navigation.navigate("Camera");
+              }}
             />
           </View>
-        )}
-      </View>
-    </>
+          <FlatList
+            data={videos}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.uri}
+            numColumns={3}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
+      )}
+    </LibrarySafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "black",
-  },
-  videos: {
-    flex: 1,
-  },
-  scrollViewContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  smallVideo: {
-    width: width / 3,
-    height: width / 3,
-  },
-  smallSelectedVideo: {
-    width: width / 3,
-    height: width / 3,
-    borderWidth: 5,
-    borderColor: colors.brand.primary,
-  },
-  action: {
-    backgroundColor: "black",
-    borderRadius: 30,
-    color: "white",
-    padding: 10,
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-  },
-  controlVideo: {
-    position: "absolute",
-    bottom: "50%",
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  libraryActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 20,
-    marginVertical: 10,
-    alignItems: "center",
-  },
-  libraryTitle: {
-    color: "white",
-    fontSize: 25,
-  },
-});

@@ -12,8 +12,9 @@ const BottomCard = styled.View`
   padding: ${(props) => props.theme.space[2]};
   flex-direction: row;
   align-items: center;
-  position: absolute;
-  background-color: rgba(52, 52, 52, 0.4);
+  /* position: absolute; */
+  /* background-color: rgba(52, 52, 52, 0.3); */
+  /* background-color: ${(props) => props.theme.colors.brand.primary} */
 `;
 
 const AvatarIcon = styled.View`
@@ -24,9 +25,9 @@ const AvatarIcon = styled.View`
 export const SmallPostCard = ({ user, onNavigate }) => {
   return (
     <CardContainer elevation={2}>
-        <TouchableRipple onPress={() => onNavigate("ViewPosting")}>
+      <TouchableRipple onPress={() => onNavigate("ViewPosting")}>
         <Card.Cover source={{ uri: user.url }} />
-        </TouchableRipple>
+      </TouchableRipple>
       <BottomCard>
         <Text variant="small_title" color="white">
           {user.videoTitle}

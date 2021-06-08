@@ -2,7 +2,6 @@ import styled from "styled-components/native";
 
 const defaultTextStyles = (theme) => `
   font-family: ${theme.fonts.body};
-  font-weight: ${theme.fontWeights.regular};
   color: ${theme.colors.text.primary};
   flex-wrap: wrap;
   margin-top: 0px;
@@ -10,7 +9,8 @@ const defaultTextStyles = (theme) => `
 `;
 
 const screen_title = (theme) => `
-    font-size: ${theme.fontSizes.h2};
+    font-family: ${theme.fonts.body_bold};
+    font-size: ${theme.fontSizes.h3};
 `;
 
 const body = (theme) => `
@@ -26,30 +26,32 @@ const error = (theme) => `
 `;
 
 const caption = (theme) => `
+font-family: ${theme.fonts.heading};
     font-size: ${theme.fontSizes.body};
-    font-weight: ${theme.fontWeights.medium};
 `;
 
 const label = (theme) => `
     font-family: ${theme.fonts.heading};
     font-size: ${theme.fontSizes.body};
-    font-weight: ${theme.fontWeights.medium};
 `;
 
 const name = (theme) => `
     font-size: ${theme.fontSizes.title};
-    font-weight: ${theme.fontWeights.bold};
+    font-family: ${theme.fonts.body_medium};
 `;
 
 const small_title = (theme) => `
-color: white;
     font-size: ${theme.fontSizes.title};
-    font-weight: ${theme.fontWeights.bold};
 `;
 
 const title = (theme) => `
+    font-family: ${theme.fonts.body_medium};
     font-size: ${theme.fontSizes.h4};
-    font-weight: ${theme.fontWeights.bold};
+`;
+
+const following_font = (theme) => `
+font-family: ${theme.fonts.heading};
+    font-size: ${theme.fontSizes.h3};
 `;
 
 const variants = {
@@ -61,7 +63,8 @@ const variants = {
   screen_title,
   name,
   title,
-  small_title
+  small_title,
+  following_font,
 };
 
 export const Text = styled.Text`

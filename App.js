@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 // import AppContainer from "./src/navigation";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 // import AppLoading from "expo-app-loading";
@@ -10,8 +11,13 @@ import { ThemeProvider } from "styled-components/native";
 import {
   useFonts as useOswald,
   Oswald_400Regular,
+  Oswald_500Medium,
+  Oswald_700Bold,
 } from "@expo-google-fonts/oswald";
-import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
+import {
+  useFonts as useLato,
+  Lato_400Regular,
+} from "@expo-google-fonts/lato";
 
 import { theme } from "./src/infrastructure/theme";
 
@@ -44,6 +50,8 @@ export default function App() {
 
   const [oswaldLoaded] = useOswald({
     Oswald_400Regular,
+    Oswald_500Medium,
+    Oswald_700Bold,
   });
 
   const [latoLoaded] = useLato({

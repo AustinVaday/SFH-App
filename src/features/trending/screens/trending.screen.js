@@ -14,12 +14,17 @@ import dataTrending from "../../../utils/mock/dataTrending";
 
 const SearchContainer = styled.View`
   padding: ${(props) => props.theme.space[3]};
-  z-index: 999;
+  /* z-index: 999; */
   width: 100%;
 `;
 
 const VideoContainer = styled.View`
   padding-bottom: ${(props) => props.theme.space[2]};
+  width: 50%;
+`;
+
+const VideosList = styled(FlatList)`
+  padding: ${(props) => props.theme.space[2]};
 `;
 
 const { width } = Dimensions.get("window");
@@ -98,15 +103,15 @@ export const TrendingScreen = ({ navigation }) => {
           onChangeText={(text) => searchFilterFunction(text)}
         />
       </SearchContainer>
-      <FlatList
+      <VideosList
         data={data}
         renderItem={({ item }) => {
           return (
-            <View style={{ width: width / 2 }}>
+            // <View style={{ width: width / 2 }}>
               <VideoContainer>
                 <SmallPostCard user={item} onNavigate={navigation.navigate} />
               </VideoContainer>
-            </View>
+            // </View>
           );
         }}
         keyExtractor={(item) => item.id}
