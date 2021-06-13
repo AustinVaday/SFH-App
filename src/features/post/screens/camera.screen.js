@@ -104,7 +104,7 @@ export const CameraScreen = ({ navigation }) => {
   };
 
   const approveVideo = async () => {
-    navigation.navigate("Upload", { url: video });
+    navigation.navigate("Post", { url: video });
     setVideo(null);
     setVideoTaken(false);
   };
@@ -150,7 +150,7 @@ export const CameraScreen = ({ navigation }) => {
                   icon="close"
                   color="white"
                   onPress={() => {
-                    navigation.goBack();
+                    navigation.navigate("Home");
                   }}
                 />
                 <CameraButtons>

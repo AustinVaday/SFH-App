@@ -15,7 +15,7 @@ export const LoadingScreen = ({ navigation }) => {
         if (user) {
           navigation.navigate("Home");
         } else {
-          navigation.navigate("Authenications");
+          navigation.navigate("Authentications");
         }
       }.bind(this)
     );

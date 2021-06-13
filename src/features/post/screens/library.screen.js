@@ -129,7 +129,7 @@ export const LibraryScreen = ({ navigation }) => {
           icon="checkbox-marked"
           color={colors.brand.primary}
           onPress={() => {
-            navigation.navigate("Upload", { url: selectedVideo });
+            navigation.navigate("Post", { url: selectedVideo });
           }}
         />
       </TopTitleSection>

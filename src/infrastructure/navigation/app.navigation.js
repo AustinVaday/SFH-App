@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { HomeNavigator } from "./home.navigation";
-import { CameraNavigator } from "./camera.navigation";
+import { PostNavigator } from "./post.navigation";
 import { InboxNavigator } from "./inbox.navigation";
 import { ProfileNavigator } from "./profile.navigation";
 import { TrendingNavigator } from "./trending.navigation";
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 const TAB_ICON = {
   Home: "md-home",
   Trending: "md-trending-up",
-  Camera: "md-camera",
+  Post: "md-add",
   Inbox: "md-chatbubbles",
   Profile: "md-person",
 };
@@ -40,8 +40,8 @@ export const AppNavigator = () => (
     <Tab.Screen name="Home" component={HomeNavigator} />
     <Tab.Screen name="Trending" component={TrendingNavigator} />
     <Tab.Screen
-      name="Camera"
-      component={CameraNavigator}
+      name="Post"
+      component={PostNavigator}
       options={{ tabBarVisible: false }}
     />
     <Tab.Screen name="Inbox" component={InboxNavigator} />
