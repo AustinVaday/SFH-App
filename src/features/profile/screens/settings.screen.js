@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
-import firebase from 'firebase';
+
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 export const SettingsScreen = () => {
+  const { onLogout } = useContext(AuthenticationContext);
+
   return (
     <View style={styles.screen}>
       <Text>Setting Screen</Text>
-      <Button title="Sign out" onPress={() => firebase.auth().signOut()} />
+      <Button title="Sign out" onPress={onLogout} />
     </View>
   );
 };

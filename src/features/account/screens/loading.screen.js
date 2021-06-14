@@ -4,22 +4,22 @@ import firebase from "firebase";
 import LottieView from "lottie-react-native";
 
 export const LoadingScreen = ({ navigation }) => {
-  useEffect(() => {
-    checkIfLoggedIn();
-  }, []);
+  // useEffect(() => {
+  //   checkIfLoggedIn();
+  // }, []);
 
-  const checkIfLoggedIn = () => {
-    firebase.auth().onAuthStateChanged(
-      function (user) {
-        console.log("AUTH STATE CHANGED CALLED ");
-        if (user) {
-          navigation.navigate("Home");
-        } else {
-          navigation.navigate("Authentications");
-        }
-      }.bind(this)
-    );
-  };
+  // const checkIfLoggedIn = () => {
+  //   firebase.auth().onAuthStateChanged(
+  //     function (user) {
+  //       console.log("AUTH STATE CHANGED CALLED ");
+  //       if (user) {
+  //         navigation.navigate("Home");
+  //       } else {
+  //         navigation.navigate("Authentications");
+  //       }
+  //     }.bind(this)
+  //   );
+  // };
 
   return (
     <View style={styles.container}>

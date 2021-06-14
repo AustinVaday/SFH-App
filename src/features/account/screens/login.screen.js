@@ -41,22 +41,22 @@ unsubscribe();
 
 export const LoginScreen = ({ navigation }) => {
   // create the component for alert (dropdown)
-  const _fetchData = async () => {
-    try {
-      // alertWithType parameters: type, title, message, payload, interval.
-      // payload object that includes a source property overrides the image source prop. (optional: object)
-      // interval takes precedence over the closeInterval prop. (optional: number)
-      this.dropDownAlertRef.alertWithType("info", "Info", "Start fetch data.");
-      await fetch("https://httpbin.org/get");
-      this.dropDownAlertRef.alertWithType(
-        "success",
-        "Success",
-        "Finish fetch data"
-      );
-    } catch (error) {
-      this.dropDownAlertRef.alertWithType("error", "Error", error);
-    }
-  };
+  // const _fetchData = async () => {
+  //   try {
+  //     // alertWithType parameters: type, title, message, payload, interval.
+  //     // payload object that includes a source property overrides the image source prop. (optional: object)
+  //     // interval takes precedence over the closeInterval prop. (optional: number)
+  //     this.dropDownAlertRef.alertWithType("info", "Info", "Start fetch data.");
+  //     await fetch("https://httpbin.org/get");
+  //     this.dropDownAlertRef.alertWithType(
+  //       "success",
+  //       "Success",
+  //       "Finish fetch data"
+  //     );
+  //   } catch (error) {
+  //     this.dropDownAlertRef.alertWithType("error", "Error", error);
+  //   }
+  // };
 
   const onSignIn = async (values, actions) => {
     const { email, password } = values;
@@ -83,14 +83,14 @@ export const LoginScreen = ({ navigation }) => {
     * Highlight of my progress, I complete the task for modals in the terminal as comment. However, I still work on the modals as pop in the actual phone
   */
 
-  useEffect(() => {
-    _fetchData();
-    const subscription = props.source.subscribe();
-    console.log("Here");
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [props.source]);
+  // useEffect(() => {
+  //   _fetchData();
+  //   const subscription = source.subscribe();
+  //   console.log("Here");
+  //   return () => {
+  //     subscription.unsubscribe();
+  //   };
+  // }, [source]);
 
   return (
     <SafeAreaView style={styles.screen}>
