@@ -1,33 +1,98 @@
-import React from "react";
+import React, { useContext } from "react";
+import { ScrollView } from "react-native";
 import {
-  Text,
-  SafeAreaView,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+  TextInput,
+  HelperText,
+  ActivityIndicator,
+  Colors,
+  Button,
+} from "react-native-paper";
+import GradientButton from "react-native-gradient-buttons";
 import { Formik } from "formik";
-import * as Yup from "yup";
-import { TextInput } from "react-native-paper";
-import { colors } from "../../../infrastructure/theme/colors";
-import { LinearGradient } from "expo-linear-gradient";
-import * as firebase from "firebase/app";
-import "firebase/auth";
 
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
+import * as yup from "yup";
+import styled from "styled-components/native";
+
+import { colors } from "../../../infrastructure/theme/colors";
+import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
+import { Text } from "../../../components/typography/text.components";
+import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
+
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+const TopTextSection = styled.View`
+  padding: ${(props) => props.theme.space[4]};
+  align-items: center;
+`;
+
+const TextInputsSection = styled.View`
+  padding-top: ${(props) => props.theme.space[3]};
+  padding-left: ${(props) => props.theme.space[3]};
+  padding-right: ${(props) => props.theme.space[3]};
+`;
+
+const SendButtonSection = styled.View`
+  padding-left: ${(props) => props.theme.space[2]};
+  padding-right: ${(props) => props.theme.space[2]};
+`;
+
+const SendText = styled(Text)`
+  color: white;
+  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-size: ${(props) => props.theme.fontSizes.body};
+`;
+
+const ForgotPasswordText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-size: ${(props) => props.theme.fontSizes.title};
+`;
+
+const MessageText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-size: ${(props) => props.theme.fontSizes.body};
+  text-align: center;
+`;
+
+const HorizontalLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: black;
+`;
+
+const OrSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-left: ${(props) => props.theme.space[4]};
+  padding-right: ${(props) => props.theme.space[4]};
+`;
+
+const OrText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-size: ${(props) => props.theme.fontSizes.body};
+  text-align: center;
+  align-self: center;
+  width: 50px;
+`;
+
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
     .label("Email")
     .email("Enter a valid email")
     .required("Please enter a registered email"),
 });
 
 export const ForgotPasswordScreen = ({ navigation }) => {
+  const { onPasswordReset, error, isLoading } = useContext(
+    AuthenticationContext
+  );
+
   const handlePasswordReset = async (values, actions) => {
     const { email } = values;
 
     try {
-      await firebase.auth().sendPasswordResetEmail(email);
-      console.log("Password reset email sent successfully");
+      onPasswordReset(email);
       navigation.navigate("Login");
     } catch (error) {
       actions.setFieldError("general", error.message);
@@ -35,8 +100,15 @@ export const ForgotPasswordScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <Text style={styles.forgotTextStyle}>Forgot Password?</Text>
+    <SafeArea>
+      <TopTextSection>
+        <ForgotPasswordText>Trouble logging in?</ForgotPasswordText>
+        <Spacer position="top" size="large" />
+        <MessageText>
+          Enter your email and we will send you a link to get back into your
+          account.
+        </MessageText>
+      </TopTextSection>
       <Formik
         initialValues={{ email: "" }}
         onSubmit={(values, actions) => {
@@ -49,84 +121,78 @@ export const ForgotPasswordScreen = ({ navigation }) => {
           values,
           handleSubmit,
           errors,
-          isValid,
           touched,
           handleBlur,
-          isSubmitting,
         }) => (
-          <View style={{ alignItems: "center" }}>
-            <TextInput
-              style={{
-                marginTop: 100,
-                width: 340,
-                height: 60,
-                fontSize: 18,
-              }}
-              mode="outlined"
-              value={values.email}
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              label="Enter email"
-              theme={{
-                roundness: 15,
-                colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: colors.brand.secondary,
-                },
-              }}
-            />
-            <Text style={{ color: "red" }}>
-              {touched.email && errors.email}
-            </Text>
-            <TouchableOpacity onPress={handleSubmit} style={{ marginTop: 10 }}>
-              <LinearGradient
-                colors={[colors.brand.primary, "#6dd5ed"]}
-                style={{
-                  padding: 15,
-                  alignItems: "center",
-                  borderRadius: 15,
-                  height: 60,
-                  width: 340,
+          <ScrollView scrollEnabled={false}>
+            <TextInputsSection>
+              <TextInput
+                mode="outlined"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                label="Enter email"
+                style={{ height: 50 }}
+                theme={{
+                  roundness: 15,
+                  colors: {
+                    primary: colors.brand.primary,
+                    nderlineColor: "blue",
+                    placeholder: "#cecbce",
+                    background: "white",
+                  },
                 }}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                <Text
-                  style={{
-                    backgroundColor: "transparent",
-                    fontSize: 20,
-                    color: "#fff",
-                  }}
-                >
-                  Send
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+              />
+              <HelperText type="error" visible={errors}>
+                {touched.email && errors.email}
+              </HelperText>
+            </TextInputsSection>
+
+            <SendButtonSection>
+              {!isLoading ? (
+                <GradientButton
+                  text={<SendText>Send</SendText>}
+                  gradientBegin={colors.brand.primary}
+                  gradientEnd="#6dd5ed"
+                  gradientDirection="vertical"
+                  height={50}
+                  radius={15}
+                  onPressAction={handleSubmit}
+                />
+              ) : (
+                <ActivityIndicator animating={true} color={Colors.blue300} />
+              )}
+            </SendButtonSection>
 
             <Text
               style={{ color: "red", paddingHorizontal: 40, marginTop: 10 }}
             >
               {errors.general}
             </Text>
-          </View>
+
+            <OrSection>
+              <HorizontalLine />
+              <OrText>OR</OrText>
+              <HorizontalLine />
+            </OrSection>
+            <Spacer size="medium" />
+            <FacebookAndGoogleButtons />
+          </ScrollView>
         )}
       </Formik>
-    </SafeAreaView>
+      <Button
+        color="white"
+        uppercase={false}
+        labelStyle={{
+          fontSize: 13,
+          color: colors.brand.primary,
+        }}
+        onPress={() => {
+          navigation.goBack();
+        }}
+      >
+        Back to Login
+      </Button>
+    </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.brand.secondary,
-    alignItems: "center",
-  },
-  forgotTextStyle: {
-    fontSize: 35,
-    marginLeft: 25,
-    marginVertical: 40,
-    alignSelf: "flex-start",
-  },
-});

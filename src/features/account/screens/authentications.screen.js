@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "react-native-paper";
-import { FacebookAuth } from "../components/facebook-auth-button.components";
-import { GoogleAuth } from "../components/google-auth-button.components";
+import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
 import styled from "styled-components/native";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
@@ -21,8 +20,9 @@ const BottomButtonsSection = styled.View`
 
 const TitleText = styled(Text)`
   font-family: ${(props) => props.theme.fonts.body_bold};
-  font-size: ${(props) => props.theme.fontSizes.h2};
+  font-size: ${(props) => props.theme.fontSizes.h3};
   color: ${(props) => props.theme.colors.brand.primary};
+  text-align: center;
 `;
 
 const MessageText = styled(Text)`
@@ -33,6 +33,8 @@ const MessageText = styled(Text)`
 
 const MainTextSection = styled.View`
   padding-bottom: ${(props) => props.theme.space[5]};
+  padding-left: ${(props) => props.theme.space[4]};
+  padding-right: ${(props) => props.theme.space[4]};
   align-items: center;
 `;
 
@@ -44,14 +46,12 @@ export const AuthenticationsScreen = ({ navigation }) => {
         <Spacer position="top" size="large" />
         <MessageText>Deaf. Hearing. Together.</MessageText>
       </MainTextSection>
-      <FacebookAuth />
-      <Spacer position="top" size="large" />
-      <GoogleAuth />
+      <FacebookAndGoogleButtons />
       <BottomButtonsSection>
         <Button
           color="white"
           labelStyle={{
-            fontSize: 15,
+            fontSize: 12,
             color: "black",
           }}
           onPress={() => {
@@ -63,7 +63,7 @@ export const AuthenticationsScreen = ({ navigation }) => {
         <Button
           color="white"
           labelStyle={{
-            fontSize: 15,
+            fontSize: 12,
             color: "black",
           }}
           onPress={() => {

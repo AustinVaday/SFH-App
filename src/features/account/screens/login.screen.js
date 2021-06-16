@@ -5,6 +5,7 @@ import {
   HelperText,
   Button,
   ActivityIndicator,
+  Colors,
 } from "react-native-paper";
 import GradientButton from "react-native-gradient-buttons";
 import { Formik } from "formik";
@@ -15,7 +16,9 @@ import styled from "styled-components/native";
 
 import { colors } from "../../../infrastructure/theme/colors";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
+import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
 
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
@@ -34,9 +37,10 @@ const ForgotPasswordSection = styled.View`
 `;
 
 const LoginButtonSection = styled.View`
-  padding-top: ${(props) => props.theme.space[5]};
-  padding-left: ${(props) => props.theme.space[4]};
-  padding-right: ${(props) => props.theme.space[4]};
+  padding-top: ${(props) => props.theme.space[3]};
+  padding-left: ${(props) => props.theme.space[2]};
+  padding-right: ${(props) => props.theme.space[2]};
+  padding-bottom: ${(props) => props.theme.space[4]};
 `;
 
 const SignUpSection = styled.View`
@@ -48,21 +52,42 @@ const SignUpSection = styled.View`
 const LoginText = styled(Text)`
   color: white;
   font-family: ${(props) => props.theme.fonts.body_medium};
-  font-size: ${(props) => props.theme.fontSizes.title};
+  font-size: ${(props) => props.theme.fontSizes.button};
 `;
 
 const WelcomeText = styled(Text)`
   font-family: ${(props) => props.theme.fonts.body_bold};
-  font-size: ${(props) => props.theme.fontSizes.h2};
+  font-size: ${(props) => props.theme.fontSizes.h4};
 `;
 
 const ContinueLoginText = styled(Text)`
   color: #bdc3d4;
-  font-size: ${(props) => props.theme.fontSizes.h4};
+  font-size: ${(props) => props.theme.fontSizes.h5};
 `;
 
 const NewUserText = styled(Text)`
+  font-size: ${(props) => props.theme.fontSizes.button};
+`;
+
+const HorizontalLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: black;
+`;
+
+const OrSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-left: ${(props) => props.theme.space[4]};
+  padding-right: ${(props) => props.theme.space[4]};
+`;
+
+const OrText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_medium};
   font-size: ${(props) => props.theme.fontSizes.body};
+  text-align: center;
+  align-self: center;
+  width: 50px;
 `;
 
 const validationSchema = yup.object().shape({
@@ -131,6 +156,7 @@ export const LoginScreen = ({ navigation }) => {
                 value={values.email}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
+                style={{ height: 50 }}
                 theme={{
                   roundness: 15,
                   colors: {
@@ -151,6 +177,7 @@ export const LoginScreen = ({ navigation }) => {
                 value={values.password}
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
+                style={{ height: 50 }}
                 theme={{
                   roundness: 15,
                   colors: {
@@ -169,7 +196,7 @@ export const LoginScreen = ({ navigation }) => {
                   color="white"
                   labelStyle={{
                     fontSize: 10,
-                    color: "black",
+                    color: colors.brand.primary,
                   }}
                   onPress={() => {
                     navigation.navigate("ForgotPassword");
@@ -186,23 +213,31 @@ export const LoginScreen = ({ navigation }) => {
                   gradientBegin={colors.brand.primary}
                   gradientEnd="#6dd5ed"
                   gradientDirection="vertical"
-                  height={60}
-                  radius={30}
+                  height={50}
+                  radius={15}
                   onPressAction={handleSubmit}
                 />
               ) : (
                 <ActivityIndicator animating={true} color={Colors.blue300} />
               )}
             </LoginButtonSection>
+            <OrSection>
+              <HorizontalLine />
+              <OrText>OR</OrText>
+              <HorizontalLine />
+            </OrSection>
+            <Spacer size="medium" />
+            <FacebookAndGoogleButtons />
           </ScrollView>
         )}
       </Formik>
       <SignUpSection>
-        <NewUserText>New user?</NewUserText>
+        <NewUserText>Don't have an account?</NewUserText>
         <Button
           color="white"
+          uppercase={false}
           labelStyle={{
-            fontSize: 13,
+            fontSize: 12,
             color: colors.brand.primary,
           }}
           onPress={() => {

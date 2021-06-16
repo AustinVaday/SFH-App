@@ -1,45 +1,129 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { TextInput } from "react-native-paper";
-import { colors } from "../../../infrastructure/theme/colors";
-import { Button } from "react-native-elements";
-import { LinearGradient } from "expo-linear-gradient";
-import * as firebase from "firebase/app";
-import "firebase/auth";
+import React, { useContext } from "react";
+import { ScrollView } from "react-native";
+import {
+  TextInput,
+  HelperText,
+  Button,
+  ActivityIndicator,
+  Colors,
+} from "react-native-paper";
+import GradientButton from "react-native-gradient-buttons";
 import { Formik } from "formik";
-import * as Yup from "yup";
 
-const validationSchema = Yup.object().shape({
-  fullname: Yup.string()
+import * as yup from "yup";
+import styled from "styled-components/native";
+
+import { colors } from "../../../infrastructure/theme/colors";
+import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
+import { Text } from "../../../components/typography/text.components";
+import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
+
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+const TopTextSection = styled.View`
+  padding: ${(props) => props.theme.space[3]};
+`;
+
+const TextInputsSection = styled.View`
+  padding-top: ${(props) => props.theme.space[5]};
+  padding-left: ${(props) => props.theme.space[3]};
+  padding-right: ${(props) => props.theme.space[3]};
+`;
+
+const SignUpButtonSection = styled.View`
+  padding-top: ${(props) => props.theme.space[1]};
+  padding-left: ${(props) => props.theme.space[2]};
+  padding-right: ${(props) => props.theme.space[2]};
+  padding-bottom: ${(props) => props.theme.space[4]};
+`;
+
+const SignInSection = styled.View`
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+`;
+
+const SignUpText = styled(Text)`
+  color: white;
+  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-size: ${(props) => props.theme.fontSizes.button};
+`;
+
+const CreateAccountText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-size: ${(props) => props.theme.fontSizes.h4};
+`;
+
+const SignUpStartedText = styled(Text)`
+  color: #bdc3d4;
+  font-size: ${(props) => props.theme.fontSizes.h5};
+`;
+
+const AlreadyAccountText = styled(Text)`
+  font-size: ${(props) => props.theme.fontSizes.button};
+`;
+
+const HorizontalLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: black;
+`;
+
+const OrSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-left: ${(props) => props.theme.space[4]};
+  padding-right: ${(props) => props.theme.space[4]};
+`;
+
+const OrText = styled(Text)`
+  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-size: ${(props) => props.theme.fontSizes.body};
+  text-align: center;
+  align-self: center;
+  width: 50px;
+`;
+
+const validationSchema = yup.object().shape({
+  fullname: yup
+    .string()
     .required("Required")
     .min(6, "FullName must contain at least 6 characters"),
-  email: Yup.string()
+  email: yup
+    .string()
     .label("Email")
     .email("Enter a valid email")
     .required("Please enter a registered email"),
-  password: Yup.string()
+  password: yup
+    .string()
     .label("Password")
     .required()
     .min(5, "Password should be at least 5 characters "),
 });
 
 export const RegisterScreen = ({ navigation }) => {
-  const onSignUp = async (values) => {
+  const { onRegister, error, isLoading } = useContext(AuthenticationContext);
+
+  const onSignUp = async (values, actions) => {
     const { email, password } = values;
     try {
-      const response = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password);
+      onRegister(email, password);
     } catch (error) {
+      actions.setFieldError("general", error.message);
       console.error(error);
     }
   };
 
   return (
-    <View style={styles.screen}>
+    <SafeArea>
+      <TopTextSection>
+        <CreateAccountText>Create Account</CreateAccountText>
+        <SignUpStartedText>Sign up to get started!</SignUpStartedText>
+      </TopTextSection>
       <Formik
         initialValues={{ fullname: "", email: "", password: "" }}
-        onSubmit={(values) => onSignUp(values)}
+        onSubmit={(values, actions) => onSignUp(values, actions)}
         validationSchema={validationSchema}
       >
         {({
@@ -50,176 +134,112 @@ export const RegisterScreen = ({ navigation }) => {
           touched,
           handleBlur,
         }) => (
-          <View>
-            <View style={styles.createTextContainer}>
-              <Text
-                style={{
-                  right: 3,
-                  fontSize: 35,
-                }}
-              >
-                Create Account
-              </Text>
-              <Text
-                style={{
-                  fontSize: 25,
-                  color: "#bdc3d4",
-                }}
-              >
-                Sign up to get started!
-              </Text>
-            </View>
-            <View>
+          <ScrollView scrollEnabled={false}>
+            <TextInputsSection>
               <TextInput
-                style={{
-                  justifyContent: "center",
-                  width: 340,
-                  height: 60,
-                  fontSize: 18,
-                  margin: 5,
-                }}
                 mode="outlined"
                 onChangeText={handleChange("fullname")}
                 value={values.fullname}
                 onBlur={handleBlur("fullname")}
                 label="Full Name"
+                style={{ height: 50 }}
                 theme={{
                   roundness: 15,
                   colors: {
                     primary: colors.brand.primary,
                     nderlineColor: "blue",
                     placeholder: "#cecbce",
-                    background: colors.brand.secondary,
+                    background: "white",
                   },
                 }}
               />
-            </View>
-            <Text style={{ color: "red" }}>
-              {touched.fullname && errors.fullname}
-            </Text>
-            <View>
+              <HelperText type="error" visible={errors}>
+                {touched.fullname && errors.fullname}
+              </HelperText>
               <TextInput
-                style={{
-                  justifyContent: "center",
-                  width: 340,
-                  height: 60,
-                  fontSize: 18,
-                  margin: 5,
-                }}
                 mode="outlined"
-                onChangeText={handleChange("email")}
-                value={values.email}
-                onBlur={handleBlur("email")}
                 label="Email"
                 keyboardType="email-address"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                style={{ height: 50 }}
                 theme={{
                   roundness: 15,
                   colors: {
                     primary: colors.brand.primary,
                     nderlineColor: "blue",
                     placeholder: "#cecbce",
-                    background: colors.brand.secondary,
+                    background: "white",
                   },
                 }}
               />
-            </View>
-            <Text style={{ color: "red" }}>
-              {touched.email && errors.email}
-            </Text>
-            <View>
+              <HelperText type="error" visible={errors}>
+                {touched.email && errors.email}
+              </HelperText>
               <TextInput
-                style={{
-                  justifyContent: "center",
-                  width: 340,
-                  height: 60,
-                  fontSize: 18,
-                  margin: 5,
-                }}
                 mode="outlined"
-                onChangeText={handleChange("password")}
-                value={values.password}
-                onBlur={handleBlur("password")}
                 label="Password"
                 secureTextEntry
+                value={values.password}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                style={{ height: 50 }}
                 theme={{
                   roundness: 15,
                   colors: {
                     primary: colors.brand.primary,
                     nderlineColor: "blue",
                     placeholder: "#cecbce",
-                    background: colors.brand.secondary,
+                    background: "white",
                   },
                 }}
               />
-            </View>
-            <Text style={{ color: "red" }}>
-              {touched.password && errors.password}
-            </Text>
-            <View>
-              <TouchableOpacity onPress={handleSubmit}>
-                <LinearGradient
-                  colors={[colors.brand.primary, "#6dd5ed"]}
-                  style={{
-                    padding: 15,
-                    alignItems: "center",
-                    borderRadius: 15,
-                    height: 60,
-                    width: 340,
-                    marginTop: 90,
-                  }}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Text
-                    style={{
-                      backgroundColor: "transparent",
-                      fontSize: 20,
-                      color: "#fff",
-                    }}
-                  >
-                    Login
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-              <View style={styles.textSignInContainer}>
-                <Text style={{fontSize: 16 }}>
-                  I'm already a member,
-                </Text>
-                <Button
-                  title="Sign In"
-                  titleStyle={{
-                    fontSize: 16,
-                    bottom: 11,
-                  }}
-                  type="clear"
-                  onPress={() => {
-                    navigation.navigate("Login");
-                  }}
+              <HelperText type="error" visible={errors}>
+                {touched.password && errors.password}
+              </HelperText>
+            </TextInputsSection>
+            <SignUpButtonSection>
+              {!isLoading ? (
+                <GradientButton
+                  text={<SignUpText>Sign up</SignUpText>}
+                  gradientBegin={colors.brand.primary}
+                  gradientEnd="#6dd5ed"
+                  gradientDirection="vertical"
+                  height={50}
+                  radius={15}
+                  onPressAction={handleSubmit}
                 />
-              </View>
-            </View>
-          </View>
+              ) : (
+                <ActivityIndicator animating={true} color={Colors.blue300} />
+              )}
+            </SignUpButtonSection>
+            <OrSection>
+              <HorizontalLine />
+              <OrText>OR</OrText>
+              <HorizontalLine />
+            </OrSection>
+            <Spacer size="medium" />
+            <FacebookAndGoogleButtons />
+          </ScrollView>
         )}
       </Formik>
-    </View>
+      <SignInSection>
+        <AlreadyAccountText>Already have an account?</AlreadyAccountText>
+        <Button
+          color="white"
+          uppercase={false}
+          labelStyle={{
+            fontSize: 14,
+            color: colors.brand.primary,
+          }}
+          onPress={() => {
+            navigation.navigate("Login");
+          }}
+        >
+          Login
+        </Button>
+      </SignInSection>
+    </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.brand.secondary,
-  },
-  createTextContainer: {
-    paddingRight: 60,
-    paddingBottom: 100,
-  },
-  textSignInContainer: {
-    flexDirection: "row",
-    paddingTop: 120,
-    top: 40,
-    left: 60,
-  },
-});

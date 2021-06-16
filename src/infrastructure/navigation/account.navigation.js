@@ -20,7 +20,7 @@ export const AccountNavigator = () => (
     <AccountStack.Screen name="Login" component={LoginScreen} />
     <AccountStack.Screen name="Register" component={RegisterScreen} />
     <AccountStack.Screen
-      name="FrgotPassword"
+      name="ForgotPassword"
       component={ForgotPasswordScreen}
     />
   </AccountStack.Navigator>
