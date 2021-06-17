@@ -1,11 +1,12 @@
 import React from "react";
 import { Button } from "react-native-paper";
-import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
+import LottieView from "lottie-react-native";
 import styled from "styled-components/native";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
+import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
 
 const AuthSafeArea = styled(SafeArea)`
   justify-content: center;
@@ -35,12 +36,28 @@ const MainTextSection = styled.View`
   padding-bottom: ${(props) => props.theme.space[5]};
   padding-left: ${(props) => props.theme.space[4]};
   padding-right: ${(props) => props.theme.space[4]};
+  padding-top: ${(props) => props.theme.space[4]};
   align-items: center;
+`;
+
+const AnimationWrapper = styled.View`
+  width: 100%;
+  height: 30%;
 `;
 
 export const AuthenticationsScreen = ({ navigation }) => {
   return (
     <AuthSafeArea>
+      <AnimationWrapper>
+      <LottieView
+          key="animation"
+          autoPlay
+          loop
+          resizeMode="cover"
+          source={require("../../../assets/lottie/world.json")}
+        />
+      </AnimationWrapper>
+      
       <MainTextSection>
         <TitleText>Signs For Humanity</TitleText>
         <Spacer position="top" size="large" />
