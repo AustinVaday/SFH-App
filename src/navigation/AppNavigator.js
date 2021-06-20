@@ -12,7 +12,7 @@ import InboxScreen from "../screens/InboxScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SearchScreen from "../screens/SearchScreen";
 import SettingScreen from "../screens/SettingScreen";
-import TreadingScreen from "../screens/TreadingScreen";
+import TrendingScreen from "../screens/TrendingScreen";
 import ViewGuestProfileScreen from "../screens/ViewGuestProfileScreen";
 import ViewPostingScreen from "../screens/ViewPostingScreen";
 import ListSearchResultsScreen from "../screens/ListSearchResultsScreen";
@@ -44,9 +44,12 @@ const HomeNavigator = createStackNavigator({
   },
 });
 
-const TreadingNavigator = createStackNavigator({
-  Treading: {
-    screen: TreadingScreen,
+const TrendingNavigator = createStackNavigator({
+  Trending: {
+    screen: TrendingScreen,
+    navigationOptions: {
+      headerShown: false,
+    },
   },
   ViewPosting: {
     screen: ViewPostingScreen,
@@ -118,8 +121,8 @@ const AppTabNavigator = createBottomTabNavigator({
       },
     },
   },
-  Treading: {
-    screen: TreadingNavigator,
+  Trending: {
+    screen: TrendingNavigator,
     navigationOptions: {
       tabBarIcon: ({ tintColor }) => (
         <Icon name="line-chart" size={30} color={tintColor} />
