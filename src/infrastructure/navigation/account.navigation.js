@@ -12,10 +12,19 @@ const AccountStack = createStackNavigator();
 
 export const AccountNavigator = () => (
   <AccountStack.Navigator headerMode="none">
-    {/* <AccountStack.Screen name="Loading" component={LoadingScreen} /> */}
+    {/* <AccountStack.Screen
+      name="Loading"
+      component={LoadingScreen}
+      options={{
+        animationEnabled: false,
+      }}
+    /> */}
     <AccountStack.Screen
       name="Authentications"
       component={AuthenticationsScreen}
+      options={{
+        animationEnabled: false,
+      }}
     />
     <AccountStack.Screen name="Login" component={LoginScreen} />
     <AccountStack.Screen name="Register" component={RegisterScreen} />

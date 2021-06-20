@@ -11,7 +11,9 @@ export const Navigation = () => {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <AppNavigator /> : <AccountNavigator />}
+      {!isAuthenticated && <AccountNavigator />}
+      {isAuthenticated && <AppNavigator />}
+      {/* <AppNavigator /> */}
     </NavigationContainer>
   );
 };

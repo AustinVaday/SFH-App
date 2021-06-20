@@ -2,22 +2,25 @@
 // in the Expo Client. Same for Expo Google package
 // Refer to the similar issue: https://github.com/expo/expo/issues/8951
 
+// CHECK: https://github.com/expo/expo/issues/11471
+// If Android device has issues with using Facebook login, check that website for resolve
+
 import React, { useEffect, useState, useContext } from "react";
 import { Dimensions } from "react-native";
 import { ActivityIndicator, Colors, Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import styled from "styled-components/native";
 
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { useAuthRequest } from "expo-auth-session/providers/facebook";
 import { useIdTokenAuthRequest } from "expo-auth-session/providers/google";
 import { ResponseType } from "expo-auth-session";
 import firebase from "firebase";
-import styled from "styled-components/native";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
-
-import { facebookConfig, googleConfig } from "../../../../Config/config";
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+import { FBAPPID, WEBCLIENTID } from "@env";
 
 const AuthButtonsSection = styled.View`
   padding-top: ${(props) => props.theme.space[3]};
@@ -26,9 +29,6 @@ const AuthButtonsSection = styled.View`
 `;
 
 const { width } = Dimensions.get("window");
-
-const FB_APP_ID = facebookConfig.fbAppId;
-const WEBCLIENTID = googleConfig.wClientId;
 
 maybeCompleteAuthSession();
 
@@ -42,7 +42,8 @@ export const FacebookAndGoogleButtons = () => {
   const [requestFacebook, responseFacebook, promptAsyncFacebook] =
     useAuthRequest({
       responseType: ResponseType.Token,
-      clientId: FB_APP_ID,
+      clientId: FBAPPID,
+      scopes: ['public_profile', 'email'],
     });
 
   const [requestGoogle, responseGoogle, promptAsyncGoogle] =
@@ -52,14 +53,14 @@ export const FacebookAndGoogleButtons = () => {
 
   useEffect(() => {
     if (onFacebook) {
-      if (responseFacebook?.type === "success") {
+      if (responseFacebook?.type === "success") { 
         const { access_token } = responseFacebook.params;
 
         const credential =
           firebase.auth.FacebookAuthProvider.credential(access_token);
         onFacebookOrGoogleSignIn(credential);
         setOnFacebook(false);
-      }
+      };
     } else if (onGoogle) {
       if (responseGoogle?.type === "success") {
         const { id_token } = responseGoogle.params;
@@ -83,6 +84,7 @@ export const FacebookAndGoogleButtons = () => {
         onPress={() => {
           setOnFacebook(true);
           promptAsyncFacebook();
+          
         }}
       >
         Continue with Facebook

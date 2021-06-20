@@ -31,6 +31,7 @@ const createScreenOptions = ({ route }) => {
 
 export const AppNavigator = () => (
   <Tab.Navigator
+    initialRouteName="Home"
     screenOptions={createScreenOptions}
     tabBarOptions={{
       activeTintColor: colors.brand.primary,

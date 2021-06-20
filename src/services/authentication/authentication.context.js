@@ -1,7 +1,9 @@
-import React, { useState, createContext } from "react";
-import firebase from "firebase";
+import React, { useState, createContext, useEffect } from "react";
+import firebase from "firebase/app";
 
 import { loginRequest, passwordResetRequest } from "./authentication.services";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AuthenticationContext = createContext();
 
@@ -10,21 +12,45 @@ export const AuthenticationContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  firebase.auth().onAuthStateChanged((usr) => {
-    if (usr) {
-      setUser(usr);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  });
+  useEffect(() => {
+    const getUser = AsyncStorage.getItem("accountCredentials")
+      .then((result) => {
+        if (result !== null) {
+          setUser(JSON.parse(result));
+        } else {
+          setUser(null);
+        }
+      })
+      .catch((err) => {
+        setError(err.toString());
+      });
+    const unlisten = firebase.auth().onAuthStateChanged((usr) => {
+      if (usr) {
+        setUser(usr);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    });
+    getUser();
+    unlisten();
+  }, []);
 
   const onLogin = (email, password) => {
     setIsLoading(true);
     loginRequest(email, password)
       .then((u) => {
-        setUser(u);
-        setIsLoading(false);
+        // setUser(u);
+        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
+          .then(() => {
+            setUser(u);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            setError(err.toString());
+          });
+        // setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -39,8 +65,17 @@ export const AuthenticationContextProvider = ({ children }) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((u) => {
-        setUser(u);
-        setIsLoading(false);
+        // setUser(u);
+        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
+          .then(() => {
+            setUser(u);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            setError(err.toString());
+          });
+        // setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -52,23 +87,7 @@ export const AuthenticationContextProvider = ({ children }) => {
     setIsLoading(true);
 
     passwordResetRequest(email)
-    .then(() => {
-      setIsLoading(false);
-    })
-    .catch((e) => {
-      setIsLoading(false);
-      setError(e.toString());
-    });
-  }
-
-  const onFacebookOrGoogleSignIn = (credential) => {
-    setIsLoading(true);
-
-    firebase
-      .auth()
-      .signInWithCredential(credential)
-      .then((u) => {
-        setUser(u);
+      .then(() => {
         setIsLoading(false);
       })
       .catch((e) => {
@@ -77,8 +96,39 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
+  const onFacebookOrGoogleSignIn = (credential) => {
+    setIsLoading(true);
+
+    firebase
+      .auth()
+      .signInWithCredential(credential)
+      .then((u) => {
+        // setUser(u);
+        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
+          .then(() => {
+            setUser(u);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            setError(err.toString());
+          });
+        // setIsLoading(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setError(e.toString());
+      });
+  };
+
   const onLogout = () => {
-    setUser(null);
+    AsyncStorage.removeItem("accountCredentials")
+      .then(() => {
+        setUser(null);
+      })
+      .catch((err) => {
+        setError(err.toString());
+      });
     firebase.auth().signOut();
   };
 
@@ -93,7 +143,7 @@ export const AuthenticationContextProvider = ({ children }) => {
         onRegister,
         onLogout,
         onFacebookOrGoogleSignIn,
-        onPasswordReset
+        onPasswordReset,
       }}
     >
       {children}

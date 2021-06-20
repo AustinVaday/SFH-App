@@ -1,25 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import firebase from "firebase";
 import LottieView from "lottie-react-native";
 
-export const LoadingScreen = ({ navigation }) => {
-  // useEffect(() => {
-  //   checkIfLoggedIn();
-  // }, []);
-
-  // const checkIfLoggedIn = () => {
-  //   firebase.auth().onAuthStateChanged(
-  //     function (user) {
-  //       console.log("AUTH STATE CHANGED CALLED ");
-  //       if (user) {
-  //         navigation.navigate("Home");
-  //       } else {
-  //         navigation.navigate("Authentications");
-  //       }
-  //     }.bind(this)
-  //   );
-  // };
+export const LoadingScreen = () => {
 
   return (
     <View style={styles.container}>

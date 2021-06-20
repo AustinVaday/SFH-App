@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext, useCallback, useState } from "react";
 import { TouchableOpacity, FlatList } from "react-native";
 import { Avatar, Button, IconButton, Surface } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import styled from "styled-components/native";
 
 import { ProfileTabs } from "../components/profile-tabs.navigator";
@@ -8,6 +10,7 @@ import { ProfileTabs } from "../components/profile-tabs.navigator";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 import userProfile from "../../../utils/mock/userProfile";
 
@@ -64,6 +67,26 @@ const ProfileInfoContainer = styled.View`
 `;
 
 export const ProfileScreen = ({ navigation }) => {
+  const { user } = useContext(AuthenticationContext);
+  // const [photo, setPhoto] = useState(null);
+  // const [fullName, setFullName] = useState("");
+
+  // const getProfileInfo = async (currentUser) => {
+  //   const photoUri = await AsyncStorage.getItem(`${currentUser.uid}-photo`);
+  //   if (!photoUri) {
+  //     setPhoto(currentUser.photoURL + "?type=large");
+  //     setFullName(currentUser.displayName)
+  //   } else {
+  //     setPhoto(photoUri);
+  //   }
+  // };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getProfileInfo(user);
+  //   }, [user])
+  // );
+
   const userName = userProfile.map((index) => index.name);
   const userFollowing = userProfile.map((index) => index.following);
   const userFollowers = userProfile.map((index) => index.followers);
@@ -89,11 +112,11 @@ export const ProfileScreen = ({ navigation }) => {
                   <Avatar.Image
                     size={120}
                     source={{
-                      uri: "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
+                      uri: user.photoURL,
                     }}
                   />
                 </Surface>
-                <Name>{userName}</Name>
+                <Name>{user.displayName}</Name>
                 <FollowsSection>
                   <TouchableOpacity
                     style={{ alignItems: "center" }}
