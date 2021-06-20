@@ -1,8 +1,6 @@
-import React, { useContext, useCallback, useState } from "react";
+import React, { useContext } from "react";
 import { TouchableOpacity, FlatList } from "react-native";
 import { Avatar, Button, IconButton, Surface } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 import styled from "styled-components/native";
 
 import { ProfileTabs } from "../components/profile-tabs.navigator";

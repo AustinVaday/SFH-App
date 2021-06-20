@@ -3,8 +3,6 @@ import firebase from "firebase/app";
 
 import { loginRequest, passwordResetRequest } from "./authentication.services";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 export const AuthenticationContext = createContext();
 
 export const AuthenticationContextProvider = ({ children }) => {
@@ -13,17 +11,6 @@ export const AuthenticationContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getUser = AsyncStorage.getItem("accountCredentials")
-      .then((result) => {
-        if (result !== null) {
-          setUser(JSON.parse(result));
-        } else {
-          setUser(null);
-        }
-      })
-      .catch((err) => {
-        setError(err.toString());
-      });
     const unlisten = firebase.auth().onAuthStateChanged((usr) => {
       if (usr) {
         setUser(usr);
@@ -32,25 +19,17 @@ export const AuthenticationContextProvider = ({ children }) => {
         setIsLoading(false);
       }
     });
-    getUser();
-    unlisten();
+    return () => {
+      unlisten();
+    };
   }, []);
 
   const onLogin = (email, password) => {
     setIsLoading(true);
     loginRequest(email, password)
       .then((u) => {
-        // setUser(u);
-        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
-          .then(() => {
-            setUser(u);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            setError(err.toString());
-          });
-        // setIsLoading(false);
+        setUser(u);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -65,17 +44,8 @@ export const AuthenticationContextProvider = ({ children }) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((u) => {
-        // setUser(u);
-        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
-          .then(() => {
-            setUser(u);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            setError(err.toString());
-          });
-        // setIsLoading(false);
+        setUser(u);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -103,17 +73,8 @@ export const AuthenticationContextProvider = ({ children }) => {
       .auth()
       .signInWithCredential(credential)
       .then((u) => {
-        // setUser(u);
-        AsyncStorage.setItem("accountCredentials", JSON.stringify(u))
-          .then(() => {
-            setUser(u);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            setIsLoading(false);
-            setError(err.toString());
-          });
-        // setIsLoading(false);
+        setUser(u);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -122,13 +83,7 @@ export const AuthenticationContextProvider = ({ children }) => {
   };
 
   const onLogout = () => {
-    AsyncStorage.removeItem("accountCredentials")
-      .then(() => {
-        setUser(null);
-      })
-      .catch((err) => {
-        setError(err.toString());
-      });
+    setUser(null);
     firebase.auth().signOut();
   };
 
