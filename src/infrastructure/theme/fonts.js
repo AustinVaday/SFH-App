@@ -1,11 +1,13 @@
 export const fonts = {
-  body: "Oswald_400Regular",
-  body_medium: "Oswald_500Medium",
-  body_bold: "Oswald_700Bold",
-  heading: "Lato_400Regular",
+  body_300: "OpenSans_300Light",
+  body_400: "OpenSans_400Regular",
+  body_600: "OpenSans_600SemiBold",
+  body_700: "OpenSans_700Bold",
+  body_800: "OpenSans_800ExtraBold",
 };
 
 export const fontSizes = {
+  date: "10px",
   caption: "12px",
   button: "14px",
   body: "16px",

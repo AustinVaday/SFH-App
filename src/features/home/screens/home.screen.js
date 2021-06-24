@@ -33,7 +33,7 @@ export const HomeScreen = ({ navigation }) => {
         renderItem={({ item }) => {
           return (
             <Spacer position="bottom" size="large">
-              <PostCard user={item} onNavigate={navigation.navigate} />
+              <PostCard user={item} onNavigate={navigation.navigate} paramsNavigation={navigation} />
             </Spacer>
           );
         }}
