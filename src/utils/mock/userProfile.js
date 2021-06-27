@@ -4,8 +4,63 @@ export default userProfile = [
     id: "1",
     avatar:
       "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
-    following: 140,
-    followers: 440,
+    following: [
+      {
+        id: "1",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Austin Vadey",
+      },
+      {
+        id: "2",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Carlos Guerrero",
+      },
+      {
+        id: "3",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Bob Bryant",
+      },
+    ],
+    followers: [
+      {
+        id: "1",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Austin Vadey",
+        followed: true,
+      },
+      {
+        id: "2",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Rick Wilson",
+        followed: false,
+      },
+      {
+        id: "3",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Carlos Guerrero",
+        followed: false,
+      },
+      {
+        id: "4",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Jerry Yi",
+        followed: true,
+      },
+      {
+        id: "5",
+        avatar:
+          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        name: "Shawn Yan",
+        followed: false,
+      },
+    ],
     posts: [
       {
         id: "2",

@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { TouchableOpacity, FlatList } from "react-native";
-import { Avatar, Button, IconButton, Surface } from "react-native-paper";
+import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
 
 import { ProfileTabs } from "../components/profile-tabs.navigator";
@@ -8,14 +8,8 @@ import { ProfileTabs } from "../components/profile-tabs.navigator";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 import userProfile from "../../../utils/mock/userProfile";
-
-const SettingsButton = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-  align-items: flex-end;
-`;
 
 const Name = styled(Text)`
   padding: ${(props) => props.theme.space[2]};
@@ -59,6 +53,7 @@ const EditProfileButtonContainer = styled.View`
 `;
 
 const ProfileInfoContainer = styled.View`
+  padding-top: ${(props) => props.theme.space[3]};
   align-items: center;
 `;
 
@@ -85,7 +80,7 @@ export const ProfileScreen = ({ navigation }) => {
   const userName = userProfile.map((index) => index.name);
   const userFollowing = userProfile.map((index) => index.following);
   const userFollowers = userProfile.map((index) => index.followers);
-  
+
   return (
     <SafeArea>
       <FlatList
@@ -93,15 +88,6 @@ export const ProfileScreen = ({ navigation }) => {
         renderItem={({ item }) => {
           return (
             <>
-              <SettingsButton>
-                <IconButton
-                  size={35}
-                  icon="cog"
-                  onPress={() => {
-                    navigation.navigate("Settings");
-                  }}
-                />
-              </SettingsButton>
               <ProfileInfoContainer>
                 <Surface style={{ borderRadius: 60, elevation: 3 }}>
                   <Avatar.Image
@@ -111,13 +97,11 @@ export const ProfileScreen = ({ navigation }) => {
                     }}
                   />
                 </Surface>
-                <Name variant='title'>{item.name}</Name>
+                <Name variant="title">{item.name}</Name>
                 <FollowsSection>
                   <TouchableOpacity
                     style={{ alignItems: "center" }}
-                    onPress={() => {
-                      navigation.navigate("FollowList");
-                    }}
+                    onPress={() => {}}
                   >
                     <FollowNumbersFont>{item.posts.length}</FollowNumbersFont>
                     <FollowTextFont>Posts</FollowTextFont>
@@ -126,20 +110,20 @@ export const ProfileScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={{ alignItems: "center" }}
                     onPress={() => {
-                      navigation.navigate("FollowList");
+                      navigation.navigate("FollowList", { item, tab: 'Following' });
                     }}
                   >
-                    <FollowNumbersFont>{userFollowing}</FollowNumbersFont>
+                    <FollowNumbersFont>{item.following.length}</FollowNumbersFont>
                     <FollowTextFont>Following</FollowTextFont>
                   </TouchableOpacity>
                   <SliceText> | </SliceText>
                   <TouchableOpacity
                     style={{ alignItems: "center" }}
                     onPress={() => {
-                      navigation.navigate("FollowList");
+                      navigation.navigate("FollowList", { item, tab: "Followers" });
                     }}
                   >
-                    <FollowNumbersFont>{userFollowers}</FollowNumbersFont>
+                    <FollowNumbersFont>{item.followers.length}</FollowNumbersFont>
                     <FollowTextFont>Followers</FollowTextFont>
                   </TouchableOpacity>
                 </FollowsSection>

@@ -1,10 +1,12 @@
 import React from "react";
 import { Text } from "../../components/typography/text.components";
+import { IconButton } from "react-native-paper";
 
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, HeaderBackButton } from "@react-navigation/stack";
 
 import { ProfileScreen } from "../../features/profile/screens/profile.screen";
 import { SettingsScreen } from "../../features/profile/screens/settings.screen";
+import { FollowListScreen } from "../../features/profile/screens/follow-list.screen";
 import { EditProfileScreen } from "../../features/profile/screens/edit-profile.screen";
 import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
 
@@ -20,22 +22,43 @@ export const ProfileNavigator = () => {
       <ProfileStack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={({ route, navigation }) => ({
+        options={({ navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
           // headerStyle: { height: 120 },
           headerTitle: null,
           headerTintColor: "black",
           headerLeft: () => (
-            <Text variant="title" style={{paddingLeft: 20}}>{userName}</Text>
+            <Text variant="title" style={{ paddingLeft: 15 }}>
+              {userName}
+            </Text>
           ),
-          // headerRight: () => <ViewPostingRightHeader />,
+          headerRight: () => (
+            <IconButton
+              icon="dots-horizontal"
+              onPress={() => navigation.navigate("Settings")}
+            />
+          ),
         })}
       />
       <ProfileStack.Screen
         name="Settings"
         component={SettingsScreen}
         options={{ headerShown: false }}
+      />
+      <ProfileStack.Screen
+        name="FollowList"
+        component={FollowListScreen}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          // headerStyle: { height: 120 },
+          headerTitle: route.params.item.name,
+          headerTintColor: "black",
+          headerLeft: (props) => (
+            <HeaderBackButton {...props} />
+          ),
+        })}
       />
       <ProfileStack.Screen
         name="EditProfile"
