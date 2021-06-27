@@ -1,0 +1,37 @@
+1ST ISSUE: For entire app, status bar colors are different depends on screen. For example,
+entire app set status bar as black and goes to Camera screen that set status bar to white
+then exit or after posting video, status bar doesnt change back to black.
+
+Sources might help:
+- https://docs.expo.io/guides/configuring-statusbar/#factoring-the-status-bar-in-with-your
+- Check with React Native ZTM Academy course from Udemy
+
+2ND ISSUE: When logged in or signed up, you will be taken to application. When user closes
+the app in their device and opens it, it crashes. Trying to figure out how the user
+stay logged in when closing the app and opening
+
+Sources might help:
+- https://www.youtube.com/watch?v=-N12hjV3DPQ
+- https://www.youtube.com/watch?v=nQVCkqvU1uE&t=1837s
+- https://www.youtube.com/watch?v=gvF6sFIPfsQ
+- https://github.com/ReactNativeSchool/getting-started-react-navigation-v5/blob/master/App/index.js
+- https://github.com/italoiz/react-navigation-reset-bottom-tabs-logout
+- https://reactnavigation.org/docs/auth-flow/
+- https://github.com/bithoven-dev/ReactNavigationAuthenticationFlowsWithHooks/blob/140f4b0b78/src/hooks/useAuth.js
+- https://github.com/itzpradip/react-navigation-v5-mix/blob/master/App.js
+- https://dev.to/embeddednature/create-an-authorization-flow-with-react-navigation-5-x-2pkh
+
+3RD ISSUE: Try to figure out on how to handle keyboard when focus on textinput in Post screen
+{
+  /* <KeyboardAvoidingView
+  behavior={Platform.OS === "ios" ? "padding" : "height"}
+  style={{flex: 1}}>
+</KeyboardAvoidingView> */
+}
+
+Sources that might help:
+- https://www.educba.com/react-native-keyboardavoidingview/
+- https://blog.hackajob.co/using-the-keyboardavoidingview-in-react-native/
+- https://www.reddit.com/r/reactnative/comments/huf6at/what_is_the_best_keyboard_aware_scroll_library/
+
+

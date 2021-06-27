@@ -48,7 +48,7 @@ export const PostsTab = ({ route, navigation }) => {
                 <Card.Cover source={{ uri: item.url }} />
               </TouchableRipple>
               <BottomCard>
-                <Text variant="small_title" color="white">
+                <Text variant="label" color="white">
                   {item.videoTitle}
                 </Text>
                 <AvatarIcon>

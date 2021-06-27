@@ -1,9 +1,7 @@
 import React from "react";
-import { Text, View } from "react-native";
 
 import {
   createStackNavigator,
-  HeaderBackButton,
 } from "@react-navigation/stack";
 
 import { HomeScreen } from "../../features/home/screens/home.screen";

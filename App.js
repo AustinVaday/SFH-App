@@ -50,8 +50,6 @@ export default function App() {
     OpenSans_800ExtraBold,
   });
 
-  // console.log(openSansLoaded);
-
   if (!openSansLoaded) {
     return null;
   } else {

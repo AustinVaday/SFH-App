@@ -48,7 +48,7 @@ export const LikesTab = ({ route, navigation }) => {
                 <Card.Cover source={{ uri: item.url }} />
               </TouchableRipple>
               <BottomCard>
-                <Text variant="small_title">{item.videoTitle}</Text>
+                <Text variant="label">{item.videoTitle}</Text>
                 <AvatarIcon>
                   <Avatar.Image size={34} source={{ uri: item.avatar }} />
                 </AvatarIcon>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity, FlatList } from "react-native";
 import { Avatar, Button, IconButton, Surface } from "react-native-paper";
 import styled from "styled-components/native";
@@ -18,8 +18,6 @@ const SettingsButton = styled.View`
 `;
 
 const Name = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_medium};
-  font-size: ${(props) => props.theme.fontSizes.h4};
   padding: ${(props) => props.theme.space[2]};
 `;
 
@@ -30,13 +28,13 @@ const FollowsSection = styled.View`
 `;
 
 const FollowNumbersFont = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.h5};
-  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-size: ${(props) => props.theme.fontSizes.body};
+  font-family: ${(props) => props.theme.fonts.body_700};
 `;
 
 const FollowTextFont = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.body};
-  font-family: ${(props) => props.theme.fonts.heading};
+  font-size: ${(props) => props.theme.fontSizes.button};
+  font-family: ${(props) => props.theme.fonts.body_400};
 `;
 
 const SliceText = styled(Text)`
@@ -47,7 +45,7 @@ const SliceText = styled(Text)`
 const EditProfileButton = styled(Button).attrs({
   labelStyle: {
     color: colors.brand.primary,
-    fontSize: 20,
+    fontSize: 12,
   },
 })`
   border-width: 1px;
@@ -65,7 +63,6 @@ const ProfileInfoContainer = styled.View`
 `;
 
 export const ProfileScreen = ({ navigation }) => {
-  const { user } = useContext(AuthenticationContext);
   // const [photo, setPhoto] = useState(null);
   // const [fullName, setFullName] = useState("");
 
@@ -88,7 +85,7 @@ export const ProfileScreen = ({ navigation }) => {
   const userName = userProfile.map((index) => index.name);
   const userFollowing = userProfile.map((index) => index.following);
   const userFollowers = userProfile.map((index) => index.followers);
-
+  
   return (
     <SafeArea>
       <FlatList
@@ -110,11 +107,11 @@ export const ProfileScreen = ({ navigation }) => {
                   <Avatar.Image
                     size={120}
                     source={{
-                      uri: user.photoURL,
+                      uri: item.avatar,
                     }}
                   />
                 </Surface>
-                <Name>{user.displayName}</Name>
+                <Name variant='title'>{item.name}</Name>
                 <FollowsSection>
                   <TouchableOpacity
                     style={{ alignItems: "center" }}

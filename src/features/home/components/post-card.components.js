@@ -34,7 +34,7 @@ const VideoSettingsButton = styled.View`
 `;
 
 const VideoSection = styled(Card.Cover)`
-  height: 500px;
+  height: 400px;
 `;
 
 const BottomCard = styled.View`
