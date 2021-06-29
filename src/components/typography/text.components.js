@@ -59,6 +59,16 @@ const following_font = (theme) => `
     font-size: ${theme.fontSizes.h3};
 `;
 
+const setting_button = (theme) => `
+    font-family: ${theme.fonts.body_400};
+    font-size: ${theme.fontSizes.button};
+`;
+
+const setting_title = (theme) => `
+    font-family: ${theme.fonts.body_700};
+    font-size: ${theme.fontSizes.body};
+`;
+
 const variants = {
   body,
   label,
@@ -70,7 +80,9 @@ const variants = {
   title,
   small_title,
   following_font,
-  date
+  date,
+  setting_button,
+  setting_title
 };
 
 export const Text = styled.Text`

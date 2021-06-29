@@ -44,7 +44,16 @@ export const ProfileNavigator = () => {
       <ProfileStack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ headerShown: false }}
+        options={() => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Settings",
+          headerTitleStyle: { fontFamily: "OpenSans_700Bold" },
+          headerTintColor: "black",
+          headerLeft: (props) => (
+            <HeaderBackButton {...props} />
+          ),
+        })}
       />
       <ProfileStack.Screen
         name="FollowList"

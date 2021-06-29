@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, FlatList } from "react-native";
+import { TouchableOpacity, FlatList, SafeAreaView } from "react-native";
 import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
 

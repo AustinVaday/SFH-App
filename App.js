@@ -3,6 +3,7 @@ import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import firebase from "firebase/app";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import {
   useFonts,
@@ -58,7 +59,9 @@ export default function App() {
     <>
       <ThemeProvider theme={theme}>
         <AuthenticationContextProvider>
+        <PaperProvider>
           <Navigation />
+          </PaperProvider>
         </AuthenticationContextProvider>
       </ThemeProvider>
       <ExpoStatusBar style="auto" />
