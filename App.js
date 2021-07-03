@@ -3,7 +3,8 @@ import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import firebase from "firebase/app";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
-import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from "react-native-paper";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import {
   useFonts,
@@ -54,18 +55,19 @@ export default function App() {
   if (!openSansLoaded) {
     return null;
   } else {
-
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <AuthenticationContextProvider>
-        <PaperProvider>
-          <Navigation />
-          </PaperProvider>
-        </AuthenticationContextProvider>
-      </ThemeProvider>
-      <ExpoStatusBar style="auto" />
-    </>
-  );
+    return (
+      <>
+        <ThemeProvider theme={theme}>
+          <ActionSheetProvider>
+            <AuthenticationContextProvider>
+              <PaperProvider>
+                <Navigation />
+              </PaperProvider>
+            </AuthenticationContextProvider>
+          </ActionSheetProvider>
+        </ThemeProvider>
+        <ExpoStatusBar style="auto" />
+      </>
+    );
   }
 }

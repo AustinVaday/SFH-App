@@ -26,16 +26,16 @@ const VideoContainer = styled.View`
   width: 50%;
 `;
 
-const LikesList = styled(FlatList)`
+const SavesList = styled(FlatList)`
   padding: ${(props) => props.theme.space[2]};
   background-color: #f8f9fa;
 `;
 
-export const LikesTab = ({ route, navigation }) => {
+export const SavesTab = ({ route, navigation }) => {
   const { newitem } = route.params;
   return (
-    <LikesList
-      data={newitem.likes}
+    <SavesList
+      data={newitem.saves}
       renderItem={({ item }) => {
         return (
           <VideoContainer>

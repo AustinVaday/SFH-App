@@ -18,6 +18,28 @@ const VersionSection = styled.View`
   align-items: center;
 `;
 
+const DialogButton = styled(Button).attrs({
+  contentStyle: {
+    padding: 8,
+    backgroundColor: colors.bg.primary,
+    borderWidth: 0.2,
+    borderColor: "lightgray",
+  },
+  uppercase: false,
+})`
+  flex: 1;
+`;
+
+const DialogButtonsContainer = styled(Dialog.Actions)`
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding: 0;
+`;
+
+const ListItem = styled(List.Item)`
+  padding: 0;
+`;
+
 export const SettingsScreen = () => {
   const [visible, setVisible] = useState(false);
   const { onLogout } = useContext(AuthenticationContext);
@@ -37,10 +59,9 @@ export const SettingsScreen = () => {
           <List.Subheader style={{ paddingVertical: 6 }}>
             <Text variant="setting_title">Account</Text>
           </List.Subheader>
-          <List.Item
+          <ListItem
             onPress={() => {}}
             title={<Text variant="setting_button">Change Email</Text>}
-            style={{ padding: 0 }}
             left={() => (
               <List.Icon icon="email-outline" color={colors.text.secondary} />
             )}
@@ -48,10 +69,9 @@ export const SettingsScreen = () => {
               <List.Icon icon="chevron-right" color={colors.text.secondary} />
             )}
           />
-          <List.Item
+          <ListItem
             onPress={() => {}}
             title={<Text variant="setting_button">Change Password</Text>}
-            style={{ padding: 0 }}
             left={() => (
               <List.Icon color={colors.text.secondary} icon="lock-outline" />
             )}
@@ -63,10 +83,9 @@ export const SettingsScreen = () => {
           <List.Subheader style={{ paddingVertical: 6 }}>
             <Text variant="setting_title">Notifications</Text>
           </List.Subheader>
-          <List.Item
+          <ListItem
             onPress={handleNotifications}
             title={<Text variant="setting_button">Push Notifications</Text>}
-            style={{ padding: 0 }}
             left={() => (
               <List.Icon icon="bell-outline" color={colors.text.secondary} />
             )}
@@ -86,10 +105,9 @@ export const SettingsScreen = () => {
           <List.Subheader style={{ paddingVertical: 6 }}>
             <Text variant="setting_title">About</Text>
           </List.Subheader>
-          <List.Item
+          <ListItem
             onPress={() => {}}
             title={<Text variant="setting_button">Terms of Service</Text>}
-            style={{ padding: 0 }}
             left={() => (
               <List.Icon
                 icon="book-open-outline"
@@ -104,10 +122,9 @@ export const SettingsScreen = () => {
           <List.Subheader style={{ paddingVertical: 6 }}>
             <Text variant="setting_title">Login</Text>
           </List.Subheader>
-          <List.Item
+          <ListItem
             onPress={showLogoutDialog}
             title={<Text variant="setting_button">Log out</Text>}
-            style={{ padding: 0 }}
             left={() => (
               <List.Icon icon="logout" color={colors.text.secondary} />
             )}
@@ -129,47 +146,25 @@ export const SettingsScreen = () => {
                   <Text>Shane Wilson</Text>
                 </Dialog.Content>
               </DialogHeader>
-              <Dialog.Actions
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                  padding: 0,
-                }}
-              >
-                <Button
-                  style={{ flex: 1 }}
-                  contentStyle={{
-                    padding: 8,
-                    backgroundColor: colors.bg.primary,
-                    borderWidth: 0.2,
-                    borderColor: "lightgray",
-                  }}
+              <DialogButtonsContainer>
+                <DialogButton
                   labelStyle={{
                     color: colors.brand.primary,
                   }}
-                  uppercase={false}
                   onPress={hideLogoutDialog}
                 >
                   Cancel
-                </Button>
-                <Button
-                  style={{ flex: 1 }}
-                  contentStyle={{
-                    padding: 8,
-                    backgroundColor: colors.bg.primary,
-                    borderWidth: 0.2,
-                    borderColor: "lightgray",
-                  }}
+                </DialogButton>
+                <DialogButton
                   labelStyle={{
                     color: colors.brand.primary,
                     fontFamily: "OpenSans_800ExtraBold",
                   }}
-                  uppercase={false}
                   onPress={onLogout}
                 >
                   Confirm
-                </Button>
-              </Dialog.Actions>
+                </DialogButton>
+              </DialogButtonsContainer>
             </Dialog>
           </Portal>
         </List.Section>

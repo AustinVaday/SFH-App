@@ -2,8 +2,11 @@ export default userProfile = [
   {
     name: "Shane Wilson",
     id: "1",
+    username: "shanewilsonpro",
+    identify: 'Deaf',
     avatar:
       "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
+    bio: "Hi guys\nBasketball\nVideo games",
     following: [
       {
         id: "1",
@@ -14,13 +17,13 @@ export default userProfile = [
       {
         id: "2",
         avatar:
-          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
         name: "Carlos Guerrero",
       },
       {
         id: "3",
         avatar:
-          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        "https://image.shutterstock.com/image-vector/man-character-face-avatar-glasses-260nw-562077406.jpg",
         name: "Bob Bryant",
       },
     ],
@@ -35,7 +38,7 @@ export default userProfile = [
       {
         id: "2",
         avatar:
-          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
         name: "Rick Wilson",
         followed: false,
       },
@@ -49,14 +52,14 @@ export default userProfile = [
       {
         id: "4",
         avatar:
-          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2020/05/FB_Avatar_4.jpg",
         name: "Jerry Yi",
         followed: true,
       },
       {
         id: "5",
         avatar:
-          "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+        "https://image.shutterstock.com/image-vector/man-character-face-avatar-glasses-260nw-562077406.jpg",
         name: "Shawn Yan",
         followed: false,
       },
@@ -147,7 +150,7 @@ export default userProfile = [
         url: "https://www.lifeprint.com/asl101/gifs/h/hard.gif",
       },
     ],
-    likes: [
+    saves: [
       {
         id: "1",
         videoTitle: "Have",

@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, FlatList, SafeAreaView } from "react-native";
+import { TouchableOpacity, FlatList, View } from "react-native";
 import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
 
@@ -15,10 +15,24 @@ const Name = styled(Text)`
   padding: ${(props) => props.theme.space[2]};
 `;
 
-const FollowsSection = styled.View`
+const StatsSection = styled.View`
   padding: ${(props) => props.theme.space[2]};
   flex-direction: row;
   align-items: center;
+`;
+
+const PostsSection = styled.View`
+  padding-left: ${(props) => props.theme.space[4]};
+  flex: 1;
+`;
+
+const FollowingSection = styled.View`
+  flex: 1;
+`;
+
+const FollowersSection = styled.View`
+  padding-right: ${(props) => props.theme.space[4]};
+  flex: 1;
 `;
 
 const FollowNumbersFont = styled(Text)`
@@ -26,14 +40,16 @@ const FollowNumbersFont = styled(Text)`
   font-family: ${(props) => props.theme.fonts.body_700};
 `;
 
+const IdentifyFont = styled(Text)`
+  font-size: ${(props) => props.theme.fontSizes.body};
+  font-family: ${(props) => props.theme.fonts.body_700};
+  color: ${(props) => props.theme.colors.text.secondary};
+  padding-bottom: ${(props) => props.theme.space[1]};
+`;
+
 const FollowTextFont = styled(Text)`
   font-size: ${(props) => props.theme.fontSizes.button};
   font-family: ${(props) => props.theme.fonts.body_400};
-`;
-
-const SliceText = styled(Text)`
-  padding-right: ${(props) => props.theme.space[3]};
-  padding-left: ${(props) => props.theme.space[3]};
 `;
 
 const EditProfileButton = styled(Button).attrs({
@@ -43,7 +59,7 @@ const EditProfileButton = styled(Button).attrs({
   },
 })`
   border-width: 1px;
-  border-radius: 20px;
+  border-radius: 5px;
   border-color: ${(props) => props.theme.colors.brand.primary};
 `;
 
@@ -77,10 +93,6 @@ export const ProfileScreen = ({ navigation }) => {
   //   }, [user])
   // );
 
-  const userName = userProfile.map((index) => index.name);
-  const userFollowing = userProfile.map((index) => index.following);
-  const userFollowers = userProfile.map((index) => index.followers);
-
   return (
     <SafeArea>
       <FlatList
@@ -89,7 +101,7 @@ export const ProfileScreen = ({ navigation }) => {
           return (
             <>
               <ProfileInfoContainer>
-                <Surface style={{ borderRadius: 60, elevation: 3 }}>
+                <Surface style={{ borderRadius: 60, elevation: 1 }}>
                   <Avatar.Image
                     size={120}
                     source={{
@@ -98,39 +110,58 @@ export const ProfileScreen = ({ navigation }) => {
                   />
                 </Surface>
                 <Name variant="title">{item.name}</Name>
-                <FollowsSection>
-                  <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={() => {}}
-                  >
-                    <FollowNumbersFont>{item.posts.length}</FollowNumbersFont>
-                    <FollowTextFont>Posts</FollowTextFont>
-                  </TouchableOpacity>
-                  <SliceText> | </SliceText>
-                  <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={() => {
-                      navigation.navigate("FollowList", { item, tab: 'Following' });
-                    }}
-                  >
-                    <FollowNumbersFont>{item.following.length}</FollowNumbersFont>
-                    <FollowTextFont>Following</FollowTextFont>
-                  </TouchableOpacity>
-                  <SliceText> | </SliceText>
-                  <TouchableOpacity
-                    style={{ alignItems: "center" }}
-                    onPress={() => {
-                      navigation.navigate("FollowList", { item, tab: "Followers" });
-                    }}
-                  >
-                    <FollowNumbersFont>{item.followers.length}</FollowNumbersFont>
-                    <FollowTextFont>Followers</FollowTextFont>
-                  </TouchableOpacity>
-                </FollowsSection>
+                <IdentifyFont>{item.identify}</IdentifyFont>
+                
+                <StatsSection>
+                  <PostsSection>
+                    <TouchableOpacity
+                      style={{ alignItems: "center" }}
+                      onPress={() => {}}
+                    >
+                      <FollowNumbersFont>{item.posts.length}</FollowNumbersFont>
+                      <FollowTextFont>Posts</FollowTextFont>
+                    </TouchableOpacity>
+                  </PostsSection>
+                  <Text> | </Text>
+                  <FollowingSection>
+                    <TouchableOpacity
+                      style={{ alignItems: "center" }}
+                      onPress={() => {
+                        navigation.navigate("FollowList", {
+                          item,
+                          tab: "Following",
+                        });
+                      }}
+                    >
+                      <FollowNumbersFont>
+                        {item.following.length}
+                      </FollowNumbersFont>
+                      <FollowTextFont>Following</FollowTextFont>
+                    </TouchableOpacity>
+                  </FollowingSection>
+                  <Text> | </Text>
+                  <FollowersSection>
+                    <TouchableOpacity
+                      style={{ alignItems: "center" }}
+                      onPress={() => {
+                        navigation.navigate("FollowList", {
+                          item,
+                          tab: "Followers",
+                        });
+                      }}
+                    >
+                      <FollowNumbersFont>
+                        {item.followers.length}
+                      </FollowNumbersFont>
+                      <FollowTextFont>Followers</FollowTextFont>
+                    </TouchableOpacity>
+                  </FollowersSection>
+                </StatsSection>
+                
                 <EditProfileButtonContainer>
                   <EditProfileButton
                     onPress={() => {
-                      navigation.navigate("EditProfile");
+                      navigation.navigate("EditProfile", { item });
                     }}
                     mode="outlined"
                     color="white"
@@ -138,6 +169,9 @@ export const ProfileScreen = ({ navigation }) => {
                     Edit Profile
                   </EditProfileButton>
                 </EditProfileButtonContainer>
+                <View style={{paddingBottom: 10, paddingTop: 0}}>
+                  <Text style={{textAlign: "center"}}>{item.bio}</Text>
+                </View>
               </ProfileInfoContainer>
               <ProfileTabs newitem={item} />
             </>
