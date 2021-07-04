@@ -6,7 +6,7 @@ export default userProfile = [
     identify: 'Deaf',
     avatar:
       "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
-    bio: "Hi guys\nBasketball\nVideo games",
+    bio: "Hi guys I'm trying to learn ASL. ASL is beautiful!\nBasketball 🏀\nComputer 💻",
     following: [
       {
         id: "1",

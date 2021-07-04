@@ -11,10 +11,6 @@ import { colors } from "../../../infrastructure/theme/colors";
 
 import userProfile from "../../../utils/mock/userProfile";
 
-const Name = styled(Text)`
-  padding: ${(props) => props.theme.space[2]};
-`;
-
 const StatsSection = styled.View`
   padding: ${(props) => props.theme.space[2]};
   flex-direction: row;
@@ -40,11 +36,10 @@ const FollowNumbersFont = styled(Text)`
   font-family: ${(props) => props.theme.fonts.body_700};
 `;
 
-const IdentifyFont = styled(Text)`
+const IdentifyText = styled(Text)`
   font-size: ${(props) => props.theme.fontSizes.body};
   font-family: ${(props) => props.theme.fonts.body_700};
   color: ${(props) => props.theme.colors.text.secondary};
-  padding-bottom: ${(props) => props.theme.space[1]};
 `;
 
 const FollowTextFont = styled(Text)`
@@ -66,11 +61,28 @@ const EditProfileButton = styled(Button).attrs({
 const EditProfileButtonContainer = styled.View`
   padding: ${(props) => props.theme.space[3]};
   width: 70%;
+  align-self: center;
 `;
 
+const Profile = styled.View``;
+
 const ProfileInfoContainer = styled.View`
-  padding-top: ${(props) => props.theme.space[3]};
+  padding: ${(props) => props.theme.space[2]};
+`;
+
+const NameAndIdentify = styled.View`
+  flex-direction: row;
   align-items: center;
+`;
+
+const AvatarImageContainer = styled.View`
+  padding: ${(props) => props.theme.space[2]};
+  align-items: center;
+`;
+
+const BioText = styled(Text)`
+  flex-wrap: wrap;
+  padding-top: ${(props) => props.theme.space[1]};
 `;
 
 export const ProfileScreen = ({ navigation }) => {
@@ -100,18 +112,25 @@ export const ProfileScreen = ({ navigation }) => {
         renderItem={({ item }) => {
           return (
             <>
-              <ProfileInfoContainer>
-                <Surface style={{ borderRadius: 60, elevation: 1 }}>
-                  <Avatar.Image
-                    size={120}
-                    source={{
-                      uri: item.avatar,
-                    }}
-                  />
-                </Surface>
-                <Name variant="title">{item.name}</Name>
-                <IdentifyFont>{item.identify}</IdentifyFont>
-                
+              <Profile>
+                <AvatarImageContainer>
+                  <Surface style={{ borderRadius: 80, elevation: 1 }}>
+                    <Avatar.Image
+                      size={120}
+                      source={{
+                        uri: item.avatar,
+                      }}
+                    />
+                  </Surface>
+                </AvatarImageContainer>
+                <ProfileInfoContainer>
+                  <NameAndIdentify>
+                    <Text variant="title">{item.name} </Text>
+                    <IdentifyText>• {item.identify}</IdentifyText>
+                  </NameAndIdentify>
+                  {item.bio !== "" ? <BioText>{item.bio}</BioText> : null}
+                </ProfileInfoContainer>
+
                 <StatsSection>
                   <PostsSection>
                     <TouchableOpacity
@@ -157,7 +176,7 @@ export const ProfileScreen = ({ navigation }) => {
                     </TouchableOpacity>
                   </FollowersSection>
                 </StatsSection>
-                
+
                 <EditProfileButtonContainer>
                   <EditProfileButton
                     onPress={() => {
@@ -169,10 +188,7 @@ export const ProfileScreen = ({ navigation }) => {
                     Edit Profile
                   </EditProfileButton>
                 </EditProfileButtonContainer>
-                <View style={{paddingBottom: 10, paddingTop: 0}}>
-                  <Text style={{textAlign: "center"}}>{item.bio}</Text>
-                </View>
-              </ProfileInfoContainer>
+              </Profile>
               <ProfileTabs newitem={item} />
             </>
           );

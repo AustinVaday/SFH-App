@@ -6,7 +6,7 @@ import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
 const TextInputContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
+  padding: ${(props) => props.theme.space[2]};
 `;
 
 const BioTextInput = styled(TextInput).attrs({
@@ -21,6 +21,8 @@ const BioTextInput = styled(TextInput).attrs({
 })`
   min-height: 120px;
   background-color: ${colors.bg.primary};
+  padding-right: 12px;
+  padding-left: 12px;
   flex: 1;
 `;
 

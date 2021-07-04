@@ -1,3 +1,5 @@
+ISSUES:
+
 1ST ISSUE: For entire app, status bar colors are different depends on screen. For example,
 entire app set status bar as black and goes to Camera screen that set status bar to white
 then exit or after posting video, status bar doesnt change back to black.
@@ -33,5 +35,15 @@ Sources that might help:
 - https://www.educba.com/react-native-keyboardavoidingview/
 - https://blog.hackajob.co/using-the-keyboardavoidingview-in-react-native/
 - https://www.reddit.com/r/reactnative/comments/huf6at/what_is_the_best_keyboard_aware_scroll_library/
+
+
+BUGS:
+
+1ST BUG: In Edit Profile, there may be bug when taking a picture or library using 
+ImagePicker library. Camera or Library screen does not go in full screen. See the
+below that happens in only iOS devices based on version 14.5+, Android is fine. It may be 
+fixed as soon as possible. So I will just leave it until it is fixed.
+
+- https://github.com/expo/expo/issues/12771
 
 
