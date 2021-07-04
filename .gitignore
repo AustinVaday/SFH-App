@@ -9,9 +9,10 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-Config/config.js
 target
 .vscode
 # macOS
 .DS_Store
 .vscode/setting.json
+
+.env

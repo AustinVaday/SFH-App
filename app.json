@@ -3,31 +3,25 @@
     "name": "SFH-App",
     "slug": "SFH-App",
     "scheme": "com.sfh.signsforhumanity",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/icons/icon.png",
     "splash": {
-      "image": "./src/assets/splash.png",
+      "image": "./src/assets/splash/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/icons/adaptive-icon.png",
         "backgroundColor": "#FFF"
       }
     }

@@ -1,0 +1,47 @@
+export default users = [
+  {
+    name: "Carlos",
+    avatar:
+      "https://image.shutterstock.com/image-vector/man-character-face-avatar-glasses-260nw-562077406.jpg",
+    date: "just now",
+    videoTitle: "Doctor",
+    caption: "I want to become a doctor! Here is a sign :)",
+    likes: 0,
+    numComments: 0,
+    url: "https://www.lifeprint.com/asl101/gifs/d/doctor-medic.gif",
+  },
+  {
+    name: "Shane",
+    avatar:
+      "https://image.shutterstock.com/image-vector/young-man-avatar-character-260nw-661669825.jpg",
+    date: "23m ago",
+    videoTitle: "Computer",
+    caption: "Let me know if this is right sign",
+    likes: 10,
+    numComments: 3,
+    url:
+      "https://i.pinimg.com/originals/f6/ab/b3/f6abb389c68bcbd7263aaab7d7fcb8e7.gif",
+  },
+  {
+    name: "Austin",
+    avatar:
+      "https://st2.depositphotos.com/1007566/12304/v/950/depositphotos_123041444-stock-illustration-avatar-man-cartoon.jpg",
+    date: "1h ago",
+    videoTitle: "Shower",
+    caption: "",
+    likes: 25,
+    numComments: 7,
+    url: "https://www.lifeprint.com/asl101/gifs/s/shower.gif",
+  },
+  {
+    name: "Carly",
+    avatar:
+      "https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2020/05/FB_Avatar_4.jpg",
+    date: "1h ago",
+    videoTitle: "Church",
+    caption: "I hope you learn this!",
+    likes: 302,
+    numComments: 26,
+    url: "https://www.lifeprint.com/asl101/gifs/c/church.gif",
+  },
+];
