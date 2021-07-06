@@ -25,11 +25,11 @@ const AvatarIcon = styled.View`
 export const SmallPostCard = ({ user, onNavigate }) => {
   return (
     <CardContainer elevation={2}>
-      <TouchableRipple onPress={() => onNavigate("ViewPosting")}>
+      <TouchableRipple onPress={() => onNavigate("ViewPosting", { user })}>
         <Card.Cover source={{ uri: user.url }} />
       </TouchableRipple>
       <BottomCard>
-        <Text variant="small_title" color="white">
+        <Text variant="label" color="white">
           {user.videoTitle}
         </Text>
         <AvatarIcon>

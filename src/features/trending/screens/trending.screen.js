@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Searchbar } from "react-native-paper";
 
@@ -14,7 +10,6 @@ import dataTrending from "../../../utils/mock/dataTrending";
 
 const SearchContainer = styled.View`
   padding: ${(props) => props.theme.space[3]};
-  /* z-index: 999; */
   width: 100%;
 `;
 
@@ -108,9 +103,9 @@ export const TrendingScreen = ({ navigation }) => {
         renderItem={({ item }) => {
           return (
             // <View style={{ width: width / 2 }}>
-              <VideoContainer>
-                <SmallPostCard user={item} onNavigate={navigation.navigate} />
-              </VideoContainer>
+            <VideoContainer>
+              <SmallPostCard user={item} onNavigate={navigation.navigate} />
+            </VideoContainer>
             // </View>
           );
         }}
