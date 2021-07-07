@@ -1,10 +1,13 @@
 import React from "react";
+import { Image } from "react-native";
+import { IconButton } from "react-native-paper";
 
-import {
-  createStackNavigator,
-} from "@react-navigation/stack";
+import { colors } from "../theme/colors";
+
+import { createStackNavigator } from "@react-navigation/stack";
 
 import { HomeScreen } from "../../features/home/screens/home.screen";
+import { ActivityScreen } from "../../features/home/screens/activity.screen";
 import { ViewGuestProfileScreen } from "../../features/home/screens/view-guest-profile.screen";
 import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
 
@@ -19,7 +22,34 @@ export const HomeNavigator = () => {
       <HomeStack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Explore",
+          headerTintColor: colors.text.primary,
+          headerLeft: () => (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../../assets/icons/sfh-logo-nobg.png")}
+            />
+          ),
+          headerRight: () => (
+            <IconButton
+              icon="bell-outline"
+              onPress={() => navigation.navigate("Activity")}
+            />
+          ),
+        })}
+      />
+      <HomeStack.Screen
+        name="Activity"
+        component={ActivityScreen}
+        options={() => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "Activity",
+          headerTintColor: colors.text.primary,
+        })}
       />
       <HomeStack.Screen
         name="ViewGuestProfile"
@@ -34,7 +64,7 @@ export const HomeNavigator = () => {
           headerBackTitleVisible: false,
           headerStyle: { height: 120 },
           headerTitle: null,
-          headerTintColor: "black",
+          headerTintColor: colors.text.primary,
           headerLeft: (props) => (
             <ViewPostingLeftHeader
               props={props}
