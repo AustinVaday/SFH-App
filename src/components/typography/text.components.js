@@ -32,7 +32,7 @@ const caption = (theme) => `
 
 const label = (theme) => `
     font-family: ${theme.fonts.body_600};
-    font-size: ${theme.fontSizes.body};
+    font-size: ${theme.fontSizes.caption};
 `;
 
 const date = (theme) => `
@@ -42,7 +42,12 @@ const date = (theme) => `
 
 const name = (theme) => `
     font-size: ${theme.fontSizes.body};
-    font-family: ${theme.fonts.body_700};
+    font-family: ${theme.fonts.body_600};
+`;
+
+const message_name = (theme) => `
+    font-size: ${theme.fontSizes.button};
+    font-family: ${theme.fonts.body_600};
 `;
 
 const small_title = (theme) => `
@@ -77,6 +82,7 @@ const variants = {
   hint,
   screen_title,
   name,
+  message_name,
   title,
   small_title,
   following_font,

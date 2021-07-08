@@ -11,8 +11,5 @@ web-build/
 web-report/
 target
 .vscode
-# macOS
 .DS_Store
-.vscode/setting.json
-
 .env

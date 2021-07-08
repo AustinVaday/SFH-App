@@ -12,8 +12,8 @@ const ListItem = styled(List.Item)`
 export const MessageCard = ({ user, onNavigate }) => {
   return (
     <ListItem
-      onPress={() => onNavigate("Conversation")}
-      title={user.name}
+      onPress={() => onNavigate("Conversation", { user: user.name })}
+      title={<Text variant="message_name">{user.name}</Text>}
       left={() => (
         <TouchableRipple onPress={() => onNavigate("ViewProfile")}>
           <Avatar.Image size={60} source={{ uri: user.avatar }} />

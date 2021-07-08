@@ -34,10 +34,28 @@ export const ChatNavigator = () => {
       <ChatStack.Screen
         name="Conversation"
         component={ConversationScreen}
+        options={({ navigation, route }) => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: route.params.user,
+          headerTintColor: colors.text.primary,
+          headerRight: () => (
+            <IconButton
+              icon="dots-horizontal"
+              onPress={() => {}}
+            />
+          ),
+        })}
       />
       <ChatStack.Screen
         name="NewMessage"
         component={NewMessageScreen}
+        options={() => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: "New Message",
+          headerTintColor: colors.text.primary,
+        })}
       />
       <ChatStack.Screen
         name="ViewProfile"
