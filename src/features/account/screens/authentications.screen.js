@@ -20,14 +20,14 @@ const BottomButtonsSection = styled.View`
 `;
 
 const TitleText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-family: ${(props) => props.theme.fonts.body_600};
   font-size: ${(props) => props.theme.fontSizes.h3};
   color: ${(props) => props.theme.colors.brand.primary};
   text-align: center;
 `;
 
 const MessageText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.heading};
+  font-family: ${(props) => props.theme.fonts.body_400};
   font-size: ${(props) => props.theme.fontSizes.h5};
   color: #b3b3b3;
 `;

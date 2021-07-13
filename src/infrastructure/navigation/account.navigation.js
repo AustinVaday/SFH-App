@@ -12,13 +12,13 @@ const AccountStack = createStackNavigator();
 
 export const AccountNavigator = () => (
   <AccountStack.Navigator headerMode="none">
-    {/* <AccountStack.Screen
+    <AccountStack.Screen
       name="Loading"
       component={LoadingScreen}
       options={{
         animationEnabled: false,
       }}
-    /> */}
+    />
     <AccountStack.Screen
       name="Authentications"
       component={AuthenticationsScreen}

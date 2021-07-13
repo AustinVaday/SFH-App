@@ -37,7 +37,7 @@ const LoginButtonSection = styled.View`
 
 const LoginText = styled(Text)`
   color: white;
-  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-family: ${(props) => props.theme.fonts.body_400};
   font-size: ${(props) => props.theme.fontSizes.button};
 `;
 

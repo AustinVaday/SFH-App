@@ -1,5 +1,5 @@
-import React, { useState, createContext, useEffect } from "react";
-import firebase from "firebase/app";
+import React, { useState, createContext } from "react";
+import { firebase } from "../../utils/firebase";
 
 import { loginRequest, passwordResetRequest } from "./authentication.services";
 
@@ -10,19 +10,14 @@ export const AuthenticationContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const unlisten = firebase.auth().onAuthStateChanged((usr) => {
-      if (usr) {
-        setUser(usr);
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-      }
-    });
-    return () => {
-      unlisten();
-    };
-  }, []);
+  firebase.auth().onAuthStateChanged((usr) => {
+    if (usr) {
+      setUser(usr);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  });
 
   const onLogin = (email, password) => {
     setIsLoading(true);

@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import LottieView from "lottie-react-native";
 
-export const LoadingScreen = () => {
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+export const LoadingScreen = ({ navigation }) => {
+  const { isAuthenticated } = useContext(AuthenticationContext);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.navigate("Authentications");
+    }
+  }, []);
 
   return (
     <View style={styles.container}>

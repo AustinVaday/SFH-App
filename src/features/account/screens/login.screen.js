@@ -22,7 +22,7 @@ const SignUpSection = styled.View`
 `;
 
 const WelcomeText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_bold};
+  font-family: ${(props) => props.theme.fonts.body_600};
   font-size: ${(props) => props.theme.fontSizes.h4};
 `;
 
@@ -49,7 +49,7 @@ const OrSection = styled.View`
 `;
 
 const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_medium};
+  font-family: ${(props) => props.theme.fonts.body_400};
   font-size: ${(props) => props.theme.fontSizes.body};
   text-align: center;
   align-self: center;
