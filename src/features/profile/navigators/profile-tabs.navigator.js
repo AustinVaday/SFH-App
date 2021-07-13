@@ -4,8 +4,8 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { colors } from "../../../infrastructure/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 
-import { PostsTab } from "./posts-tab.components";
-import { SavesTab } from "./saves-tab.components";
+import { PostsTab } from "../components/posts-tab.components";
+import { SavesTab } from "../components/saves-tab.components";
 
 const { width } = Dimensions.get("window");
 

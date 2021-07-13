@@ -1,12 +1,14 @@
-// BUG: Menu class from React-Native-paper package didn't work in the Flatlist
-// class, probably a bug. Instead, using React-native-material-menu package
-// for menu
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Share } from "react-native";
 import styled from "styled-components/native";
-import { Avatar, IconButton, Card, TouchableRipple } from "react-native-paper";
-import Menu, { MenuItem } from "react-native-material-menu";
+import {
+  Avatar,
+  IconButton,
+  Card,
+  TouchableRipple,
+  List,
+} from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { Text } from "../../../components/typography/text.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { colors } from "../../../infrastructure/theme/colors";
@@ -58,7 +60,7 @@ const CommentButton = styled.View`
 `;
 
 const TitleAndCaptionSection = styled.View`
-padding-left: ${(props) => props.theme.space[1]};
+  padding-left: ${(props) => props.theme.space[1]};
   padding-bottom: ${(props) => props.theme.space[3]};
 `;
 
@@ -69,7 +71,6 @@ const HorizontalLine = styled.View`
 `;
 
 export const PostCard = ({ user, onNavigate }) => {
-  const [menu, setMenu] = useState(null);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -102,18 +103,6 @@ export const PostCard = ({ user, onNavigate }) => {
     }
   };
 
-  const setMenuRef = (ref) => {
-    setMenu(ref);
-  };
-
-  const hideMenu = () => {
-    menu.hide();
-  };
-
-  const showMenu = () => {
-    menu.show();
-  };
-
   const onShare = () => {
     try {
       Share.share({
@@ -123,6 +112,8 @@ export const PostCard = ({ user, onNavigate }) => {
       alert(error.message);
     }
   };
+
+  const refRBSheet = useRef();
 
   return (
     <CardContainer elevation={2}>
@@ -140,12 +131,33 @@ export const PostCard = ({ user, onNavigate }) => {
           <Text variant="date">{user.date}</Text>
         </NameAndDate>
         <VideoSettingsButton>
-          <Menu
-            ref={setMenuRef}
-            button={<IconButton icon="dots-vertical" onPress={showMenu} />}
+          <IconButton
+            icon="dots-vertical"
+            onPress={() => refRBSheet.current.open()}
+          />
+          <RBSheet
+            ref={refRBSheet}
+            closeOnDragDown={true}
+            customStyles={{
+              container: {
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
+              },
+            }}
           >
-            <MenuItem onPress={hideMenu}>Report</MenuItem>
-          </Menu>
+            <List.Item
+              onPress={() => {}}
+              style={{ padding: 0 }}
+              title="Report"
+              left={() => <List.Icon icon="flag" />}
+            />
+            <List.Item
+              onPress={() => {}}
+              style={{ padding: 0 }}
+              title="Unfollow"
+              left={() => <List.Icon icon="account-cancel" />}
+            />
+          </RBSheet>
         </VideoSettingsButton>
       </TopCard>
       <VideoSection source={{ uri: user.url }} />

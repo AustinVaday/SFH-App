@@ -3,7 +3,7 @@ import { TouchableOpacity, FlatList, View } from "react-native";
 import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
 
-import { ProfileTabs } from "../components/profile-tabs.navigator";
+import { ProfileTabs } from "../navigators/profile-tabs.navigator";
 
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
@@ -194,6 +194,7 @@ export const ProfileScreen = ({ navigation }) => {
           );
         }}
         keyExtractor={(item) => item.id}
+        stickyHeaderIndices={[1]}
       />
     </SafeArea>
   );

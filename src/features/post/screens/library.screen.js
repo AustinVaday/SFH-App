@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Dimensions,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import { IconButton } from "react-native-paper";
-import * as MediaLibrary from "expo-media-library";
+import { View, Dimensions, FlatList, TouchableOpacity } from "react-native";
+import { IconButton, Button } from "react-native-paper";
+import { requestPermissionsAsync, getAssetsAsync } from "expo-media-library";
 import { Video } from "expo-av";
+import { openURL } from "expo-linking";
 import styled from "styled-components/native";
 
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
@@ -38,6 +34,13 @@ const PlayIconButton = styled(Icon)`
   align-self: center;
 `;
 
+const AllowPhotosAccessSection = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: ${(props) => props.theme.space[3]};
+`;
+
 export const LibraryScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [shouldPlay, setShouldPlay] = useState(false);
@@ -47,11 +50,11 @@ export const LibraryScreen = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       const { status: cameraRoll } =
-        await MediaLibrary.requestPermissionsAsync();
+        await requestPermissionsAsync();
       setHasPermission(cameraRoll === "granted");
     })();
     (async () => {
-      const edges = await MediaLibrary.getAssetsAsync({
+      const edges = await getAssetsAsync({
         first: 10,
         mediaType: "video",
       });
@@ -65,7 +68,39 @@ export const LibraryScreen = ({ navigation }) => {
   }
 
   if (hasPermission === false) {
-    return <Text>No access to library</Text>;
+    return (
+      <SafeArea>
+        <IconButton
+          size={30}
+          icon="close"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        <AllowPhotosAccessSection>
+          <Text
+            variant="title"
+            style={{ textAlign: "center", paddingBottom: 20 }}
+          >
+            Please Allow Access to Your Photos
+          </Text>
+          <Text
+            variant="body"
+            style={{ textAlign: "center", paddingBottom: 30 }}
+          >
+            Grant photos access to select your video
+          </Text>
+          <Button
+            mode="text"
+            uppercase={false}
+            color={colors.brand.primary}
+            onPress={() => openURL("app-settings:")}
+          >
+            Enable Photos Access
+          </Button>
+        </AllowPhotosAccessSection>
+      </SafeArea>
+    );
   }
 
   const handlePlayAndPause = () => {
@@ -105,15 +140,15 @@ export const LibraryScreen = ({ navigation }) => {
     <SafeArea>
       <TopTitleSection>
         <IconButton
-          size={35}
+          size={30}
           icon="close"
           onPress={() => {
             navigation.goBack();
           }}
         />
-        <Text variant="title">New Post</Text>
+        <Text variant="screen_title">New Post</Text>
         <IconButton
-          size={35}
+          size={30}
           icon="checkbox-marked"
           color={colors.brand.primary}
           onPress={() => {

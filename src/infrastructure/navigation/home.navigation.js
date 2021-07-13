@@ -3,6 +3,7 @@ import { Image } from "react-native";
 import { IconButton } from "react-native-paper";
 
 import { colors } from "../theme/colors";
+import { Text } from "../../components/typography/text.components";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -25,7 +26,7 @@ export const HomeNavigator = () => {
         options={({ navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Explore",
+          headerTitle: () => <Text variant="screen_title">Explore</Text>,
           headerTintColor: colors.text.primary,
           headerLeft: () => (
             <Image
@@ -47,7 +48,7 @@ export const HomeNavigator = () => {
         options={() => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Activity",
+          headerTitle: () => <Text variant="screen_title">Activity</Text>,
           headerTintColor: colors.text.primary,
         })}
       />

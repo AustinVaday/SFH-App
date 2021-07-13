@@ -9,8 +9,18 @@ const defaultTextStyles = (theme) => `
 `;
 
 const screen_title = (theme) => `
-    font-family: ${theme.fonts.body_bold};
-    font-size: ${theme.fontSizes.h3};
+    font-family: ${theme.fonts.body_800};
+    font-size: ${theme.fontSizes.body};
+`;
+
+const empty_title = (theme) => `
+    font-family: ${theme.fonts.body_600};
+    font-size: ${theme.fontSizes.body};
+`;
+
+const empty_message = (theme) => `
+    font-family: ${theme.fonts.body_400};
+    font-size: ${theme.fontSizes.button};
 `;
 
 const body = (theme) => `
@@ -25,9 +35,14 @@ const error = (theme) => `
     color: ${theme.colors.text.error};
 `;
 
+const title = (theme) => `
+    font-family: ${theme.fonts.body_700};
+    font-size: ${theme.fontSizes.title};
+`;
+
 const caption = (theme) => `
     font-family: ${theme.fonts.body_400};
-    font-size: ${theme.fontSizes.body};
+    font-size: ${theme.fontSizes.caption};
 `;
 
 const label = (theme) => `
@@ -45,17 +60,22 @@ const name = (theme) => `
     font-family: ${theme.fonts.body_600};
 `;
 
+const notifications_name = (theme) => `
+    font-size: ${theme.fontSizes.button};
+    font-family: ${theme.fonts.body_600};
+`;
+
+const notifications_message = (theme) => `
+    font-size: ${theme.fontSizes.caption};
+    font-family: ${theme.fonts.body_400};
+`;
+
 const message_name = (theme) => `
     font-size: ${theme.fontSizes.button};
     font-family: ${theme.fonts.body_600};
 `;
 
 const small_title = (theme) => `
-    font-size: ${theme.fontSizes.title};
-`;
-
-const title = (theme) => `
-    font-family: ${theme.fonts.body_800};
     font-size: ${theme.fontSizes.title};
 `;
 
@@ -82,13 +102,17 @@ const variants = {
   hint,
   screen_title,
   name,
-  message_name,
+  notifications_name,
+  notifications_message,
   title,
   small_title,
   following_font,
   date,
   setting_button,
-  setting_title
+  setting_title,
+  message_name,
+  empty_title,
+  empty_message
 };
 
 export const Text = styled.Text`

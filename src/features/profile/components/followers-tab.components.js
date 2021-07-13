@@ -50,24 +50,27 @@ export const FollowersTab = ({ route, navigation }) => {
               </AvatarImageContainer>
               <NameText>{item.name}</NameText>
               <FollowersButton>
-                  {item.followed ? 
-                <Button
-                  mode="outlined"
-                  color={colors.brand.primary}
-                  style={{ width: 120}}
-                  uppercase={false}
-                  onPress={() => {}}
-                >
-                  Remove
-                </Button> : <Button
-                  mode="contained"
-                  color={colors.brand.primary}
-                  style={{ width: 120}}
-                  uppercase={false}
-                  onPress={() => {}}
-                >
-                  Follow
-                </Button>}
+                {item.followed ? (
+                  <Button
+                    mode="outlined"
+                    color={colors.brand.primary}
+                    style={{ width: 120 }}
+                    uppercase={false}
+                    onPress={() => {}}
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    mode="contained"
+                    color={colors.brand.primary}
+                    style={{ width: 120 }}
+                    uppercase={false}
+                    onPress={() => {}}
+                  >
+                    Follow
+                  </Button>
+                )}
               </FollowersButton>
             </BottomCard>
           </TouchableRipple>

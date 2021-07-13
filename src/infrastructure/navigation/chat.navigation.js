@@ -4,6 +4,7 @@ import { IconButton } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { colors } from "../theme/colors";
+import { Text } from "../../components/typography/text.components";
 
 import { MessagesScreen } from "../../features/chat/screens/messages.screen";
 import { ConversationScreen } from "../../features/chat/screens/conversation.screen";
@@ -21,7 +22,7 @@ export const ChatNavigator = () => {
         options={({ navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Messages",
+          headerTitle: () => <Text variant="screen_title">Messages</Text>,
           headerTintColor: colors.text.primary,
           headerRight: () => (
             <IconButton
@@ -31,36 +32,32 @@ export const ChatNavigator = () => {
           ),
         })}
       />
-      <ChatStack.Screen
+      {/* <ChatStack.Screen
         name="Conversation"
         component={ConversationScreen}
-        options={({ navigation, route }) => ({
+        options={({ route }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: route.params.user,
+          headerTitle: () => (
+            <Text variant="screen_title">{route.params.user}</Text>
+          ),
           headerTintColor: colors.text.primary,
           headerRight: () => (
-            <IconButton
-              icon="dots-horizontal"
-              onPress={() => {}}
-            />
+            <IconButton icon="dots-horizontal" onPress={() => {}} />
           ),
         })}
-      />
+      /> */}
       <ChatStack.Screen
         name="NewMessage"
         component={NewMessageScreen}
         options={() => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "New Message",
+          headerTitle: () => <Text variant="screen_title">New Message</Text>,
           headerTintColor: colors.text.primary,
         })}
       />
-      <ChatStack.Screen
-        name="ViewProfile"
-        component={ProfileScreen}
-      />
+      <ChatStack.Screen name="ViewProfile" component={ProfileScreen} />
     </ChatStack.Navigator>
   );
 };
