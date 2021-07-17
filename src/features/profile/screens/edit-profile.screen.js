@@ -3,13 +3,17 @@ import { ScrollView, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import styled from "styled-components";
 
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 import { AvatarImageEdit } from "../components/avatar-image-edit.components";
 
 import RNPickerSelect from "react-native-picker-select";
 import { Ionicons } from "@expo/vector-icons";
+
+const EditProfileBackground = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.bg.primary};
+`;
 
 const ListItem = styled(List.Item)`
   padding-right: 0;
@@ -72,7 +76,7 @@ export const EditProfileScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeArea>
+    <EditProfileBackground>
       <ScrollView>
         <AvatarImageEdit userImage={item.avatar} />
         <List.Section>
@@ -148,6 +152,6 @@ export const EditProfileScreen = ({ navigation, route }) => {
           />
         </List.Section>
       </ScrollView>
-    </SafeArea>
+    </EditProfileBackground>
   );
 };

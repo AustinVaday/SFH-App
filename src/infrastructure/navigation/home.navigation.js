@@ -9,7 +9,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { HomeScreen } from "../../features/home/screens/home.screen";
 import { ActivityScreen } from "../../features/home/screens/activity.screen";
-import { ViewGuestProfileScreen } from "../../features/home/screens/view-guest-profile.screen";
 import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
 
 import { ViewPostingLeftHeader } from "../components/view-posting-left-header.components";
@@ -37,6 +36,7 @@ export const HomeNavigator = () => {
           headerRight: () => (
             <IconButton
               icon="bell-outline"
+              underlayColor="transparent"
               onPress={() => navigation.navigate("Activity")}
             />
           ),
@@ -51,11 +51,6 @@ export const HomeNavigator = () => {
           headerTitle: () => <Text variant="screen_title">Activity</Text>,
           headerTintColor: colors.text.primary,
         })}
-      />
-      <HomeStack.Screen
-        name="ViewGuestProfile"
-        component={ViewGuestProfileScreen}
-        options={{ headerShown: false }}
       />
       <HomeStack.Screen
         name="ViewPosting"

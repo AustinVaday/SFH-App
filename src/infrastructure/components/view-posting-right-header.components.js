@@ -16,6 +16,7 @@ export const ViewPostingRightHeader = () => {
     <LeftHeader>
       <IconButton
         icon="dots-vertical"
+        underlayColor="transparent"
         onPress={() => refRBSheet.current.open()}
       />
       <RBSheet

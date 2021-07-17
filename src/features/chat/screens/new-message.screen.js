@@ -1,6 +1,11 @@
 import React from "react";
-import { FlatList, View, Dimensions } from "react-native";
-import { Avatar, List, TouchableRipple } from "react-native-paper";
+import {
+  FlatList,
+  View,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { Avatar, List } from "react-native-paper";
 import { MaterialCommunityIcons as MCIcon } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
@@ -37,19 +42,18 @@ export const NewMessageScreen = ({ navigation }) => {
               <MCIcon
                 name={"account-group"}
                 size={100}
-                color={colors.bg.tertiary}
+                color={colors.icon.secondary}
               />
               <Text
-                variant="empty_title"
+                variant="list_empty_title"
                 style={{
-                  textAlign: "center",
                   paddingBottom: 20,
                   paddingTop: 20,
                 }}
               >
                 No Following
               </Text>
-              <Text variant="empty_message" style={{ textAlign: "center" }}>
+              <Text variant="list_empty_message">
                 When you follow people, you will see them here
               </Text>
             </ListEmptySection>
@@ -57,7 +61,9 @@ export const NewMessageScreen = ({ navigation }) => {
         }}
         ListHeaderComponent={() => (
           <View style={{ padding: 10 }}>
-            <Text variant="label" style={{color: colors.text.secondary}}>Following</Text>
+            <Text variant="label" style={{ color: colors.text.secondary }}>
+              Following
+            </Text>
           </View>
         )}
         renderItem={({ item }) => {
@@ -68,11 +74,11 @@ export const NewMessageScreen = ({ navigation }) => {
               }
               title={<Text variant="message_name">{item.name}</Text>}
               left={() => (
-                <TouchableRipple
+                <TouchableWithoutFeedback
                   onPress={() => navigation.navigate("ViewProfile")}
                 >
                   <Avatar.Image size={60} source={{ uri: item.avatar }} />
-                </TouchableRipple>
+                </TouchableWithoutFeedback>
               )}
             />
           );

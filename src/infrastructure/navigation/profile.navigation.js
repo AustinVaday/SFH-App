@@ -39,6 +39,7 @@ export const ProfileNavigator = () => {
           headerRight: () => (
             <IconButton
               icon="dots-horizontal"
+              underlayColor="transparent"
               onPress={() => navigation.navigate("Settings")}
             />
           ),

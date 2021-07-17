@@ -1,17 +1,26 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, FlatList } from "react-native";
+import { KeyboardAvoidingView, FlatList, Dimensions } from "react-native";
 import { TextInput } from "react-native-paper";
-import { colors } from "../../../infrastructure/theme/colors";
-import { HeaderDetailPosting } from "../components/header-detail-posting.components";
-import { CommentDetailPosting } from "../components/comment-detail-posting.components";
+import { MaterialCommunityIcons as MCIcon } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
+import { colors } from "../../../infrastructure/theme/colors";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Text } from "../../../components/typography/text.components";
+import { HeaderDetailPosting } from "../components/header-detail-posting.components";
+import { CommentDetailPosting } from "../components/comment-detail-posting.components";
 
 const CommentSection = styled.View`
   padding-bottom: ${(props) => props.theme.space[1]};
-  background-color: white;
+  background-color: ${(props) => props.theme.colors.bg.primary};
 `;
+
+const ListEmptySection = styled.View`
+  align-items: center;
+  justify-content: center;
+`;
+
+const { height } = Dimensions.get("window");
 
 export const ViewPostingScreen = ({ navigation, route }) => {
   const [comment, setComment] = useState("");
@@ -22,6 +31,26 @@ export const ViewPostingScreen = ({ navigation, route }) => {
     <SafeArea>
       <FlatList
         data={user.numComments}
+        ListEmptyComponent={() => {
+          return (
+            <ListEmptySection style={{ height: height / 4 }}>
+              <MCIcon
+                name={"comment-text-outline"}
+                size={100}
+                color={colors.icon.secondary}
+              />
+              <Text
+                variant="list_empty_message"
+                style={{
+                  paddingBottom: 20,
+                  paddingTop: 20,
+                }}
+              >
+                Comments Are Empty
+              </Text>
+            </ListEmptySection>
+          );
+        }}
         ListHeaderComponent={<HeaderDetailPosting user={user} />}
         renderItem={({ item }) => (
           <CommentDetailPosting item={item} onNavigate={navigation.navigate} />
@@ -40,9 +69,8 @@ export const ViewPostingScreen = ({ navigation, route }) => {
               roundness: 15,
               colors: {
                 primary: colors.brand.primary,
-                nderlineColor: "blue",
-                placeholder: "#cecbce",
-                background: "white",
+                placeholder: colors.text.tertiary,
+                background: colors.bg.primary,
               },
             }}
           />

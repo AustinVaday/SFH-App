@@ -49,8 +49,7 @@ export const LibraryScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      const { status: cameraRoll } =
-        await requestPermissionsAsync();
+      const { status: cameraRoll } = await requestPermissionsAsync();
       setHasPermission(cameraRoll === "granted");
     })();
     (async () => {
@@ -73,6 +72,7 @@ export const LibraryScreen = ({ navigation }) => {
         <IconButton
           size={30}
           icon="close"
+          underlayColor="transparent"
           onPress={() => {
             navigation.goBack();
           }}
@@ -93,7 +93,8 @@ export const LibraryScreen = ({ navigation }) => {
           <Button
             mode="text"
             uppercase={false}
-            color={colors.brand.primary}
+            color={colors.bg.primary}
+            labelStyle={{ color: colors.text.brand }}
             onPress={() => openURL("app-settings:")}
           >
             Enable Photos Access
@@ -113,7 +114,7 @@ export const LibraryScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <>
-      {selectedVideo == item.uri ? (
+      {/* {selectedVideo == item.uri ? (
         <Video
           source={{ uri: selectedVideo }}
           resizeMode="cover"
@@ -124,15 +125,15 @@ export const LibraryScreen = ({ navigation }) => {
             borderColor: colors.brand.primary,
           }}
         />
-      ) : (
-        <TouchableOpacity key={item} onPress={() => setSelectedVideo(item.uri)}>
+      ) : ( */}
+        <TouchableOpacity activeOpacity={1} key={item} onPress={() => setSelectedVideo(item.uri)}>
           <Video
             source={{ uri: item.uri }}
             resizeMode="cover"
             style={{ width: width / 3, height: width / 3 }}
           />
         </TouchableOpacity>
-      )}
+      {/* )} */}
     </>
   );
 
@@ -142,6 +143,7 @@ export const LibraryScreen = ({ navigation }) => {
         <IconButton
           size={30}
           icon="close"
+          underlayColor="transparent"
           onPress={() => {
             navigation.goBack();
           }}
@@ -151,6 +153,7 @@ export const LibraryScreen = ({ navigation }) => {
           size={30}
           icon="checkbox-marked"
           color={colors.brand.primary}
+          underlayColor="transparent"
           onPress={() => {
             navigation.navigate("Post", { url: selectedVideo });
           }}
@@ -171,13 +174,14 @@ export const LibraryScreen = ({ navigation }) => {
               <PlayIconButton
                 name={shouldPlay ? null : "play"}
                 size={85}
-                color="white"
+                color={colors.icon.primary}
               />
             </TouchableOpacity>
             <CameraIconButton
               size={30}
               icon="camera"
-              color="white"
+              color={colors.icon.primary}
+              underlayColor="black"
               onPress={() => {
                 navigation.navigate("Camera");
               }}

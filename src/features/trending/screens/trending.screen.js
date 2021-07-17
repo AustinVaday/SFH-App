@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimensions, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Searchbar } from "react-native-paper";
 
@@ -19,10 +19,8 @@ const VideoContainer = styled.View`
 `;
 
 const VideosList = styled(FlatList)`
-  padding: ${(props) => props.theme.space[2]};
+  padding: ${(props) => props.theme.space[1]};
 `;
-
-const { width } = Dimensions.get("window");
 
 // to get the data in the order for the most views
 const mostViewsData = dataTrending.sort((a, b) => b.views - a.views);
@@ -102,11 +100,9 @@ export const TrendingScreen = ({ navigation }) => {
         data={data}
         renderItem={({ item }) => {
           return (
-            // <View style={{ width: width / 2 }}>
             <VideoContainer>
               <SmallPostCard user={item} onNavigate={navigation.navigate} />
             </VideoContainer>
-            // </View>
           );
         }}
         keyExtractor={(item) => item.id}

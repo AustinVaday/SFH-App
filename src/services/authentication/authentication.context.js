@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { firebase } from "../../utils/firebase";
 
 import { loginRequest, passwordResetRequest } from "./authentication.services";
@@ -6,18 +6,26 @@ import { loginRequest, passwordResetRequest } from "./authentication.services";
 export const AuthenticationContext = createContext();
 
 export const AuthenticationContextProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  firebase.auth().onAuthStateChanged((usr) => {
-    if (usr) {
-      setUser(usr);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  });
+  useEffect(() => {
+    setTimeout(async () => {
+      try {
+        await firebase.auth().onAuthStateChanged((usr) => {
+          if (usr) {
+            setUser(usr);
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }, 1000);
+  }, []);
 
   const onLogin = (email, password) => {
     setIsLoading(true);
@@ -32,10 +40,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onRegister = (email, password) => {
+  const onRegister = async (email, password) => {
     setIsLoading(true);
 
-    firebase
+    await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((u) => {
@@ -61,10 +69,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onFacebookOrGoogleSignIn = (credential) => {
+  const onFacebookOrGoogleSignIn = async (credential) => {
     setIsLoading(true);
 
-    firebase
+    await firebase
       .auth()
       .signInWithCredential(credential)
       .then((u) => {
@@ -77,9 +85,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onLogout = () => {
+  const onLogout = async () => {
+    setIsLoading(true);
     setUser(null);
-    firebase.auth().signOut();
+    await firebase.auth().signOut();
   };
 
   return (

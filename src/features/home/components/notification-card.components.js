@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Image, TouchableWithoutFeedback, Platform } from "react-native";
-import { Avatar, List, TouchableRipple, Button } from "react-native-paper";
+import { Avatar, List, Button } from "react-native-paper";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import RBSheet from "react-native-raw-bottom-sheet";
 import styled from "styled-components/native";
@@ -62,7 +62,7 @@ export const NotificationCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
           uppercase={false}
           onPress={() => {}}
         >
-          Follow
+          <Text variant="contained_button">Follow</Text>
         </Button>
       );
     }
@@ -85,12 +85,9 @@ export const NotificationCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
           </>
         }
         left={() => (
-          <TouchableRipple
-            style={{ alignSelf: "center" }}
-            onPress={() => onNavigate("ViewProfile")}
-          >
+          <TouchableWithoutFeedback onPress={() => onNavigate("ViewProfile")}>
             <Avatar.Image size={60} source={{ uri: user.avatar }} />
-          </TouchableRipple>
+          </TouchableWithoutFeedback>
         )}
         right={() => typeOfNotification(user.type)}
       />

@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { Dimensions } from "react-native";
-import { ActivityIndicator, Colors, Button } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
@@ -15,9 +15,11 @@ import { maybeCompleteAuthSession } from "expo-web-browser";
 import { useAuthRequest } from "expo-auth-session/providers/facebook";
 import { useIdTokenAuthRequest } from "expo-auth-session/providers/google";
 import { ResponseType } from "expo-auth-session";
-import firebase from "firebase";
+import { firebase } from "../../../utils/firebase";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
+import { Text } from "../../../components/typography/text.components";
+import { colors } from "../../../infrastructure/theme/colors";
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 import { FBAPPID, WEBCLIENTID } from "@env";
@@ -32,7 +34,7 @@ const { width } = Dimensions.get("window");
 
 maybeCompleteAuthSession();
 
-export const FacebookAndGoogleButtons = () => {
+export const FacebookAndGoogleButtons = ({ navigation }) => {
   const [onFacebook, setOnFacebook] = useState(false);
   const [onGoogle, setOnGoogle] = useState(false);
   const { onFacebookOrGoogleSignIn, error, isLoading } = useContext(
@@ -43,7 +45,7 @@ export const FacebookAndGoogleButtons = () => {
     useAuthRequest({
       responseType: ResponseType.Token,
       clientId: FBAPPID,
-      scopes: ['public_profile', 'email'],
+      scopes: ["public_profile", "email"],
     });
 
   const [requestGoogle, responseGoogle, promptAsyncGoogle] =
@@ -53,14 +55,14 @@ export const FacebookAndGoogleButtons = () => {
 
   useEffect(() => {
     if (onFacebook) {
-      if (responseFacebook?.type === "success") { 
+      if (responseFacebook?.type === "success") {
         const { access_token } = responseFacebook.params;
 
         const credential =
           firebase.auth.FacebookAuthProvider.credential(access_token);
         onFacebookOrGoogleSignIn(credential);
         setOnFacebook(false);
-      };
+      }
     } else if (onGoogle) {
       if (responseGoogle?.type === "success") {
         const { id_token } = responseGoogle.params;
@@ -73,38 +75,43 @@ export const FacebookAndGoogleButtons = () => {
     }
   }, [responseFacebook, responseGoogle]);
 
-  return !isLoading ? (
+  return (
     <AuthButtonsSection>
       <Button
-        icon={() => <Ionicons name="logo-facebook" size={30} color="white" />}
+        icon={() => (
+          <Ionicons
+            name="logo-facebook"
+            size={30}
+            color={colors.icon.primary}
+          />
+        )}
         mode="contained"
-        color="#4267B2"
-        contentStyle={{ padding: 10, width: width / 1.2, height: 50 }}
-        labelStyle={{ fontSize: 12 }}
+        color={colors.icon.facebook}
+        contentStyle={{ width: width / 1.2, height: 50 }}
         onPress={() => {
           setOnFacebook(true);
           promptAsyncFacebook();
-          
         }}
+        loading={isLoading}
       >
-        Continue with Facebook
+        <Text variant="contained_button">Continue with Facebook</Text>
       </Button>
       <Spacer size="medium" />
       <Button
-        icon={() => <Ionicons name="logo-google" size={30} color="white" />}
+        icon={() => (
+          <Ionicons name="logo-google" size={30} color={colors.icon.primary} />
+        )}
         mode="contained"
-        color="#DB4437"
-        contentStyle={{ padding: 10, width: width / 1.2, height: 50 }}
-        labelStyle={{ fontSize: 12 }}
+        color={colors.icon.google}
+        contentStyle={{ width: width / 1.2, height: 50 }}
         onPress={() => {
           setOnGoogle(true);
           promptAsyncGoogle();
         }}
+        loading={isLoading}
       >
-        Continue with Google
+        <Text variant="contained_button">Continue with Google</Text>
       </Button>
     </AuthButtonsSection>
-  ) : (
-    <ActivityIndicator animating={true} color={Colors.blue300} />
   );
 };

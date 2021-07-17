@@ -29,7 +29,11 @@ export const AppNavigator = () => {
           ),
           headerTintColor: colors.text.primary,
           headerRight: () => (
-            <IconButton icon="dots-horizontal" onPress={() => {}} />
+            <IconButton
+              icon="dots-horizontal"
+              underlayColor="transparent"
+              onPress={() => {}}
+            />
           ),
         })}
       />

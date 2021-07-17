@@ -1,34 +1,30 @@
-import React, { useContext, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import LottieView from "lottie-react-native";
+import React from "react";
+import { ImageBackground, Dimensions } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import styled from "styled-components";
 
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+import { colors } from "../../../infrastructure/theme/colors";
 
-export const LoadingScreen = ({ navigation }) => {
-  const { isAuthenticated } = useContext(AuthenticationContext);
+const LoadingBackground = styled.View`
+  flex: 1;
+`;
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate("Authentications");
-    }
-  }, []);
+const { height } = Dimensions.get("window");
 
+export const LoadingScreen = () => {
   return (
-    <View style={styles.container}>
-      <LottieView
-        style={{ height: 300 }}
-        source={require("../../../assets/loading-logo.json")}
-        autoPlay
-        loop
-      />
-    </View>
+    <LoadingBackground>
+      <ImageBackground
+        resizeMode="center"
+        source={require("../../../assets/splash/splash.png")}
+        style={{ flex: 1 }}
+      >
+        <ActivityIndicator
+          size="large"
+          color={colors.brand.primary}
+          style={{ flex: 1, top: height * 0.1 }}
+        />
+      </ImageBackground>
+    </LoadingBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

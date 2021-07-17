@@ -28,7 +28,7 @@ const VideoContainer = styled.View`
 
 const SavesList = styled(FlatList)`
   padding: ${(props) => props.theme.space[2]};
-  background-color: #f8f9fa;
+  background-color: ${(props) => props.theme.colors.bg.primary};
 `;
 
 export const SavesTab = ({ route, navigation }) => {

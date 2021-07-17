@@ -6,6 +6,7 @@ import styled from "styled-components/native";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
+import { colors } from "../../../infrastructure/theme/colors";
 import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
 
 const AuthSafeArea = styled(SafeArea)`
@@ -19,24 +20,8 @@ const BottomButtonsSection = styled.View`
   flex-direction: row;
 `;
 
-const TitleText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.h3};
-  color: ${(props) => props.theme.colors.brand.primary};
-  text-align: center;
-`;
-
-const MessageText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_400};
-  font-size: ${(props) => props.theme.fontSizes.h5};
-  color: #b3b3b3;
-`;
-
 const MainTextSection = styled.View`
-  padding-bottom: ${(props) => props.theme.space[5]};
-  padding-left: ${(props) => props.theme.space[4]};
-  padding-right: ${(props) => props.theme.space[4]};
-  padding-top: ${(props) => props.theme.space[4]};
+  padding: ${(props) => props.theme.space[4]};
   align-items: center;
 `;
 
@@ -49,7 +34,7 @@ export const AuthenticationsScreen = ({ navigation }) => {
   return (
     <AuthSafeArea>
       <AnimationWrapper>
-      <LottieView
+        <LottieView
           key="animation"
           autoPlay
           loop
@@ -57,37 +42,29 @@ export const AuthenticationsScreen = ({ navigation }) => {
           source={require("../../../assets/lottie/world.json")}
         />
       </AnimationWrapper>
-      
+
       <MainTextSection>
-        <TitleText>Signs For Humanity</TitleText>
+        <Text variant="account_title">Signs For Humanity</Text>
         <Spacer position="top" size="large" />
-        <MessageText>Deaf. Hearing. Together.</MessageText>
+        <Text variant="account_message">Deaf. Hearing. Together.</Text>
       </MainTextSection>
       <FacebookAndGoogleButtons />
       <BottomButtonsSection>
         <Button
-          color="white"
-          labelStyle={{
-            fontSize: 12,
-            color: "black",
-          }}
           onPress={() => {
             navigation.navigate("Login");
           }}
+          color={colors.ui.tertiary}
         >
-          Login
+          <Text variant="text_button">Login</Text>
         </Button>
         <Button
-          color="white"
-          labelStyle={{
-            fontSize: 12,
-            color: "black",
-          }}
           onPress={() => {
             navigation.navigate("Register");
           }}
+          color={colors.ui.tertiary}
         >
-          Sign up with email
+          <Text variant="text_button">Sign up with email</Text>
         </Button>
       </BottomButtonsSection>
     </AuthSafeArea>

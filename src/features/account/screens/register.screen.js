@@ -13,30 +13,16 @@ const TopTextSection = styled.View`
   padding: ${(props) => props.theme.space[3]};
 `;
 
-const SignInSection = styled.View`
+const LoginSection = styled.View`
   align-items: center;
   flex-direction: row;
   justify-content: center;
 `;
 
-const CreateAccountText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.h4};
-`;
-
-const SignUpStartedText = styled(Text)`
-  color: #bdc3d4;
-  font-size: ${(props) => props.theme.fontSizes.h5};
-`;
-
-const AlreadyAccountText = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.button};
-`;
-
 const HorizontalLine = styled.View`
   flex: 1;
   height: 1px;
-  background-color: black;
+  background-color: ${(props) => props.theme.colors.text.secondary};
 `;
 
 const OrSection = styled.View`
@@ -47,10 +33,10 @@ const OrSection = styled.View`
 `;
 
 const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_400};
-  font-size: ${(props) => props.theme.fontSizes.body};
+  font-family: ${(props) => props.theme.fonts.body_600};
+  font-size: ${(props) => props.theme.fontSizes.button};
+  color: ${(props) => props.theme.colors.text.secondary};
   text-align: center;
-  align-self: center;
   width: 50px;
 `;
 
@@ -62,8 +48,8 @@ export const RegisterScreen = ({ navigation }) => {
   return (
     <SafeArea>
       <TopTextSection>
-        <CreateAccountText>Create Account</CreateAccountText>
-        <SignUpStartedText>Sign up to get started!</SignUpStartedText>
+        <Text variant="account_title" style={{textAlign: "left"}}>Create Account</Text>
+        <Text variant="account_message">Sign up to get started!</Text>
       </TopTextSection>
       <FormRegister />
       <OrSection>
@@ -74,22 +60,18 @@ export const RegisterScreen = ({ navigation }) => {
       <Spacer size="medium" />
       <FacebookAndGoogleButtons />
       <WhiteSpaceSection />
-      <SignInSection>
-        <AlreadyAccountText>Already have an account?</AlreadyAccountText>
+      <LoginSection>
+        <Text variant="text_button">Already have an account?</Text>
         <Button
-          color="white"
-          uppercase={false}
-          labelStyle={{
-            fontSize: 14,
-            color: colors.brand.primary,
-          }}
           onPress={() => {
             navigation.navigate("Login");
           }}
+          color={colors.ui.tertiary}
+          uppercase={false}
         >
-          Login
+          <Text variant="text_button" style={{color: colors.text.brand}}>Login</Text>
         </Button>
-      </SignInSection>
+      </LoginSection>
     </SafeArea>
   );
 };

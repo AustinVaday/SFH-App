@@ -5,7 +5,6 @@ import {
   HelperText,
   Button,
   ActivityIndicator,
-  Colors,
 } from "react-native-paper";
 import GradientButton from "react-native-gradient-buttons";
 import { Formik } from "formik";
@@ -33,12 +32,6 @@ const LoginButtonSection = styled.View`
   padding-left: ${(props) => props.theme.space[2]};
   padding-right: ${(props) => props.theme.space[2]};
   padding-bottom: ${(props) => props.theme.space[4]};
-`;
-
-const LoginText = styled(Text)`
-  color: white;
-  font-family: ${(props) => props.theme.fonts.body_400};
-  font-size: ${(props) => props.theme.fontSizes.button};
 `;
 
 const validationSchema = yup.object().shape({
@@ -97,10 +90,9 @@ export const FormLogin = ({ onNavigate }) => {
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: "white",
+                  primary: colors.text.brand,
+                  placeholder: colors.ui.quinary,
+                  background: colors.bg.primary,
                 },
               }}
             />
@@ -118,10 +110,9 @@ export const FormLogin = ({ onNavigate }) => {
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: "white",
+                  primary: colors.text.brand,
+                  placeholder: colors.ui.quinary,
+                  background: colors.bg.primary,
                 },
               }}
             />
@@ -130,23 +121,24 @@ export const FormLogin = ({ onNavigate }) => {
             </HelperText>
             <ForgotPasswordSection>
               <Button
-                color="white"
-                labelStyle={{
-                  fontSize: 10,
-                  color: colors.brand.primary,
-                }}
                 onPress={() => {
                   onNavigate("ForgotPassword");
                 }}
+                color={colors.ui.tertiary}
               >
-                Forgot password?
+                <Text
+                  variant="text_button"
+                  style={{ color: colors.text.brand }}
+                >
+                  Forgot password?
+                </Text>
               </Button>
             </ForgotPasswordSection>
           </TextInputsSection>
           <LoginButtonSection>
             {!isLoading ? (
               <GradientButton
-                text={<LoginText>Login</LoginText>}
+                text={<Text variant="contained_button">Login</Text>}
                 gradientBegin={colors.brand.primary}
                 gradientEnd="#6dd5ed"
                 gradientDirection="vertical"
@@ -155,7 +147,10 @@ export const FormLogin = ({ onNavigate }) => {
                 onPressAction={handleSubmit}
               />
             ) : (
-              <ActivityIndicator animating={true} color={Colors.blue300} />
+              <ActivityIndicator
+                animating={true}
+                color={colors.brand.primary}
+              />
             )}
           </LoginButtonSection>
         </ScrollView>

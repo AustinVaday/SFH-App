@@ -17,8 +17,8 @@ export const ProfileTabs = ({ newitem }) => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: colors.brand.primary,
-        inactiveTintColor: "#BABBBA",
+        activeTintColor: colors.icon.brand,
+        inactiveTintColor: colors.icon.secondary,
         showIcon: true,
         showLabel: false,
         indicatorStyle: { width: width / 4, left: width / 8 },

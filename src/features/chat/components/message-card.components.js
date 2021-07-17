@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { Platform, Alert } from "react-native";
-import { Avatar, List, TouchableRipple } from "react-native-paper";
+import { Platform, Alert, TouchableWithoutFeedback } from "react-native";
+import { Avatar, List } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import styled from "styled-components/native";
 
@@ -46,9 +46,9 @@ export const MessageCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
         }
         title={<Text variant="message_name">{user.name}</Text>}
         left={() => (
-          <TouchableRipple onPress={() => onNavigate("ViewProfile")}>
+          <TouchableWithoutFeedback onPress={() => onNavigate("ViewProfile")}>
             <Avatar.Image size={60} source={{ uri: user.avatar }} />
-          </TouchableRipple>
+          </TouchableWithoutFeedback>
         )}
         right={() => (
           <Text style={{ alignSelf: "center" }} variant="date">
