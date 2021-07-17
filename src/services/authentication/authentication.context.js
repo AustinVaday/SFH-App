@@ -1,27 +1,30 @@
 import React, { useState, createContext, useEffect } from "react";
-import firebase from "firebase/app";
+import { firebase } from "../../utils/firebase";
 
 import { loginRequest, passwordResetRequest } from "./authentication.services";
 
 export const AuthenticationContext = createContext();
 
 export const AuthenticationContextProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unlisten = firebase.auth().onAuthStateChanged((usr) => {
-      if (usr) {
-        setUser(usr);
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
+    setTimeout(async () => {
+      try {
+        await firebase.auth().onAuthStateChanged((usr) => {
+          if (usr) {
+            setUser(usr);
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+          }
+        });
+      } catch (e) {
+        console.log(e);
       }
-    });
-    return () => {
-      unlisten();
-    };
+    }, 1000);
   }, []);
 
   const onLogin = (email, password) => {
@@ -37,10 +40,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onRegister = (email, password) => {
+  const onRegister = async (email, password) => {
     setIsLoading(true);
 
-    firebase
+    await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((u) => {
@@ -66,10 +69,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onFacebookOrGoogleSignIn = (credential) => {
+  const onFacebookOrGoogleSignIn = async (credential) => {
     setIsLoading(true);
 
-    firebase
+    await firebase
       .auth()
       .signInWithCredential(credential)
       .then((u) => {
@@ -82,9 +85,10 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
-  const onLogout = () => {
+  const onLogout = async () => {
+    setIsLoading(true);
     setUser(null);
-    firebase.auth().signOut();
+    await firebase.auth().signOut();
   };
 
   return (

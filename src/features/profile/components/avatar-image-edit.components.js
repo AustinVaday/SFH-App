@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Alert } from "react-native";
-import { Avatar, Surface, TouchableRipple } from "react-native-paper";
+import { View, Alert, TouchableWithoutFeedback } from "react-native";
+import { Avatar, Surface } from "react-native-paper";
 import { openURL } from "expo-linking";
 import styled from "styled-components";
 
@@ -101,7 +101,7 @@ export const AvatarImageEdit = ({ userImage }) => {
 
   return (
     <View style={{ alignItems: "center", padding: 20 }}>
-      <TouchableRipple style={{ borderRadius: 60 }} onPress={onPhotoActions}>
+      <TouchableWithoutFeedback onPress={onPhotoActions}>
         <Surface style={{ borderRadius: 60, elevation: 1 }}>
           {image ? (
             <Avatar.Image
@@ -120,7 +120,7 @@ export const AvatarImageEdit = ({ userImage }) => {
           )}
           <CameraEditIcon icon="camera" />
         </Surface>
-      </TouchableRipple>
+      </TouchableWithoutFeedback>
     </View>
   );
 };

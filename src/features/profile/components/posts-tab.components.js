@@ -28,7 +28,7 @@ const VideoContainer = styled.View`
 
 const PostsList = styled(FlatList)`
   padding: ${(props) => props.theme.space[2]};
-  background-color: #f8f9fa;
+  background-color: ${(props) => props.theme.colors.bg.primary};
 `;
 
 export const PostsTab = ({ route, navigation }) => {
@@ -48,7 +48,7 @@ export const PostsTab = ({ route, navigation }) => {
                 <Card.Cover source={{ uri: item.url }} />
               </TouchableRipple>
               <BottomCard>
-                <Text variant="label" color="white">
+                <Text variant="label">
                   {item.videoTitle}
                 </Text>
                 <AvatarIcon>

@@ -7,8 +7,8 @@ export const SaveRightHeader = ({ onNavigate }) => {
   return (
       <Button
         uppercase={false}
-        color={colors.brand.primary}
-        contentStyle={{backgroundColor: colors.bg.primary}}
+        color={colors.ui.quaternary}
+        labelStyle={{color: colors.icon.brand}}
         onPress={() => onNavigate()}
       >
         Save

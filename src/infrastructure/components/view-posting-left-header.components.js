@@ -1,6 +1,8 @@
 import React from "react";
-import styled from "styled-components/native";
+import { TouchableWithoutFeedback } from "react-native";
 import { Avatar, TouchableRipple } from "react-native-paper";
+import styled from "styled-components/native";
+
 import { Text } from "../../components/typography/text.components";
 
 import { HeaderBackButton } from "@react-navigation/stack";
@@ -19,14 +21,13 @@ export const ViewPostingLeftHeader = ({ props, user, onNavigate }) => {
   return (
     <LeftHeader>
       <HeaderBackButton {...props} style={{color: "black"}} />
-      <TouchableRipple
-        underlayColor="none"
+      <TouchableWithoutFeedback
         onPress={() => {
             onNavigate("ViewGuestProfile");
         }}
       >
         <Avatar.Image size={45} source={{ uri: user.avatar }} />
-      </TouchableRipple>
+      </TouchableWithoutFeedback>
       <NameAndDate>
         <Text variant="name">{user.name}</Text>
         <Text variant="date">{user.date}</Text>

@@ -1,7 +1,7 @@
 import firebase from "firebase";
 
-export const loginRequest = (email, password) =>
-  firebase.auth().signInWithEmailAndPassword(email, password);
+export const loginRequest = async (email, password) =>
+  await firebase.auth().signInWithEmailAndPassword(email, password);
 
-export const passwordResetRequest = (email) =>
-  firebase.auth().sendPasswordResetEmail(email);
+export const passwordResetRequest = async (email) =>
+  await firebase.auth().sendPasswordResetEmail(email);

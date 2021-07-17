@@ -4,11 +4,15 @@ import { Button, Dialog, Portal, List } from "react-native-paper";
 import { openURL } from "expo-linking";
 import styled from "styled-components";
 
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+const SettingsBackground = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.bg.primary};
+`;
 
 const DialogHeader = styled.View`
   align-items: center;
@@ -40,7 +44,7 @@ const ListItem = styled(List.Item)`
   padding: 0;
 `;
 
-export const SettingsScreen = () => {
+export const SettingsScreen = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
   const { onLogout } = useContext(AuthenticationContext);
 
@@ -53,7 +57,7 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <SafeArea>
+    <SettingsBackground>
       <ScrollView>
         <List.Section>
           <List.Subheader style={{ paddingVertical: 6 }}>
@@ -178,6 +182,6 @@ export const SettingsScreen = () => {
           </Text>
         </VersionSection>
       </ScrollView>
-    </SafeArea>
+    </SettingsBackground>
   );
 };

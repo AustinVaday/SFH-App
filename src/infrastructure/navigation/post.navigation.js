@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components/native";
 
 import { Text } from "../../components/typography/text.components";
 
@@ -8,12 +7,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { CameraScreen } from "../../features/post/screens/camera.screen";
 import { LibraryScreen } from "../../features/post/screens/library.screen";
 import { PostScreen } from "../../features/post/screens/post.screen";
+import { colors } from "../theme/colors";
 
 const PostStack = createStackNavigator();
-
-const NewPostText = styled(Text)`
-  font-size: 20px;
-`;
 
 export const PostNavigator = () => {
   return (
@@ -33,7 +29,8 @@ export const PostNavigator = () => {
         component={PostScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => <NewPostText>New Post</NewPostText>,
+          headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">New Post</Text>,
         }}
       />
     </PostStack.Navigator>

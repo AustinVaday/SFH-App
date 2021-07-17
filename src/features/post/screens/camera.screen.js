@@ -7,7 +7,8 @@ import {
 } from "react-native";
 import { Camera } from "expo-camera";
 import { Video } from "expo-av";
-import { IconButton } from "react-native-paper";
+import { IconButton, Button } from "react-native-paper";
+import { openURL } from "expo-linking";
 import styled from "styled-components/native";
 
 import { colors } from "../../../infrastructure/theme/colors";
@@ -64,6 +65,13 @@ export const CameraBottomButtonsContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+`;
+
+const AllowCameraAccessSection = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: ${(props) => props.theme.space[3]};
 `;
 
 function useInterval(callback, delay) {
@@ -134,7 +142,39 @@ export const CameraScreen = ({ navigation }) => {
   }
 
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <SafeArea>
+        <IconButton
+          size={30}
+          icon="close"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        <AllowCameraAccessSection>
+          <Text
+            variant="title"
+            style={{ textAlign: "center", paddingBottom: 20 }}
+          >
+            Please Allow Access to Your Camera
+          </Text>
+          <Text
+            variant="body"
+            style={{ textAlign: "center", paddingBottom: 30 }}
+          >
+            Grant camera access to shoot a video
+          </Text>
+          <Button
+            mode="text"
+            uppercase={false}
+            color={colors.brand.primary}
+            onPress={() => openURL("app-settings:")}
+          >
+            Enable Camera Access
+          </Button>
+        </AllowCameraAccessSection>
+      </SafeArea>
+    );
   }
 
   const changeType = () => {

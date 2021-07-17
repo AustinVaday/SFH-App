@@ -2,20 +2,23 @@ import React, { useState } from "react";
 import { TextInput, HelperText } from "react-native-paper";
 import styled from "styled-components";
 
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { colors } from "../../../infrastructure/theme/colors";
+
+const EditBioBackground = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.bg.primary};
+`;
 
 const TextInputContainer = styled.View`
   padding: ${(props) => props.theme.space[2]};
 `;
 
 const BioTextInput = styled(TextInput).attrs({
-  underlineColor: "#cecbce",
   selectionColor: colors.brand.primary,
   theme: {
     colors: {
-      primary: "#cecbce",
-      placeholder: "#cecbce",
+      primary: colors.ui.quinary,
+      placeholder: colors.ui.quinary,
     },
   },
 })`
@@ -31,7 +34,7 @@ export const BioEditScreen = ({ route, navigation }) => {
   const [text, setText] = useState(bio);
 
   return (
-    <SafeArea>
+    <EditBioBackground>
       <TextInputContainer>
         <BioTextInput
           mode="flat"
@@ -56,6 +59,6 @@ export const BioEditScreen = ({ route, navigation }) => {
           {text.length}/80
         </HelperText>
       </TextInputContainer>
-    </SafeArea>
+    </EditBioBackground>
   );
 };

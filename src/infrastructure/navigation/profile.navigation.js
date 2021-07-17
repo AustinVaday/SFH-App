@@ -1,8 +1,8 @@
 import React from "react";
+import { IconButton } from "react-native-paper";
+
 import { Text } from "../../components/typography/text.components";
 import { colors } from "../theme/colors";
-import { fonts } from "../theme/fonts";
-import { IconButton } from "react-native-paper";
 
 import {
   createStackNavigator,
@@ -35,16 +35,11 @@ export const ProfileNavigator = () => {
         options={({ navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: null,
-          headerTintColor: colors.text.primary,
-          headerLeft: () => (
-            <Text variant="title" style={{ paddingLeft: 15 }}>
-              {userName}
-            </Text>
-          ),
+          headerTitle: () => <Text variant="screen_title">{userName}</Text>,
           headerRight: () => (
             <IconButton
               icon="dots-horizontal"
+              underlayColor="transparent"
               onPress={() => navigation.navigate("Settings")}
             />
           ),
@@ -56,9 +51,8 @@ export const ProfileNavigator = () => {
         options={() => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Settings",
-          headerTitleStyle: { fontFamily: fonts.body_700 },
           headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">Settings</Text>,
           headerLeft: (props) => <HeaderBackButton {...props} />,
         })}
       />
@@ -68,8 +62,10 @@ export const ProfileNavigator = () => {
         options={({ route }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: route.params.item.name,
           headerTintColor: colors.text.primary,
+          headerTitle: () => (
+            <Text variant="screen_title">{route.params.item.name}</Text>
+          ),
           headerLeft: (props) => <HeaderBackButton {...props} />,
         })}
       />
@@ -79,9 +75,8 @@ export const ProfileNavigator = () => {
         options={() => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Edit Profile",
-          headerTitleStyle: { fontFamily: fonts.body_700 },
           headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">Edit Profile</Text>,
           headerLeft: (props) => <HeaderBackButton {...props} />,
         })}
       />
@@ -91,9 +86,8 @@ export const ProfileNavigator = () => {
         options={({ route, navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Name",
-          headerTitleStyle: { fontFamily: fonts.body_700 },
           headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">Name</Text>,
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader
@@ -109,9 +103,8 @@ export const ProfileNavigator = () => {
         options={({ route, navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Username",
-          headerTitleStyle: { fontFamily: fonts.body_700 },
           headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">Username</Text>,
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader
@@ -127,9 +120,8 @@ export const ProfileNavigator = () => {
         options={({ route, navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: "Bio",
-          headerTitleStyle: { fontFamily: fonts.body_700 },
           headerTintColor: colors.text.primary,
+          headerTitle: () => <Text variant="screen_title">Bio</Text>,
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader

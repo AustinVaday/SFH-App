@@ -1,11 +1,6 @@
 import React, { useContext } from "react";
 import { ScrollView } from "react-native";
-import {
-  TextInput,
-  HelperText,
-  ActivityIndicator,
-  Colors,
-} from "react-native-paper";
+import { TextInput, HelperText, ActivityIndicator } from "react-native-paper";
 import GradientButton from "react-native-gradient-buttons";
 import { Formik } from "formik";
 
@@ -18,7 +13,7 @@ import { Text } from "../../../components/typography/text.components";
 import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 const TextInputsSection = styled.View`
-  padding-top: ${(props) => props.theme.space[5]};
+  padding-top: ${(props) => props.theme.space[4]};
   padding-left: ${(props) => props.theme.space[3]};
   padding-right: ${(props) => props.theme.space[3]};
 `;
@@ -28,12 +23,6 @@ const SignUpButtonSection = styled.View`
   padding-left: ${(props) => props.theme.space[2]};
   padding-right: ${(props) => props.theme.space[2]};
   padding-bottom: ${(props) => props.theme.space[4]};
-`;
-
-const SignUpText = styled(Text)`
-  color: white;
-  font-family: ${(props) => props.theme.fonts.body_medium};
-  font-size: ${(props) => props.theme.fontSizes.button};
 `;
 
 const validationSchema = yup.object().shape({
@@ -92,10 +81,9 @@ export const FormRegister = () => {
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: "white",
+                  primary: colors.text.brand,
+                  placeholder: colors.ui.quinary,
+                  background: colors.bg.primary,
                 },
               }}
             />
@@ -113,10 +101,9 @@ export const FormRegister = () => {
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: "white",
+                  primary: colors.text.brand,
+                  placeholder: colors.ui.quinary,
+                  background: colors.bg.primary,
                 },
               }}
             />
@@ -134,10 +121,9 @@ export const FormRegister = () => {
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.brand.primary,
-                  nderlineColor: "blue",
-                  placeholder: "#cecbce",
-                  background: "white",
+                  primary: colors.text.brand,
+                  placeholder: colors.ui.quinary,
+                  background: colors.bg.primary,
                 },
               }}
             />
@@ -148,7 +134,7 @@ export const FormRegister = () => {
           <SignUpButtonSection>
             {!isLoading ? (
               <GradientButton
-                text={<SignUpText>Sign up</SignUpText>}
+                text={<Text variant="contained_button">Sign up</Text>}
                 gradientBegin={colors.brand.primary}
                 gradientEnd="#6dd5ed"
                 gradientDirection="vertical"
@@ -157,7 +143,10 @@ export const FormRegister = () => {
                 onPressAction={handleSubmit}
               />
             ) : (
-              <ActivityIndicator animating={true} color={Colors.blue300} />
+              <ActivityIndicator
+                animating={true}
+                color={colors.brand.primary}
+              />
             )}
           </SignUpButtonSection>
         </ScrollView>

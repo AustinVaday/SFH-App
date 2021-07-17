@@ -1,25 +1,30 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import LottieView from "lottie-react-native";
+import { ImageBackground, Dimensions } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import styled from "styled-components";
+
+import { colors } from "../../../infrastructure/theme/colors";
+
+const LoadingBackground = styled.View`
+  flex: 1;
+`;
+
+const { height } = Dimensions.get("window");
 
 export const LoadingScreen = () => {
-
   return (
-    <View style={styles.container}>
-      <LottieView
-        style={{ height: 300 }}
-        source={require("../../../assets/loading-logo.json")}
-        autoPlay
-        loop
-      />
-    </View>
+    <LoadingBackground>
+      <ImageBackground
+        resizeMode="center"
+        source={require("../../../assets/splash/splash.png")}
+        style={{ flex: 1 }}
+      >
+        <ActivityIndicator
+          size="large"
+          color={colors.brand.primary}
+          style={{ flex: 1, top: height * 0.1 }}
+        />
+      </ImageBackground>
+    </LoadingBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

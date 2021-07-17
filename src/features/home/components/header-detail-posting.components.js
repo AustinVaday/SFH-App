@@ -34,7 +34,7 @@ const CommentButton = styled.View`
 const HorizontalLine = styled.View`
   flex: 1;
   height: 1px;
-  background-color: #f6eeee;
+  background-color: ${(props) => props.theme.colors.ui.quinary};
 `;
 
 const CommentText = styled(Text)`
@@ -94,16 +94,19 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
       <BottomCard>
         <TitleAndCaptionSection>
           <Text variant="title">{user.videoTitle}</Text>
-          <Spacer position="top" size="small">
-            <Text variant="caption">{user.caption}</Text>
-          </Spacer>
+          {user.caption !== "" ? (
+            <Spacer position="top" size="small">
+              <Text variant="caption">{user.caption}</Text>
+            </Spacer>
+          ) : null}
         </TitleAndCaptionSection>
         <HorizontalLine />
         <IconsSection>
           <LikeButton>
             <IconButton
               icon={upvoted ? "arrow-up-bold" : "arrow-up-bold-outline"}
-              color={upvoted ? colors.brand.primary : "#BABBBA"}
+              color={upvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ margin: 0 }}
               size={25}
               onPress={clickLike}
@@ -111,7 +114,8 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
             <Text variant="label">{user.likes}</Text>
             <IconButton
               icon={downvoted ? "arrow-down-bold" : "arrow-down-bold-outline"}
-              color={downvoted ? colors.brand.primary : "#BABBBA"}
+              color={downvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ paddingTop: 2, margin: 0 }}
               size={25}
               onPress={clickDislike}
@@ -120,7 +124,8 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
           <CommentButton>
             <IconButton
               icon="message-outline"
-              color="#BABBBA"
+              color={colors.icon.secondary}
+              underlayColor="transparent"
               style={{ margin: 0 }}
               size={25}
               onPress={() => {}}
@@ -129,14 +134,16 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
           </CommentButton>
           <IconButton
             icon="share-outline"
-            color="#BABBBA"
+            color={colors.icon.secondary}
+            underlayColor="transparent"
             style={{ margin: 0 }}
             size={30}
             onPress={onShare}
           />
           <IconButton
             icon={saved ? "bookmark" : "bookmark-outline"}
-            color={saved ? colors.brand.primary : "#BABBBA"}
+            color={saved ? colors.brand.primary : colors.icon.secondary}
+            underlayColor="transparent"
             style={{ margin: 0 }}
             size={25}
             onPress={clickSave}

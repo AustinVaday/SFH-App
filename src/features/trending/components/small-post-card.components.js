@@ -1,7 +1,8 @@
 import React from "react";
-import styled from "styled-components/native";
-import { Avatar, Card, TouchableRipple } from "react-native-paper";
+import { TouchableWithoutFeedback } from "react-native";
+import { Avatar, Card } from "react-native-paper";
 import { Text } from "../../../components/typography/text.components";
+import styled from "styled-components/native";
 
 const CardContainer = styled(Card)`
   width: 95%;
@@ -12,9 +13,6 @@ const BottomCard = styled.View`
   padding: ${(props) => props.theme.space[2]};
   flex-direction: row;
   align-items: center;
-  /* position: absolute; */
-  /* background-color: rgba(52, 52, 52, 0.3); */
-  /* background-color: ${(props) => props.theme.colors.brand.primary} */
 `;
 
 const AvatarIcon = styled.View`
@@ -25,13 +23,13 @@ const AvatarIcon = styled.View`
 export const SmallPostCard = ({ user, onNavigate }) => {
   return (
     <CardContainer elevation={2}>
-      <TouchableRipple onPress={() => onNavigate("ViewPosting", { user })}>
+      <TouchableWithoutFeedback
+        onPress={() => onNavigate("ViewPosting", { user })}
+      >
         <Card.Cover source={{ uri: user.url }} />
-      </TouchableRipple>
+      </TouchableWithoutFeedback>
       <BottomCard>
-        <Text variant="label" color="white">
-          {user.videoTitle}
-        </Text>
+        <Text variant="label">{user.videoTitle}</Text>
         <AvatarIcon>
           <Avatar.Image size={34} source={{ uri: user.avatar }} />
         </AvatarIcon>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FollowTabs } from "../components/follow-tabs.navigator";
+import { FollowTabs } from "../navigators/follow-tabs.navigator";
 
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 
