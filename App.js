@@ -1,19 +1,19 @@
 import React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import firebase from "firebase/app";
-// import AppLoading from "expo-app-loading";
-// import * as Font from "expo-font";
-// import { Asset } from "expo-asset";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
+import { Provider as PaperProvider } from "react-native-paper";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 import {
-  useFonts as useOswald,
-  Oswald_400Regular,
-  Oswald_500Medium,
-  Oswald_700Bold,
-} from "@expo-google-fonts/oswald";
-import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
+  useFonts,
+  OpenSans_300Light,
+  OpenSans_400Regular,
+  OpenSans_600SemiBold,
+  OpenSans_700Bold,
+  OpenSans_800ExtraBold,
+} from "@expo-google-fonts/open-sans";
 
 import { theme } from "./src/infrastructure/theme";
 import {
@@ -26,9 +26,7 @@ import {
   APPID,
   MEASUREMENTID,
 } from "@env";
-import {
-  AuthenticationContextProvider
-} from "./src/services/authentication/authentication.context";
+import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 
 const firebaseConfig = {
   apiKey: APIKEY,
@@ -46,28 +44,30 @@ if (!firebase.apps.length) {
 }
 
 export default function App() {
-  const [oswaldLoaded] = useOswald({
-    Oswald_400Regular,
-    Oswald_500Medium,
-    Oswald_700Bold,
+  const [openSansLoaded] = useFonts({
+    OpenSans_300Light,
+    OpenSans_400Regular,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+    OpenSans_800ExtraBold,
   });
 
-  const [latoLoaded] = useLato({
-    Lato_400Regular,
-  });
-
-  if (!oswaldLoaded || !latoLoaded) {
+  if (!openSansLoaded) {
     return null;
+  } else {
+    return (
+      <>
+        <ThemeProvider theme={theme}>
+          <ActionSheetProvider>
+            <AuthenticationContextProvider>
+              <PaperProvider>
+                <Navigation />
+              </PaperProvider>
+            </AuthenticationContextProvider>
+          </ActionSheetProvider>
+        </ThemeProvider>
+        <ExpoStatusBar style="auto" />
+      </>
+    );
   }
-
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <AuthenticationContextProvider>
-          <Navigation />
-        </AuthenticationContextProvider>
-      </ThemeProvider>
-      <ExpoStatusBar style="auto" />
-    </>
-  );
 }

@@ -5,7 +5,7 @@ import { colors } from "../../../infrastructure/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 
 import { PostsTab } from "./posts-tab.components";
-import { LikesTab } from "./likes-tab.components";
+import { SavesTab } from "./saves-tab.components";
 
 const { width } = Dimensions.get("window");
 
@@ -26,7 +26,7 @@ export const ProfileTabs = ({ newitem }) => {
     >
       <Tab.Screen
         name="Posts"
-        component={activeTab === "Posts" ? PostsTab : LikesTab}
+        component={activeTab === "Posts" ? PostsTab : SavesTab}
         initialParams={{ newitem: newitem }}
         listeners={{ focus: () => setActiveTab("Posts") }}
         options={{
@@ -37,14 +37,14 @@ export const ProfileTabs = ({ newitem }) => {
         }}
       />
       <Tab.Screen
-        name="Likes"
-        component={activeTab === "Likes" ? LikesTab : PostsTab}
+        name="Saves"
+        component={activeTab === "Saves" ? SavesTab : PostsTab}
         initialParams={{ newitem: newitem }}
-        listeners={{ focus: () => setActiveTab("Likes") }}
+        listeners={{ focus: () => setActiveTab("Saves") }}
         options={{
-          tabBarLabel: "Posts",
+          tabBarLabel: "Saves",
           tabBarIcon: ({ color }) => (
-            <Ionicons name={"thumbs-up-sharp"} color={color} size={25} />
+            <Ionicons name={"bookmark-outline"} color={color} size={25} />
           ),
         }}
       />

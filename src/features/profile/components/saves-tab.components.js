@@ -26,16 +26,16 @@ const VideoContainer = styled.View`
   width: 50%;
 `;
 
-const LikesList = styled(FlatList)`
+const SavesList = styled(FlatList)`
   padding: ${(props) => props.theme.space[2]};
   background-color: #f8f9fa;
 `;
 
-export const LikesTab = ({ route, navigation }) => {
+export const SavesTab = ({ route, navigation }) => {
   const { newitem } = route.params;
   return (
-    <LikesList
-      data={newitem.likes}
+    <SavesList
+      data={newitem.saves}
       renderItem={({ item }) => {
         return (
           <VideoContainer>
@@ -48,7 +48,7 @@ export const LikesTab = ({ route, navigation }) => {
                 <Card.Cover source={{ uri: item.url }} />
               </TouchableRipple>
               <BottomCard>
-                <Text variant="small_title">{item.videoTitle}</Text>
+                <Text variant="label">{item.videoTitle}</Text>
                 <AvatarIcon>
                   <Avatar.Image size={34} source={{ uri: item.avatar }} />
                 </AvatarIcon>

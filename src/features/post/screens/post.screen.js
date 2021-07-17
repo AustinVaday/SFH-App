@@ -1,23 +1,8 @@
-// Figure out how to navigate back home to dismiss the screens like camera stopped running.
-
-// NOTE: Try to figure out on how to handle keyboard when focus on textinput,
-{
-  /* <KeyboardAvoidingView
-  behavior={Platform.OS === "ios" ? "padding" : "height"}
-  style={{flex: 1}}>
-</KeyboardAvoidingView> */
-}
-// Check out these sources that might help
-// https://www.educba.com/react-native-keyboardavoidingview/
-// https://blog.hackajob.co/using-the-keyboardavoidingview-in-react-native/
-// https://www.reddit.com/r/reactnative/comments/huf6at/what_is_the_best_keyboard_aware_scroll_library/
-
 import React, { useState, createRef } from "react";
 import {
   View,
   ScrollView,
   Dimensions,
-  StatusBar,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
@@ -79,7 +64,6 @@ export const PostScreen = ({ navigation, route }) => {
   return (
     <Provider>
       <SafeArea>
-        <StatusBar backgroundColor="black" barStyle="dark-content" />
         <Portal>
           <Modal
             dismissable={true}

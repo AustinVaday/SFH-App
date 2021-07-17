@@ -3,7 +3,6 @@ import {
   View,
   Dimensions,
   FlatList,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
 import { IconButton } from "react-native-paper";
@@ -19,19 +18,10 @@ import { colors } from "../../../infrastructure/theme/colors";
 
 const { width } = Dimensions.get("window");
 
-const LibrarySafeArea = styled(SafeArea)`
-  background-color: black;
-`;
-
 const TopTitleSection = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-
-const NewPostText = styled(Text)`
-  color: white;
-  font-size: ${(props) => props.theme.fontSizes.h5};
 `;
 
 const CameraIconButton = styled(IconButton)`
@@ -112,18 +102,16 @@ export const LibraryScreen = ({ navigation }) => {
   );
 
   return (
-    <LibrarySafeArea>
-      <StatusBar translucent backgroundColor="white" barStyle="light-content" />
+    <SafeArea>
       <TopTitleSection>
         <IconButton
           size={35}
           icon="close"
-          color="white"
           onPress={() => {
-            navigation.navigate("Home");
+            navigation.goBack();
           }}
         />
-        <NewPostText>New Post</NewPostText>
+        <Text variant="title">New Post</Text>
         <IconButton
           size={35}
           icon="checkbox-marked"
@@ -169,6 +157,6 @@ export const LibraryScreen = ({ navigation }) => {
           />
         </>
       )}
-    </LibrarySafeArea>
+    </SafeArea>
   );
 };
