@@ -21,24 +21,10 @@ const SignUpSection = styled.View`
   justify-content: center;
 `;
 
-const WelcomeText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_bold};
-  font-size: ${(props) => props.theme.fontSizes.h4};
-`;
-
-const ContinueLoginText = styled(Text)`
-  color: #bdc3d4;
-  font-size: ${(props) => props.theme.fontSizes.h5};
-`;
-
-const NewUserText = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.button};
-`;
-
 const HorizontalLine = styled.View`
   flex: 1;
   height: 1px;
-  background-color: black;
+  background-color: ${(props) => props.theme.colors.text.secondary};
 `;
 
 const OrSection = styled.View`
@@ -49,10 +35,10 @@ const OrSection = styled.View`
 `;
 
 const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_medium};
-  font-size: ${(props) => props.theme.fontSizes.body};
+  font-family: ${(props) => props.theme.fonts.body_600};
+  font-size: ${(props) => props.theme.fontSizes.button};
+  color: ${(props) => props.theme.colors.text.secondary};
   text-align: center;
-  align-self: center;
   width: 50px;
 `;
 
@@ -73,8 +59,10 @@ export const LoginScreen = ({ navigation }) => {
   return (
     <SafeArea>
       <TopTextSection>
-        <WelcomeText>Welcome</WelcomeText>
-        <ContinueLoginText>Log in to continue!</ContinueLoginText>
+        <Text variant="account_title" style={{ textAlign: "left" }}>
+          Welcome
+        </Text>
+        <Text variant="account_message">Log in to continue!</Text>
       </TopTextSection>
       <FormLogin onNavigate={navigation.navigate} />
       <OrSection>
@@ -86,19 +74,17 @@ export const LoginScreen = ({ navigation }) => {
       <FacebookAndGoogleButtons />
       <WhiteSpaceSection />
       <SignUpSection>
-        <NewUserText>Don't have an account?</NewUserText>
+        <Text variant="text_button">Don't have an account?</Text>
         <Button
-          color="white"
-          uppercase={false}
-          labelStyle={{
-            fontSize: 12,
-            color: colors.brand.primary,
-          }}
           onPress={() => {
             navigation.navigate("Register");
           }}
+          color={colors.ui.tertiary}
+          uppercase={false}
         >
-          Sign up
+          <Text variant="text_button" style={{ color: colors.text.brand }}>
+            Sign up
+          </Text>
         </Button>
       </SignUpSection>
     </SafeArea>

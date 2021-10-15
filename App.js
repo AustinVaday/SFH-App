@@ -1,6 +1,5 @@
 import React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import firebase from "firebase/app";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -16,32 +15,7 @@ import {
 } from "@expo-google-fonts/open-sans";
 
 import { theme } from "./src/infrastructure/theme";
-import {
-  APIKEY,
-  AUTHDOMAIN,
-  DATABASEURL,
-  PROJECTID,
-  STORAGEBUCKET,
-  MESSAGINGSENDERID,
-  APPID,
-  MEASUREMENTID,
-} from "@env";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
-
-const firebaseConfig = {
-  apiKey: APIKEY,
-  authDomain: AUTHDOMAIN,
-  databaseURL: DATABASEURL,
-  projectId: PROJECTID,
-  storageBucket: STORAGEBUCKET,
-  messagingSenderId: MESSAGINGSENDERID,
-  appId: APPID,
-  measurementId: MEASUREMENTID,
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 export default function App() {
   const [openSansLoaded] = useFonts({
@@ -58,13 +32,13 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
-          <ActionSheetProvider>
-            <AuthenticationContextProvider>
-              <PaperProvider>
+          <PaperProvider>
+            <ActionSheetProvider>
+              <AuthenticationContextProvider>
                 <Navigation />
-              </PaperProvider>
-            </AuthenticationContextProvider>
-          </ActionSheetProvider>
+              </AuthenticationContextProvider>
+            </ActionSheetProvider>
+          </PaperProvider>
         </ThemeProvider>
         <ExpoStatusBar style="auto" />
       </>

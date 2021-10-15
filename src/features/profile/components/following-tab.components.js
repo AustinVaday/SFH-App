@@ -1,34 +1,18 @@
 import React from "react";
 import { FlatList } from "react-native";
 import styled from "styled-components/native";
-import { Avatar, Button, TouchableRipple } from "react-native-paper";
+import { Avatar, Button, List } from "react-native-paper";
 
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
-const BottomCard = styled.View`
-  padding: ${(props) => props.theme.space[2]};
-  flex-direction: row;
-  align-items: center;
-`;
-
-const FollowingButton = styled.View`
-  flex: 1;
-  align-items: flex-end;
-`;
-
-const AvatarImageContainer = styled.View`
-  padding-right: ${(props) => props.theme.space[3]};
-`;
-
 const FollowingList = styled(FlatList)`
-  padding: ${(props) => props.theme.space[2]};
-  background-color: #f8f9fa;
+  background-color: ${(props) => props.theme.colors.bg.primary};
 `;
 
-const NameText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_700};
-  font-size: ${(props) => props.theme.fontSizes.caption};
+const ListItem = styled(List.Item)`
+  padding-left: ${(props) => props.theme.space[3]};
+  padding-right: ${(props) => props.theme.space[3]};
 `;
 
 export const FollowingTab = ({ route, navigation }) => {
@@ -39,28 +23,30 @@ export const FollowingTab = ({ route, navigation }) => {
       data={newitem.following}
       renderItem={({ item }) => {
         return (
-          <TouchableRipple
-            onPress={() => {
-              navigation.navigate("ViewProfile");
-            }}
-          >
-            <BottomCard>
-              <AvatarImageContainer>
-                <Avatar.Image size={50} source={{ uri: item.avatar }} />
-              </AvatarImageContainer>
-              <NameText>{item.name}</NameText>
-              <FollowingButton>
-                <Button
-                  mode="outlined"
-                  color={colors.brand.primary}
-                  uppercase={false}
-                  onPress={() => {}}
+          <ListItem
+            onPress={() => navigation.navigate("ViewProfile")}
+            title={<Text variant="follow_name">{item.name}</Text>}
+            left={() => (
+              <Avatar.Image size={50} source={{ uri: item.avatar }} />
+            )}
+            right={() => (
+              <Button
+                mode="outlined"
+                style={{ alignSelf: "center" }}
+                color={colors.bg.primary}
+                labelStyle={{ color: colors.text.brand }}
+                uppercase={false}
+                onPress={() => {}}
+              >
+                <Text
+                  variant="text_button"
+                  style={{ color: colors.text.brand }}
                 >
                   Following
-                </Button>
-              </FollowingButton>
-            </BottomCard>
-          </TouchableRipple>
+                </Text>
+              </Button>
+            )}
+          />
         );
       }}
       keyExtractor={(item) => item.id}

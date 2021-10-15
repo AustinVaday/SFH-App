@@ -1,51 +1,42 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { HomeNavigator } from "./home.navigation";
-import { PostNavigator } from "./post.navigation";
-import { InboxNavigator } from "./inbox.navigation";
-import { ProfileNavigator } from "./profile.navigation";
-import { TrendingNavigator } from "./trending.navigation";
+import { AppTabsNavigator } from "./app-tabs.navigation";
 
-import { Ionicons } from "@expo/vector-icons";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ConversationScreen } from "../../features/chat/screens/conversation.screen";
 import { colors } from "../theme/colors";
+import { IconButton } from "react-native-paper";
+import { Text } from "../../components/typography/text.components";
 
-const Tab = createBottomTabNavigator();
+const AppStack = createStackNavigator();
 
-const TAB_ICON = {
-  Home: "md-home",
-  Trending: "md-trending-up",
-  Post: "md-add",
-  Inbox: "md-chatbubbles",
-  Profile: "md-person",
+export const AppNavigator = () => {
+  return (
+    <AppStack.Navigator>
+      <AppStack.Screen
+        name="Home"
+        component={AppTabsNavigator}
+        options={{ headerShown: false }}
+      />
+      <AppStack.Screen
+        name="Conversation"
+        component={ConversationScreen}
+        options={({ route }) => ({
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTitle: () => (
+            <Text variant="screen_title">{route.params.user}</Text>
+          ),
+          headerTintColor: colors.text.primary,
+          headerRight: () => (
+            <IconButton
+              icon="dots-horizontal"
+              underlayColor="transparent"
+              onPress={() => {}}
+            />
+          ),
+        })}
+      />
+    </AppStack.Navigator>
+  );
 };
-
-const createScreenOptions = ({ route }) => {
-  const iconName = TAB_ICON[route.name];
-  return {
-    tabBarIcon: ({ size, color }) => (
-      <Ionicons name={iconName} size={size} color={color} />
-    ),
-  };
-};
-
-export const AppNavigator = () => (
-  <Tab.Navigator
-    initialRouteName="Home"
-    screenOptions={createScreenOptions}
-    tabBarOptions={{
-      activeTintColor: colors.brand.primary,
-      inactiveTintColor: colors.brand.muted,
-    }}
-  >
-    <Tab.Screen name="Home" component={HomeNavigator} />
-    <Tab.Screen name="Trending" component={TrendingNavigator} />
-    <Tab.Screen
-      name="Post"
-      component={PostNavigator}
-      options={{ tabBarVisible: false }}
-    />
-    <Tab.Screen name="Inbox" component={InboxNavigator} />
-    <Tab.Screen name="Profile" component={ProfileNavigator} />
-  </Tab.Navigator>
-);

@@ -1,15 +1,18 @@
 import React from "react";
-import { TouchableOpacity, FlatList, View } from "react-native";
+import { TouchableOpacity, FlatList } from "react-native";
 import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
 
-import { ProfileTabs } from "../components/profile-tabs.navigator";
+import { ProfileTabs } from "../navigators/profile-tabs.navigator";
 
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
 import userProfile from "../../../utils/mock/userProfile";
+
+const ProfileBackground = styled.View`
+  background-color: ${(props) => props.theme.colors.bg.primary};
+`;
 
 const StatsSection = styled.View`
   padding: ${(props) => props.theme.space[2]};
@@ -31,28 +34,7 @@ const FollowersSection = styled.View`
   flex: 1;
 `;
 
-const FollowNumbersFont = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.body};
-  font-family: ${(props) => props.theme.fonts.body_700};
-`;
-
-const IdentifyText = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.body};
-  font-family: ${(props) => props.theme.fonts.body_700};
-  color: ${(props) => props.theme.colors.text.secondary};
-`;
-
-const FollowTextFont = styled(Text)`
-  font-size: ${(props) => props.theme.fontSizes.button};
-  font-family: ${(props) => props.theme.fonts.body_400};
-`;
-
-const EditProfileButton = styled(Button).attrs({
-  labelStyle: {
-    color: colors.brand.primary,
-    fontSize: 12,
-  },
-})`
+const EditProfileButton = styled(Button)`
   border-width: 1px;
   border-radius: 5px;
   border-color: ${(props) => props.theme.colors.brand.primary};
@@ -64,7 +46,9 @@ const EditProfileButtonContainer = styled.View`
   align-self: center;
 `;
 
-const Profile = styled.View``;
+const Profile = styled.View`
+  background-color: ${(props) => props.theme.colors.bg.primary};
+`;
 
 const ProfileInfoContainer = styled.View`
   padding: ${(props) => props.theme.space[2]};
@@ -106,7 +90,7 @@ export const ProfileScreen = ({ navigation }) => {
   // );
 
   return (
-    <SafeArea>
+    <ProfileBackground>
       <FlatList
         data={userProfile}
         renderItem={({ item }) => {
@@ -126,7 +110,7 @@ export const ProfileScreen = ({ navigation }) => {
                 <ProfileInfoContainer>
                   <NameAndIdentify>
                     <Text variant="title">{item.name} </Text>
-                    <IdentifyText>• {item.identify}</IdentifyText>
+                    <Text variant="profile_identify">• {item.identify}</Text>
                   </NameAndIdentify>
                   {item.bio !== "" ? <BioText>{item.bio}</BioText> : null}
                 </ProfileInfoContainer>
@@ -135,16 +119,18 @@ export const ProfileScreen = ({ navigation }) => {
                   <PostsSection>
                     <TouchableOpacity
                       style={{ alignItems: "center" }}
+                      activeOpacity={1}
                       onPress={() => {}}
                     >
-                      <FollowNumbersFont>{item.posts.length}</FollowNumbersFont>
-                      <FollowTextFont>Posts</FollowTextFont>
+                      <Text variant="profile_numbers">{item.posts.length}</Text>
+                      <Text variant="profile_labels">Posts</Text>
                     </TouchableOpacity>
                   </PostsSection>
                   <Text> | </Text>
                   <FollowingSection>
                     <TouchableOpacity
                       style={{ alignItems: "center" }}
+                      activeOpacity={1}
                       onPress={() => {
                         navigation.navigate("FollowList", {
                           item,
@@ -152,16 +138,17 @@ export const ProfileScreen = ({ navigation }) => {
                         });
                       }}
                     >
-                      <FollowNumbersFont>
+                      <Text variant="profile_numbers">
                         {item.following.length}
-                      </FollowNumbersFont>
-                      <FollowTextFont>Following</FollowTextFont>
+                      </Text>
+                      <Text variant="profile_labels">Following</Text>
                     </TouchableOpacity>
                   </FollowingSection>
                   <Text> | </Text>
                   <FollowersSection>
                     <TouchableOpacity
                       style={{ alignItems: "center" }}
+                      activeOpacity={1}
                       onPress={() => {
                         navigation.navigate("FollowList", {
                           item,
@@ -169,10 +156,10 @@ export const ProfileScreen = ({ navigation }) => {
                         });
                       }}
                     >
-                      <FollowNumbersFont>
+                      <Text variant="profile_numbers">
                         {item.followers.length}
-                      </FollowNumbersFont>
-                      <FollowTextFont>Followers</FollowTextFont>
+                      </Text>
+                      <Text variant="profile_labels">Followers</Text>
                     </TouchableOpacity>
                   </FollowersSection>
                 </StatsSection>
@@ -183,9 +170,14 @@ export const ProfileScreen = ({ navigation }) => {
                       navigation.navigate("EditProfile", { item });
                     }}
                     mode="outlined"
-                    color="white"
+                    color={colors.ui.quaternary}
                   >
-                    Edit Profile
+                    <Text
+                      variant="text_button"
+                      style={{ color: colors.text.brand }}
+                    >
+                      Edit Profile
+                    </Text>
                   </EditProfileButton>
                 </EditProfileButtonContainer>
               </Profile>
@@ -194,7 +186,8 @@ export const ProfileScreen = ({ navigation }) => {
           );
         }}
         keyExtractor={(item) => item.id}
+        stickyHeaderIndices={[1]}
       />
-    </SafeArea>
+    </ProfileBackground>
   );
 };

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { colors } from "../../../infrastructure/theme/colors";
-import { Text } from "../../../components/typography/text.components";
 
-import { FollowingTab } from "./following-tab.components";
-import { FollowersTab } from "./followers-tab.components";
+import { FollowingTab } from "../components/following-tab.components";
+import { FollowersTab } from "../components/followers-tab.components";
 
 const { width } = Dimensions.get("window");
 
@@ -18,8 +17,8 @@ export const FollowTabs = ({ newitem, pickedTab }) => {
     <Tab.Navigator
       initialRouteName={activeTab}
       tabBarOptions={{
-        activeTintColor: colors.brand.primary,
-        inactiveTintColor: "#BABBBA",
+        activeTintColor: colors.icon.brand,
+        inactiveTintColor: colors.icon.secondary,
         showLabel: true,
         labelStyle: {
           textTransform: "none",

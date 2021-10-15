@@ -15,21 +15,10 @@ const TopTextSection = styled.View`
   align-items: center;
 `;
 
-const ForgotPasswordText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_bold};
-  font-size: ${(props) => props.theme.fontSizes.title};
-`;
-
-const MessageText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_bold};
-  font-size: ${(props) => props.theme.fontSizes.body};
-  text-align: center;
-`;
-
 const HorizontalLine = styled.View`
   flex: 1;
   height: 1px;
-  background-color: black;
+  background-color: ${(props) => props.theme.colors.text.secondary};
 `;
 
 const OrSection = styled.View`
@@ -40,10 +29,10 @@ const OrSection = styled.View`
 `;
 
 const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_medium};
-  font-size: ${(props) => props.theme.fontSizes.body};
+  font-family: ${(props) => props.theme.fonts.body_600};
+  font-size: ${(props) => props.theme.fontSizes.button};
+  color: ${(props) => props.theme.colors.text.secondary};
   text-align: center;
-  align-self: center;
   width: 50px;
 `;
 
@@ -55,12 +44,12 @@ export const ForgotPasswordScreen = ({ navigation }) => {
   return (
     <SafeArea>
       <TopTextSection>
-        <ForgotPasswordText>Trouble logging in?</ForgotPasswordText>
+        <Text variant="forgot_password_title">Trouble logging in?</Text>
         <Spacer position="top" size="large" />
-        <MessageText>
+        <Text variant="forgot_password_message">
           Enter your email and we will send you a link to get back into your
           account.
-        </MessageText>
+        </Text>
       </TopTextSection>
       <FormForgotPassword onNavigate={navigation.navigate} />
       <OrSection>
@@ -72,17 +61,15 @@ export const ForgotPasswordScreen = ({ navigation }) => {
       <FacebookAndGoogleButtons />
       <WhiteSpaceSection />
       <Button
-        color="white"
-        uppercase={false}
-        labelStyle={{
-          fontSize: 13,
-          color: colors.brand.primary,
-        }}
         onPress={() => {
           navigation.goBack();
         }}
+        color={colors.ui.tertiary}
+        uppercase={false}
       >
-        Back to Login
+        <Text variant="text_button" style={{ color: colors.text.brand }}>
+          Back to Login
+        </Text>
       </Button>
     </SafeArea>
   );

@@ -1,18 +1,10 @@
 import React, { useState } from "react";
+import { TouchableWithoutFeedback } from "react-native";
+import { Avatar, IconButton, Card } from "react-native-paper";
 import styled from "styled-components/native";
-import { Avatar, IconButton, Card, TouchableRipple } from "react-native-paper";
+
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
-
-const LikesNumberText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.caption};
-`;
-
-const NameText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_700};
-  font-size: ${(props) => props.theme.fontSizes.caption};
-`;
 
 const CommentSection = styled.View`
   flex-direction: row;
@@ -27,7 +19,7 @@ const RightSideCommentSection = styled.View`
 
 const NameAndCommentCard = styled(Card)`
   padding: ${(props) => props.theme.space[2]};
-  background-color: #f9f9f9;
+  background-color: ${(props) => props.theme.colors.ui.comment};
 `;
 
 const BottomRightSideCommentSection = styled.View`
@@ -69,17 +61,16 @@ export const CommentDetailPosting = ({ item, onNavigate }) => {
 
   return (
     <CommentSection>
-      <TouchableRipple
-        underlayColor="none"
+      <TouchableWithoutFeedback
         onPress={() => {
           onNavigate("ViewGuestProfile");
         }}
       >
         <Avatar.Image size={45} source={{ uri: item.avatar }} />
-      </TouchableRipple>
+      </TouchableWithoutFeedback>
       <RightSideCommentSection>
         <NameAndCommentCard>
-          <NameText>{item.name}</NameText>
+          <Text variant="comment_name">{item.name}</Text>
           <Text variant="caption">{item.comment}</Text>
         </NameAndCommentCard>
         <BottomRightSideCommentSection>
@@ -87,15 +78,17 @@ export const CommentDetailPosting = ({ item, onNavigate }) => {
           <LikesSection>
             <IconButton
               icon={upvoted ? "arrow-up-bold" : "arrow-up-bold-outline"}
-              color={upvoted ? colors.brand.primary : "#BABBBA"}
+              color={upvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ margin: 0 }}
               size={20}
               onPress={clickLike}
             />
-            <LikesNumberText>{item.likes}</LikesNumberText>
+            <Text variant="numbers">{item.likes}</Text>
             <IconButton
               icon={downvoted ? "arrow-down-bold" : "arrow-down-bold-outline"}
-              color={downvoted ? colors.brand.primary : "#BABBBA"}
+              color={downvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ paddingTop: 2, margin: 0 }}
               size={20}
               onPress={clickDislike}

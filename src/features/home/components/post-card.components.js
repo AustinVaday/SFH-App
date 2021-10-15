@@ -1,12 +1,8 @@
-// BUG: Menu class from React-Native-paper package didn't work in the Flatlist
-// class, probably a bug. Instead, using React-native-material-menu package
-// for menu
-
-import React, { useState } from "react";
-import { Share } from "react-native";
+import React, { useState, useRef } from "react";
+import { Share, Platform, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import { Avatar, IconButton, Card, TouchableRipple } from "react-native-paper";
-import Menu, { MenuItem } from "react-native-material-menu";
+import { Avatar, IconButton, Card, List } from "react-native-paper";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { Text } from "../../../components/typography/text.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { colors } from "../../../infrastructure/theme/colors";
@@ -58,18 +54,17 @@ const CommentButton = styled.View`
 `;
 
 const TitleAndCaptionSection = styled.View`
-padding-left: ${(props) => props.theme.space[1]};
+  padding-left: ${(props) => props.theme.space[1]};
   padding-bottom: ${(props) => props.theme.space[3]};
 `;
 
 const HorizontalLine = styled.View`
   flex: 1;
   height: 1px;
-  background-color: #f6eeee;
+  background-color: ${(props) => props.theme.colors.ui.quinary};
 `;
 
 export const PostCard = ({ user, onNavigate }) => {
-  const [menu, setMenu] = useState(null);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -102,18 +97,6 @@ export const PostCard = ({ user, onNavigate }) => {
     }
   };
 
-  const setMenuRef = (ref) => {
-    setMenu(ref);
-  };
-
-  const hideMenu = () => {
-    menu.hide();
-  };
-
-  const showMenu = () => {
-    menu.show();
-  };
-
   const onShare = () => {
     try {
       Share.share({
@@ -124,52 +107,80 @@ export const PostCard = ({ user, onNavigate }) => {
     }
   };
 
+  const refRBSheet = useRef();
+
   return (
     <CardContainer elevation={2}>
       <TopCard>
-        <TouchableRipple
-          underlayColor="none"
+        <TouchableWithoutFeedback
           onPress={() => {
             onNavigate("ViewGuestProfile");
           }}
         >
           <Avatar.Image size={50} source={{ uri: user.avatar }} />
-        </TouchableRipple>
+        </TouchableWithoutFeedback>
         <NameAndDate>
           <Text variant="name">{user.name}</Text>
           <Text variant="date">{user.date}</Text>
         </NameAndDate>
         <VideoSettingsButton>
-          <Menu
-            ref={setMenuRef}
-            button={<IconButton icon="dots-vertical" onPress={showMenu} />}
+          <IconButton
+            icon={Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical"}
+            onPress={() => refRBSheet.current.open()}
+            underlayColor="transparent"
+          />
+          <RBSheet
+            ref={refRBSheet}
+            closeOnDragDown={true}
+            height={180}
+            customStyles={{
+              container: {
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
+              },
+            }}
           >
-            <MenuItem onPress={hideMenu}>Report</MenuItem>
-          </Menu>
+            <List.Item
+              onPress={() => {}}
+              style={{ padding: 0 }}
+              title="Report"
+              left={() => <List.Icon icon="flag" />}
+            />
+            <List.Item
+              onPress={() => {}}
+              style={{ padding: 0 }}
+              title="Unfollow"
+              left={() => <List.Icon icon="account-cancel" />}
+            />
+          </RBSheet>
         </VideoSettingsButton>
       </TopCard>
       <VideoSection source={{ uri: user.url }} />
       <BottomCard>
         <TitleAndCaptionSection>
           <Text variant="title">{user.videoTitle}</Text>
-          <Spacer position="top" size="small">
-            <Text variant="caption">{user.caption}</Text>
-          </Spacer>
+          {user.caption !== "" ? (
+            <Spacer position="top" size="small">
+              <Text variant="caption">{user.caption}</Text>
+            </Spacer>
+          ) : null}
         </TitleAndCaptionSection>
         <HorizontalLine />
         <IconsSection>
           <LikeButton>
             <IconButton
               icon={upvoted ? "arrow-up-bold" : "arrow-up-bold-outline"}
-              color={upvoted ? colors.brand.primary : "#BABBBA"}
+              color={upvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ margin: 0 }}
               size={25}
               onPress={clickLike}
             />
-            <Text variant="label">{user.likes}</Text>
+            <Text variant="numbers">{user.likes}</Text>
             <IconButton
               icon={downvoted ? "arrow-down-bold" : "arrow-down-bold-outline"}
-              color={downvoted ? colors.brand.primary : "#BABBBA"}
+              color={downvoted ? colors.brand.primary : colors.icon.secondary}
+              underlayColor="transparent"
               style={{ paddingTop: 2, margin: 0 }}
               size={25}
               onPress={clickDislike}
@@ -178,23 +189,26 @@ export const PostCard = ({ user, onNavigate }) => {
           <CommentButton>
             <IconButton
               icon="message-outline"
-              color="#BABBBA"
+              color={colors.icon.secondary}
+              underlayColor="transparent"
               style={{ margin: 0 }}
               size={25}
               onPress={() => onNavigate("ViewPosting", { user })}
             />
-            <Text variant="label">{user.numComments.length}</Text>
+            <Text variant="numbers">{user.numComments.length}</Text>
           </CommentButton>
           <IconButton
             icon="share-outline"
-            color="#BABBBA"
+            color={colors.icon.secondary}
+            underlayColor="transparent"
             style={{ margin: 0 }}
             size={30}
             onPress={onShare}
           />
           <IconButton
             icon={saved ? "bookmark" : "bookmark-outline"}
-            color={saved ? colors.brand.primary : "#BABBBA"}
+            color={saved ? colors.brand.primary : colors.icon.secondary}
+            underlayColor="transparent"
             style={{ margin: 0 }}
             size={25}
             onPress={clickSave}
