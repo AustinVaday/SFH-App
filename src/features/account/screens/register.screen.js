@@ -47,6 +47,7 @@ const WhiteSpaceSection = styled.View`
 export const RegisterScreen = ({ navigation }) => {
   return (
     <SafeArea>
+
       <TopTextSection>
         <Text variant="account_title" style={{textAlign: "left"}}>Create Account</Text>
         <Text variant="account_message">Sign up to get started!</Text>

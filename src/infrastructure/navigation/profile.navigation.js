@@ -20,12 +20,12 @@ import { BioEditScreen } from "../../features/profile/screens/bio-edit.screen";
 
 import { SaveRightHeader } from "../components/save-right-header.components";
 
-import userProfile from "../../utils/mock/userProfile";
+import { useSelector } from "react-redux";
 
 const ProfileStack = createStackNavigator();
 
 export const ProfileNavigator = () => {
-  const userName = userProfile.map((index) => index.username);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   return (
     <ProfileStack.Navigator>
@@ -35,7 +35,9 @@ export const ProfileNavigator = () => {
         options={({ navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: () => <Text variant="screen_title">{userName}</Text>,
+          headerTitle: () => (
+            <Text variant="screen_title">{currentUser.username}</Text>
+          ),
           headerRight: () => (
             <IconButton
               icon="dots-horizontal"
@@ -91,8 +93,8 @@ export const ProfileNavigator = () => {
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader
-              nameChange={route.params.name}
-              onNavigate={navigation.pop}
+              params={route.params}
+              onNavigate={navigation.goBack}
             />
           ),
         })}
@@ -108,8 +110,8 @@ export const ProfileNavigator = () => {
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader
-              nameChange={route.params.username}
-              onNavigate={navigation.pop}
+              params={route.params}
+              onNavigate={navigation.goBack}
             />
           ),
         })}
@@ -125,8 +127,8 @@ export const ProfileNavigator = () => {
           headerLeft: (props) => <HeaderBackButton {...props} />,
           headerRight: () => (
             <SaveRightHeader
-              nameChange={route.params.bio}
-              onNavigate={navigation.pop}
+              params={route.params}
+              onNavigate={navigation.goBack}
             />
           ),
         })}

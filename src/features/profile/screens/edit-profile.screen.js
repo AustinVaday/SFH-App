@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import styled from "styled-components";
@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 import { AvatarImageEdit } from "../components/avatar-image-edit.components";
+
+import { saveUserField } from "../../../services/user";
 
 import RNPickerSelect from "react-native-picker-select";
 import { Ionicons } from "@expo/vector-icons";
@@ -66,27 +68,41 @@ const identifies = [
 ];
 
 export const EditProfileScreen = ({ navigation, route }) => {
-  const { item } = route.params;
-  const [selectedIdentify, setSelectedIdentify] = useState(item.identify);
+  const { currentUser } = route.params;
+  const [selectedIdentify, setSelectedIdentify] = useState(
+    currentUser.identify
+  );
 
   const placeholder = {
-    label: "Don't want to identify",
-    value: null,
+    label: "No identify",
+    value: "none",
     color: "#9EA0A4",
+  };
+
+  const onSave = () => {
+    if (currentUser.identify !== selectedIdentify) {
+      let field = "identify";
+      saveUserField(field, selectedIdentify);
+    }
   };
 
   return (
     <EditProfileBackground>
       <ScrollView>
-        <AvatarImageEdit userImage={item.avatar} />
+        <AvatarImageEdit userImage={currentUser.profilePhoto} />
         <List.Section>
           <ListItem
-            onPress={() => navigation.navigate("NameEdit", { name: item.name })}
+            onPress={() =>
+              navigation.navigate("NameEdit", {
+                field: "displayName",
+                name: currentUser.displayName,
+              })
+            }
             title={<Text variant="setting_button">Name</Text>}
             right={() => (
               <>
                 <Text variant="setting_button" style={{ alignSelf: "center" }}>
-                  {item.name}
+                  {currentUser.displayName}
                 </Text>
                 <List.Icon icon="chevron-right" color={colors.text.secondary} />
               </>
@@ -94,13 +110,16 @@ export const EditProfileScreen = ({ navigation, route }) => {
           />
           <ListItem
             onPress={() =>
-              navigation.navigate("UsernameEdit", { username: item.username })
+              navigation.navigate("UsernameEdit", {
+                field: "username",
+                username: currentUser.username,
+              })
             }
             title={<Text variant="setting_button">Username</Text>}
             right={() => (
               <>
                 <Text variant="setting_button" style={{ alignSelf: "center" }}>
-                  {item.username}
+                  {currentUser.username}
                 </Text>
                 <List.Icon icon="chevron-right" color={colors.text.secondary} />
               </>
@@ -123,6 +142,7 @@ export const EditProfileScreen = ({ navigation, route }) => {
                       right: 10,
                     },
                   }}
+                  onClose={() => onSave()}
                   value={selectedIdentify}
                   useNativeAndroidPickerStyle={false}
                   Icon={() => {
@@ -135,7 +155,12 @@ export const EditProfileScreen = ({ navigation, route }) => {
             )}
           />
           <ListItem
-            onPress={() => navigation.navigate("BioEdit", { bio: item.bio })}
+            onPress={() =>
+              navigation.navigate("BioEdit", {
+                field: "bio",
+                bio: currentUser.bio,
+              })
+            }
             title={<Text variant="setting_button">Bio</Text>}
             right={() => (
               <>
@@ -144,7 +169,7 @@ export const EditProfileScreen = ({ navigation, route }) => {
                   variant="setting_button"
                   style={{ alignSelf: "center" }}
                 >
-                  {item.bio !== "" ? "..." : "Add a bio"}
+                  {currentUser.bio !== "" ? "..." : "Add a bio"}
                 </Text>
                 <List.Icon icon="chevron-right" color={colors.text.secondary} />
               </>

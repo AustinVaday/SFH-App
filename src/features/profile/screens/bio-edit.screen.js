@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, HelperText } from "react-native-paper";
 import styled from "styled-components";
 
@@ -30,8 +30,12 @@ const BioTextInput = styled(TextInput).attrs({
 `;
 
 export const BioEditScreen = ({ route, navigation }) => {
-  const { bio } = route.params;
+  const { field, bio } = route.params;
   const [text, setText] = useState(bio);
+
+  useEffect(() => {
+    navigation.setParams({ field: field, value: text });
+  }, [text]);
 
   return (
     <EditBioBackground>
@@ -52,7 +56,6 @@ export const BioEditScreen = ({ route, navigation }) => {
               console.log("Row limit");
             }
           }}
-          onSubmitEditing={() => navigation.setParams({ bio: text })}
           style={{ paddingHorizontal: 0 }}
         />
         <HelperText type="info" style={{ paddingTop: 10 }}>

@@ -20,7 +20,12 @@ import { firebase } from "../../../utils/firebase";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  onFacebookSignIn,
+  onGoogleSignIn,
+} from "../../../services/redux/actions/auth.actions";
 
 import { FBAPPID, WEBCLIENTID } from "@env";
 
@@ -37,9 +42,10 @@ maybeCompleteAuthSession();
 export const FacebookAndGoogleButtons = ({ navigation }) => {
   const [onFacebook, setOnFacebook] = useState(false);
   const [onGoogle, setOnGoogle] = useState(false);
-  const { onFacebookOrGoogleSignIn, error, isLoading } = useContext(
-    AuthenticationContext
-  );
+
+  const isGoogleLoading = useSelector((state) => state.auth.googleLoading);
+  const isFacebookLoading = useSelector((state) => state.auth.facebookLoading);
+  const dispatch = useDispatch();
 
   const [requestFacebook, responseFacebook, promptAsyncFacebook] =
     useAuthRequest({
@@ -60,7 +66,7 @@ export const FacebookAndGoogleButtons = ({ navigation }) => {
 
         const credential =
           firebase.auth.FacebookAuthProvider.credential(access_token);
-        onFacebookOrGoogleSignIn(credential);
+        dispatch(onFacebookSignIn(credential));
         setOnFacebook(false);
       }
     } else if (onGoogle) {
@@ -69,7 +75,7 @@ export const FacebookAndGoogleButtons = ({ navigation }) => {
 
         const credential =
           firebase.auth.GoogleAuthProvider.credential(id_token);
-        onFacebookOrGoogleSignIn(credential);
+        dispatch(onGoogleSignIn(credential));
         setOnGoogle(false);
       }
     }
@@ -92,9 +98,11 @@ export const FacebookAndGoogleButtons = ({ navigation }) => {
           setOnFacebook(true);
           promptAsyncFacebook();
         }}
-        loading={isLoading}
+        loading={isFacebookLoading}
       >
-        <Text variant="contained_button">Continue with Facebook</Text>
+        {!isFacebookLoading ? (
+          <Text variant="contained_button">Continue with Facebook</Text>
+        ) : null}
       </Button>
       <Spacer size="medium" />
       <Button
@@ -108,9 +116,11 @@ export const FacebookAndGoogleButtons = ({ navigation }) => {
           setOnGoogle(true);
           promptAsyncGoogle();
         }}
-        loading={isLoading}
+        loading={isGoogleLoading}
       >
-        <Text variant="contained_button">Continue with Google</Text>
+        {!isGoogleLoading ? (
+          <Text variant="contained_button">Continue with Google</Text>
+        ) : null}
       </Button>
     </AuthButtonsSection>
   );

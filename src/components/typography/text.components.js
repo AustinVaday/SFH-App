@@ -119,7 +119,7 @@ const text_button = (theme) => `
 const contained_button = (theme) => `
     font-family: ${theme.fonts.body_600};
     font-size: ${theme.fontSizes.caption};
-    color: ${theme.colors.text.inverse};
+    color: ${theme.colors.text.white};
 `;
 
 const account_title = (theme) => `

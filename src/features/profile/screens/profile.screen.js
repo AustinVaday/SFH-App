@@ -8,6 +8,8 @@ import { ProfileTabs } from "../navigators/profile-tabs.navigator";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
+import { useSelector } from "react-redux";
+
 import userProfile from "../../../utils/mock/userProfile";
 
 const ProfileBackground = styled.View`
@@ -70,24 +72,7 @@ const BioText = styled(Text)`
 `;
 
 export const ProfileScreen = ({ navigation }) => {
-  // const [photo, setPhoto] = useState(null);
-  // const [fullName, setFullName] = useState("");
-
-  // const getProfileInfo = async (currentUser) => {
-  //   const photoUri = await AsyncStorage.getItem(`${currentUser.uid}-photo`);
-  //   if (!photoUri) {
-  //     setPhoto(currentUser.photoURL + "?type=large");
-  //     setFullName(currentUser.displayName)
-  //   } else {
-  //     setPhoto(photoUri);
-  //   }
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getProfileInfo(user);
-  //   }, [user])
-  // );
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   return (
     <ProfileBackground>
@@ -98,21 +83,28 @@ export const ProfileScreen = ({ navigation }) => {
             <>
               <Profile>
                 <AvatarImageContainer>
-                  <Surface style={{ borderRadius: 80, elevation: 1 }}>
-                    <Avatar.Image
-                      size={120}
-                      source={{
-                        uri: item.avatar,
-                      }}
-                    />
-                  </Surface>
+                    <Surface style={{ borderRadius: 80, elevation: 1 }}>
+                      <Avatar.Image
+                        size={120}
+                        source={{
+                          uri: currentUser.profilePhoto,
+                        }}
+                      />
+                    </Surface>
                 </AvatarImageContainer>
+
                 <ProfileInfoContainer>
                   <NameAndIdentify>
-                    <Text variant="title">{item.name} </Text>
-                    <Text variant="profile_identify">• {item.identify}</Text>
+                    <Text variant="title">{currentUser.displayName} </Text>
+                    {currentUser.identify !== "none" ? (
+                      <Text variant="profile_identify">
+                        • {currentUser.identify}
+                      </Text>
+                    ) : null}
                   </NameAndIdentify>
-                  {item.bio !== "" ? <BioText>{item.bio}</BioText> : null}
+                  {currentUser.bio !== "" ? (
+                    <BioText>{currentUser.bio}</BioText>
+                  ) : null}
                 </ProfileInfoContainer>
 
                 <StatsSection>
@@ -139,7 +131,7 @@ export const ProfileScreen = ({ navigation }) => {
                       }}
                     >
                       <Text variant="profile_numbers">
-                        {item.following.length}
+                        {currentUser.followingCount}
                       </Text>
                       <Text variant="profile_labels">Following</Text>
                     </TouchableOpacity>
@@ -157,7 +149,7 @@ export const ProfileScreen = ({ navigation }) => {
                       }}
                     >
                       <Text variant="profile_numbers">
-                        {item.followers.length}
+                        {currentUser.followersCount}
                       </Text>
                       <Text variant="profile_labels">Followers</Text>
                     </TouchableOpacity>
@@ -167,7 +159,7 @@ export const ProfileScreen = ({ navigation }) => {
                 <EditProfileButtonContainer>
                   <EditProfileButton
                     onPress={() => {
-                      navigation.navigate("EditProfile", { item });
+                      navigation.navigate("EditProfile", { currentUser });
                     }}
                     mode="outlined"
                     color={colors.ui.quaternary}

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Alert, TouchableWithoutFeedback } from "react-native";
 import { Avatar, Surface } from "react-native-paper";
 import { openURL } from "expo-linking";
 import styled from "styled-components";
 
 import { colors } from "../../../infrastructure/theme/colors";
+
+import { saveUserProfileImage } from "../../../services/user";
 
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
@@ -25,8 +27,6 @@ const CameraEditIcon = styled(Avatar.Icon).attrs({
 `;
 
 export const AvatarImageEdit = ({ userImage }) => {
-  const [image, setImage] = useState(null);
-
   const { showActionSheetWithOptions } = useActionSheet();
 
   const takePhoto = async () => {
@@ -42,7 +42,7 @@ export const AvatarImageEdit = ({ userImage }) => {
       });
 
       if (!result.cancelled) {
-        setImage(result.uri);
+        saveUserProfileImage(result.uri);
       }
     }
   };
@@ -55,12 +55,12 @@ export const AvatarImageEdit = ({ userImage }) => {
       let result = await launchImageLibraryAsync({
         mediaTypes: MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [1, 1],
         quality: 1,
       });
 
       if (!result.cancelled) {
-        setImage(result.uri);
+        saveUserProfileImage(result.uri);
       }
     }
   };
@@ -103,21 +103,12 @@ export const AvatarImageEdit = ({ userImage }) => {
     <View style={{ alignItems: "center", padding: 20 }}>
       <TouchableWithoutFeedback onPress={onPhotoActions}>
         <Surface style={{ borderRadius: 60, elevation: 1 }}>
-          {image ? (
-            <Avatar.Image
-              size={120}
-              source={{
-                uri: image,
-              }}
-            />
-          ) : (
-            <Avatar.Image
-              size={120}
-              source={{
-                uri: userImage,
-              }}
-            />
-          )}
+          <Avatar.Image
+            size={120}
+            source={{
+              uri: userImage,
+            }}
+          />
           <CameraEditIcon icon="camera" />
         </Surface>
       </TouchableWithoutFeedback>

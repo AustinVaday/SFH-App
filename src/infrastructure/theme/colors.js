@@ -18,7 +18,9 @@ export const colors = {
   bg: {
     primary: "#FFFFFF",
     secondary: "#F1F1F1",
-    tertiary: "#C1C2C1"
+    tertiary: "#C1C2C1",
+    error: "#D0421B",
+    success: "#138000",
   },
   text: {
     primary: "#262626",
@@ -26,7 +28,7 @@ export const colors = {
     tertiary: "#CECECE",
     brand: "#0095FF",
     disabled: "#9C9C9C",
-    inverse: "#FFFFFF",
+    white: "#FFFFFF",
     error: "#D0421B",
     success: "#138000",
   },

@@ -1,13 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import { Button, Dialog, Portal, List } from "react-native-paper";
 import { openURL } from "expo-linking";
 import styled from "styled-components";
 
+import { firebase } from "../../../utils/firebase";
+
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
-
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 const SettingsBackground = styled.View`
   flex: 1;
@@ -46,7 +46,6 @@ const ListItem = styled(List.Item)`
 
 export const SettingsScreen = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
-  const { onLogout } = useContext(AuthenticationContext);
 
   const showLogoutDialog = () => setVisible(true);
 
@@ -54,6 +53,10 @@ export const SettingsScreen = ({ navigation }) => {
 
   const handleNotifications = () => {
     openURL("app-settings:");
+  };
+
+  const onLogout = async () => {
+    firebase.auth().signOut();
   };
 
   return (
@@ -164,7 +167,9 @@ export const SettingsScreen = ({ navigation }) => {
                     color: colors.brand.primary,
                     fontFamily: "OpenSans_800ExtraBold",
                   }}
-                  onPress={onLogout}
+                  onPress={() => {
+                    onLogout();
+                  }}
                 >
                   Confirm
                 </DialogButton>

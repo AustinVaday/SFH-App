@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
-import { ScrollView } from "react-native";
-import { TextInput, HelperText, ActivityIndicator } from "react-native-paper";
-import GradientButton from "react-native-gradient-buttons";
+import React from "react";
+import { ScrollView, Pressable } from "react-native";
+import { TextInput, ActivityIndicator } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
 import { Formik } from "formik";
+import Toast from "react-native-toast-message";
 
 import * as yup from "yup";
 import styled from "styled-components/native";
@@ -10,7 +11,8 @@ import styled from "styled-components/native";
 import { colors } from "../../../infrastructure/theme/colors";
 import { Text } from "../../../components/typography/text.components";
 
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+import { useDispatch, useSelector } from "react-redux";
+import { passwordReset } from "../../../services/redux/actions/auth.actions";
 
 const TextInputsSection = styled.View`
   padding-top: ${(props) => props.theme.space[3]};
@@ -19,8 +21,9 @@ const TextInputsSection = styled.View`
 `;
 
 const SendButtonSection = styled.View`
-  padding-left: ${(props) => props.theme.space[2]};
-  padding-right: ${(props) => props.theme.space[2]};
+  padding-left: ${(props) => props.theme.space[3]};
+  padding-right: ${(props) => props.theme.space[3]};
+  padding-bottom: ${(props) => props.theme.space[3]};
 `;
 
 const validationSchema = yup.object().shape({
@@ -28,41 +31,51 @@ const validationSchema = yup.object().shape({
     .string()
     .label("Email")
     .email("Enter a valid email")
-    .required("Please enter a registered email"),
+    .required("Please enter your email"),
 });
 
 export const FormForgotPassword = ({ onNavigate }) => {
-  const { onPasswordReset, error, isLoading } = useContext(
-    AuthenticationContext
-  );
+  const isLoading = useSelector((state) => state.auth.loading);
+  const dispatch = useDispatch();
 
-  const handlePasswordReset = async (values, actions) => {
+  const handlePasswordReset = async (values) => {
     const { email } = values;
 
     try {
-      onPasswordReset(email);
+      dispatch(passwordReset(email));
       onNavigate("Login");
     } catch (error) {
-      actions.setFieldError("general", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+        topOffset: 45,
+      });
+    }
+  };
+
+  const handleSubmit = (values, errors) => {
+    if (errors.email === undefined && values.email === "") {
+      Toast.show({
+        type: "error",
+        text2: "Please fill out the email.",
+        topOffset: 45,
+      });
+    } else if (values.email === "" || errors.email !== undefined) {
+      Toast.show({
+        type: "error",
+        text1: "Email",
+        text2: errors.email,
+        topOffset: 45,
+      });
+    } else if (!errors.email) {
+      handlePasswordReset(values);
     }
   };
 
   return (
-    <Formik
-      initialValues={{ email: "" }}
-      onSubmit={(values, actions) => {
-        handlePasswordReset(values, actions);
-      }}
-      validationSchema={validationSchema}
-    >
-      {({
-        handleChange,
-        values,
-        handleSubmit,
-        errors,
-        touched,
-        handleBlur,
-      }) => (
+    <Formik initialValues={{ email: "" }} validationSchema={validationSchema}>
+      {({ handleChange, values, errors, touched, handleBlur }) => (
         <ScrollView scrollEnabled={false} style={{ flexGrow: 0 }}>
           <TextInputsSection>
             <TextInput
@@ -71,43 +84,50 @@ export const FormForgotPassword = ({ onNavigate }) => {
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               label="Enter email"
-              style={{ height: 50 }}
+              style={{ height: 50, paddingBottom: 10 }}
               theme={{
                 roundness: 15,
                 colors: {
-                  primary: colors.text.brand,
-                  placeholder: colors.ui.quinary,
+                  primary:
+                    touched.email && errors.email
+                      ? colors.text.error
+                      : colors.text.brand,
+                  placeholder:
+                    touched.email && errors.email
+                      ? colors.ui.error
+                      : colors.ui.quinary,
                   background: colors.bg.primary,
                 },
               }}
             />
-            <HelperText type="error" visible={errors}>
-              {touched.email && errors.email}
-            </HelperText>
           </TextInputsSection>
 
           <SendButtonSection>
-            {!isLoading ? (
-              <GradientButton
-                text={<Text variant="contained_button">Send</Text>}
-                gradientBegin={colors.brand.primary}
-                gradientEnd="#6dd5ed"
-                gradientDirection="vertical"
-                height={50}
-                radius={15}
-                onPressAction={handleSubmit}
-              />
-            ) : (
-              <ActivityIndicator
-                animating={true}
-                color={colors.brand.primary}
-              />
-            )}
+            <Pressable
+              onPress={() => {
+                handleSubmit(values, errors);
+              }}
+              disabled={isLoading}
+            >
+              <LinearGradient
+                colors={[colors.brand.primary, "#6dd5ed"]}
+                style={{
+                  height: 50,
+                  borderRadius: 15,
+                  alignItems: "center",
+                  padding: 15,
+                }}
+              >
+                {!isLoading ? (
+                  <Text variant="contained_button" style={{ fontSize: 15 }}>
+                    SEND
+                  </Text>
+                ) : (
+                  <ActivityIndicator animating={true} color="white" />
+                )}
+              </LinearGradient>
+            </Pressable>
           </SendButtonSection>
-
-          <Text style={{ color: "red", paddingHorizontal: 40, marginTop: 10 }}>
-            {errors.general}
-          </Text>
         </ScrollView>
       )}
     </Formik>

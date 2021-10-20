@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, HelperText } from "react-native-paper";
 import styled from "styled-components";
 
@@ -27,8 +27,12 @@ const UsernameTextInput = styled(TextInput).attrs({
 `;
 
 export const UsernameEditScreen = ({ route, navigation }) => {
-  const { username } = route.params;
+  const { field, username } = route.params;
   const [text, setText] = useState(username);
+
+  useEffect(() => {
+    navigation.setParams({ field: field, value: text });
+  }, [text]);
 
   return (
     <EditUsernameBackground>
@@ -41,7 +45,6 @@ export const UsernameEditScreen = ({ route, navigation }) => {
           clearButtonMode="while-editing"
           value={text}
           onChangeText={(value) => setText(value)}
-          onSubmitEditing={() => navigation.setParams({ username: text })}
         />
         <HelperText type="info" style={{ paddingTop: 10 }}>
           {text.length}/24
