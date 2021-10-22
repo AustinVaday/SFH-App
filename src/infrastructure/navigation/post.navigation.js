@@ -7,6 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { CameraScreen } from "../../features/post/screens/camera.screen";
 import { LibraryScreen } from "../../features/post/screens/library.screen";
 import { PostScreen } from "../../features/post/screens/post.screen";
+import { PreviewScreen } from "../../features/post/screens/preview.screen";
 import { colors } from "../theme/colors";
 
 const PostStack = createStackNavigator();
@@ -22,6 +23,11 @@ export const PostNavigator = () => {
       <PostStack.Screen
         name="Camera"
         component={CameraScreen}
+        options={{ headerShown: false }}
+      />
+      <PostStack.Screen
+        name="Preview"
+        component={PreviewScreen}
         options={{ headerShown: false }}
       />
       <PostStack.Screen

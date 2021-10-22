@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Camera } from "expo-camera";
-import { Video } from "expo-av";
+import { getThumbnailAsync } from "expo-video-thumbnails";
 import { IconButton, Button } from "react-native-paper";
 import { openURL } from "expo-linking";
 import styled from "styled-components/native";
@@ -16,6 +16,8 @@ import { Text } from "../../../components/typography/text.components";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 
 import LottieView from "lottie-react-native";
+
+import { useIsFocused } from "@react-navigation/core";
 
 const PostCamera = styled(Camera)`
   width: 100%;
@@ -51,7 +53,7 @@ const PreviewTopButtonsSection = styled.View`
   align-items: center;
 `;
 
-export const AnimationWrapper = styled.View`
+const AnimationWrapper = styled.View`
   flex-direction: row;
   height: 10px;
   width: 90%;
@@ -60,7 +62,7 @@ export const AnimationWrapper = styled.View`
   align-self: center;
 `;
 
-export const CameraBottomButtonsContainer = styled.View`
+const CameraBottomButtonsContainer = styled.View`
   flex: 1;
   flex-direction: row;
   align-items: center;
@@ -93,20 +95,22 @@ function useInterval(callback, delay) {
 }
 
 export const CameraScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
-  const [videoTaken, setVideoTaken] = useState(false);
+  const [hasCameraPermissions, setHasCameraPermissions] = useState(false);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const [cameraFlash, setCameraFlash] = useState(
+    Camera.Constants.FlashMode.off
+  );
   const [cameraIsRecording, setCameraIsRecording] = useState(false);
-  const [video, setVideo] = useState(null);
   const cameraRef = useRef();
   const animation = useRef(new Animated.Value(0));
   const [progress, setProgress] = useState(0);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      setHasPermission(status === "granted");
+      const cameraStatus = await Camera.requestPermissionsAsync();
+      setHasCameraPermissions(cameraStatus.status == "granted");
     })();
   }, []);
 
@@ -137,11 +141,7 @@ export const CameraScreen = ({ navigation }) => {
     extrapolate: "clamp",
   });
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-
-  if (hasPermission === false) {
+  if (hasCameraPermissions === false) {
     return (
       <SafeArea>
         <IconButton
@@ -177,69 +177,59 @@ export const CameraScreen = ({ navigation }) => {
     );
   }
 
-  const changeType = () => {
-    setType(
-      type === Camera.Constants.Type.back
+  const changeCameraType = () => {
+    setCameraType(
+      cameraType === Camera.Constants.Type.back
         ? Camera.Constants.Type.front
         : Camera.Constants.Type.back
     );
   };
 
-  const changeFlash = () => {
-    if (flash === Camera.Constants.FlashMode.off) {
-      setFlash(Camera.Constants.FlashMode.on);
-    } else if (flash === Camera.Constants.FlashMode.on) {
-      setFlash(Camera.Constants.FlashMode.auto);
-    } else if (flash === Camera.Constants.FlashMode.auto) {
-      setFlash(Camera.Constants.FlashMode.off);
-    }
+  const changeCameraFlash = () => {
+    setCameraFlash(
+      cameraFlash === Camera.Constants.FlashMode.off
+        ? Camera.Constants.FlashMode.torch
+        : Camera.Constants.FlashMode.off
+    );
   };
 
-  const takeVideo = async () => {
+  const recordVideo = async () => {
     if (cameraRef) {
-      const takenVideo = await cameraRef.current.recordAsync();
-      setVideo(takenVideo.uri);
-      setVideoTaken(true);
+      try {
+        const options = {
+          maxDuration: 10,
+          quality: Camera.Constants.VideoQuality["480"],
+        };
+        const videoRecordPromise = cameraRef.current.recordAsync(options);
+        if (videoRecordPromise) {
+          const data = await videoRecordPromise;
+          const source = data.uri;
+          let sourceThumb = await generateThumbnail(source);
+          navigation.navigate("Preview", { source, sourceThumb });
+        }
+      } catch (error) {
+        console.warn(error);
+      }
     }
   };
 
-  const rejectVideo = () => {
-    setVideo(null);
-    setVideoTaken(false);
-  };
-
-  const approveVideo = async () => {
-    navigation.navigate("Post", { url: video });
-    setVideo(null);
-    setVideoTaken(false);
+  const generateThumbnail = async (source) => {
+    try {
+      const { uri } = await getThumbnailAsync(source, {
+        time: 5000,
+      });
+      return uri;
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
   return (
     <>
-      {videoTaken ? (
-        <SafeArea>
-          <PreviewTopButtonsSection>
-            <IconButton size={35} icon="close" onPress={rejectVideo} />
-            <Text variant="title">Preview</Text>
-            <IconButton
-              size={35}
-              icon="checkbox-marked"
-              color={colors.brand.primary}
-              onPress={approveVideo}
-            />
-          </PreviewTopButtonsSection>
-          <Video
-            source={{ uri: video }}
-            resizeMode="cover"
-            isLooping
-            useNativeControls
-            style={{ flex: 1 }}
-          />
-        </SafeArea>
-      ) : (
         <PostCamera
-          type={type}
-          flashMode={flash}
+          type={cameraType}
+          ratio={"16:9"}
+          flashMode={cameraFlash}
           ref={(camera) => (cameraRef.current = camera)}
         >
           <SafeArea style={{ backgroundColor: "transparent" }}>
@@ -258,35 +248,27 @@ export const CameraScreen = ({ navigation }) => {
                     <IconButton
                       size={35}
                       icon={
-                        type === Camera.Constants.Type.back
+                        cameraType === Camera.Constants.Type.back
                           ? "camera-front"
                           : "camera-rear"
                       }
                       color="white"
-                      onPress={changeType}
+                      onPress={changeCameraType}
                     />
-                    {flash === Camera.Constants.FlashMode.off && (
+                    {cameraFlash === Camera.Constants.FlashMode.off && (
                       <IconButton
                         size={35}
                         icon={"flash-off"}
                         color="white"
-                        onPress={changeFlash}
+                        onPress={changeCameraFlash}
                       />
                     )}
-                    {flash === Camera.Constants.FlashMode.on && (
+                    {cameraFlash === Camera.Constants.FlashMode.torch && (
                       <IconButton
                         size={35}
                         icon={"flash"}
                         color="white"
-                        onPress={changeFlash}
-                      />
-                    )}
-                    {flash === Camera.Constants.FlashMode.auto && (
-                      <IconButton
-                        size={35}
-                        icon={"flash-auto"}
-                        color="white"
-                        onPress={changeFlash}
+                        onPress={changeCameraFlash}
                       />
                     )}
                   </CameraButtons>
@@ -302,7 +284,7 @@ export const CameraScreen = ({ navigation }) => {
                     <TouchableWithoutFeedback
                       onPress={() => {
                         setCameraIsRecording(true);
-                        takeVideo();
+                        recordVideo();
                       }}
                     >
                       <LottieView
@@ -352,7 +334,6 @@ export const CameraScreen = ({ navigation }) => {
             )}
           </SafeArea>
         </PostCamera>
-      )}
     </>
   );
 };

@@ -44,6 +44,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-big-list": "^1.4.3",
     "react-native-dotenv": "^2.5.5",
     "react-native-dropdownalert": "^4.3.0",
     "react-native-gesture-handler": "~1.10.2",

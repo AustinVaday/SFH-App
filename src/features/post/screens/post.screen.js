@@ -4,7 +4,6 @@ import {
   ScrollView,
   Dimensions,
   ActivityIndicator,
-  Alert,
   TouchableOpacity,
 } from "react-native";
 import { Video } from "expo-av";
@@ -22,6 +21,9 @@ import { Keyboard } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components/native";
+import Toast from "react-native-toast-message";
+
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 import { colors } from "../../../infrastructure/theme/colors";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
@@ -39,26 +41,46 @@ const PostText = styled(Text)`
 `;
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required("Required"),
+  title: Yup.string().required("Please fill out the title"),
   caption: Yup.string().label("Caption"),
 });
 
-export const PostScreen = ({ navigation, route }) => {
+export const PostScreen = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const titleRef = createRef();
   const captionRef = createRef();
 
-  const { url } = route.params;
+  const { source, sourceThumb } = props.route.params;
+
+  const navigation = useNavigation();
+
+  const handleSubmit = (values, errors) => {
+    setIsSubmitting(true);
+    if (errors.title === undefined && values.title === "") {
+      Toast.show({
+        type: "error",
+        text2: "Please fill out everything.",
+        topOffset: 45,
+      });
+      setIsSubmitting(false);
+    } else if (values.title === "" || errors.title !== undefined) {
+      Toast.show({
+        type: "error",
+        text1: "Title",
+        text2: errors.title,
+        topOffset: 45,
+      });
+      setIsSubmitting(false);
+    } else if (!errors.title && !errors.caption) {
+      submit(values);
+    }
+  };
 
   const submit = async (values) => {
-    if (values.title) {
-      setIsSubmitting(true);
-      navigation.navigate("Home");
-    } else {
-      Alert.alert("All fields are required");
-    }
+    setIsSubmitting(false);
+    navigation.dispatch(CommonActions.reset({index: 1, routes: [{name: "Home"}]}));
   };
 
   return (
@@ -75,7 +97,7 @@ export const PostScreen = ({ navigation, route }) => {
                 shouldPlay: true,
                 resizeMode: Video.RESIZE_MODE_CONTAIN,
                 source: {
-                  uri: url,
+                  uri: source,
                 },
               }}
               inFullscreen={true}
@@ -93,7 +115,7 @@ export const PostScreen = ({ navigation, route }) => {
               <Surface style={{ elevation: 3 }}>
                 <Video
                   resizeMode="stretch"
-                  source={{ uri: url }}
+                  source={{ uri: source }}
                   style={{
                     width: width / 3,
                     height: width / 3,
@@ -104,10 +126,9 @@ export const PostScreen = ({ navigation, route }) => {
           </VideoPreview>
           <Formik
             initialValues={{ title: "", caption: "" }}
-            onSubmit={(values) => submit(values)}
             validationSchema={validationSchema}
           >
-            {({ handleChange, values, handleSubmit, errors, touched }) => (
+            {({ handleChange, values, errors, touched }) => (
               <View>
                 <TextInput
                   value={values.title}
@@ -154,10 +175,10 @@ export const PostScreen = ({ navigation, route }) => {
                   }}
                   contentStyle={{ height: 50, width: width / 2 }}
                   mode="contained"
-                  onPress={handleSubmit}
+                  onPress={() => handleSubmit(values, errors)}
                 >
                   {isSubmitting ? (
-                    <ActivityIndicator color={colors.brand.primary} />
+                    <ActivityIndicator color={colors.brand.secondary} />
                   ) : (
                     <PostText>Post</PostText>
                   )}

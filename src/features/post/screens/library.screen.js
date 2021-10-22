@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Dimensions, FlatList, TouchableOpacity } from "react-native";
+import { View, Dimensions, Pressable } from "react-native";
 import { IconButton, Button } from "react-native-paper";
 import { requestPermissionsAsync, getAssetsAsync } from "expo-media-library";
 import { Video } from "expo-av";
+import { getThumbnailAsync } from "expo-video-thumbnails";
+import BigList from "react-native-big-list";
 import { openURL } from "expo-linking";
 import styled from "styled-components/native";
 
@@ -42,31 +44,40 @@ const AllowPhotosAccessSection = styled.View`
 `;
 
 export const LibraryScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
   const [shouldPlay, setShouldPlay] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [videos, setVideos] = useState(null);
+  const [selectedGalleryVideo, setSelectedGalleryVideo] = useState(null);
+  const [galleryVideos, setGalleryVideos] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const { status: cameraRoll } = await requestPermissionsAsync();
-      setHasPermission(cameraRoll === "granted");
-    })();
-    (async () => {
-      const edges = await getAssetsAsync({
-        first: 10,
-        mediaType: "video",
-      });
-      setVideos(edges.assets);
-      setSelectedVideo(edges.assets[0].uri);
+      const galleryStatus = await requestPermissionsAsync();
+      setHasGalleryPermissions(galleryStatus.status === "granted");
+
+      if (galleryStatus.status == "granted") {
+        const userGalleryMedia = await getAssetsAsync({
+          first: 100,
+          sortBy: ["creationTime"],
+          mediaType: ["video"],
+        });
+
+        // to filter the gallery videos for less than 10 seconds only, removing
+        // gallery items if more than 10 seconds
+        userGalleryMedia.assets = userGalleryMedia.assets
+          .filter((item) => item.duration <= 10)
+          .map((item) => {
+            return item;
+          });
+
+        if (userGalleryMedia.totalCount !== 0) {
+          setGalleryVideos(userGalleryMedia.assets);
+          setSelectedGalleryVideo(userGalleryMedia.assets[0].uri);
+        }
+      }
     })();
   }, []);
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-
-  if (hasPermission === false) {
+  if (hasGalleryPermissions === false) {
     return (
       <SafeArea>
         <IconButton
@@ -112,28 +123,38 @@ export const LibraryScreen = ({ navigation }) => {
     }
   };
 
+  const handleToSelectVideo = (uri) => {
+    if (shouldPlay) {
+      setShouldPlay(false);
+    }
+    setSelectedGalleryVideo(uri);
+  };
+
+  const handleSubmit = async () => {
+    let sourceThumb = await generateThumbnail(selectedGalleryVideo);
+    navigation.navigate("Preview", { source: selectedGalleryVideo, sourceThumb });
+  };
+
+  const generateThumbnail = async (source) => {
+    try {
+      const { uri } = await getThumbnailAsync(source, {
+        time: 5000,
+      });
+      return uri;
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   const renderItem = ({ item }) => (
     <>
-      {/* {selectedVideo == item.uri ? (
+      <Pressable key={item} onPress={() => handleToSelectVideo(item.uri)}>
         <Video
-          source={{ uri: selectedVideo }}
+          source={{ uri: item.uri }}
           resizeMode="cover"
-          style={{
-            width: width / 3,
-            height: width / 3,
-            borderWidth: 5,
-            borderColor: colors.brand.primary,
-          }}
+          style={{ width: width / 3, height: width / 3 }}
         />
-      ) : ( */}
-        <TouchableOpacity activeOpacity={1} key={item} onPress={() => setSelectedVideo(item.uri)}>
-          <Video
-            source={{ uri: item.uri }}
-            resizeMode="cover"
-            style={{ width: width / 3, height: width / 3 }}
-          />
-        </TouchableOpacity>
-      {/* )} */}
+      </Pressable>
     </>
   );
 
@@ -154,48 +175,43 @@ export const LibraryScreen = ({ navigation }) => {
           icon="checkbox-marked"
           color={colors.brand.primary}
           underlayColor="transparent"
-          onPress={() => {
-            navigation.navigate("Post", { url: selectedVideo });
-          }}
+          onPress={handleSubmit}
         />
       </TopTitleSection>
-      {videos && (
-        <>
-          <View>
-            <TouchableOpacity activeOpacity={1} onPress={handlePlayAndPause}>
-              <Video
-                source={{ uri: selectedVideo }}
-                isMuted={true}
-                shouldPlay={shouldPlay}
-                resizeMode="cover"
-                isLooping
-                style={{ width: width, height: width }}
-              />
-              <PlayIconButton
-                name={shouldPlay ? null : "play"}
-                size={85}
-                color={colors.icon.primary}
-              />
-            </TouchableOpacity>
-            <CameraIconButton
-              size={30}
-              icon="camera"
-              color={colors.icon.primary}
-              underlayColor="black"
-              onPress={() => {
-                navigation.navigate("Camera");
-              }}
-            />
-          </View>
-          <FlatList
-            data={videos}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.uri}
-            numColumns={3}
-            showsVerticalScrollIndicator={false}
+      <View>
+        <Pressable onPress={handlePlayAndPause}>
+          <Video
+            source={{ uri: selectedGalleryVideo }}
+            isMuted={true}
+            shouldPlay={shouldPlay}
+            resizeMode="cover"
+            isLooping
+            style={{ width: width, height: width }}
           />
-        </>
-      )}
+          <PlayIconButton
+            name={shouldPlay ? null : "play"}
+            size={85}
+            color={colors.icon.primary}
+          />
+        </Pressable>
+        <CameraIconButton
+          size={30}
+          icon="camera"
+          color={colors.icon.primary}
+          underlayColor="black"
+          onPress={() => {
+            navigation.navigate("Camera");
+          }}
+        />
+      </View>
+      <BigList
+        data={galleryVideos}
+        renderItem={renderItem}
+        itemHeight={130}
+        keyExtractor={(item) => item.uri}
+        numColumns={3}
+        showsVerticalScrollIndicator={false}
+      />
     </SafeArea>
   );
 };
