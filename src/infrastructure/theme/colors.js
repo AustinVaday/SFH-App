@@ -40,3 +40,11 @@ export const colors = {
     google: "#DB4437",
   },
 };
+
+export const shadowTextStyle = () => {
+  return {
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.1,
+  };
+};

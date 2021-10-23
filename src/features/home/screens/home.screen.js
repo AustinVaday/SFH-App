@@ -10,7 +10,7 @@ import { Text } from "../../../components/typography/text.components";
 import user from "../../../utils/mock/users";
 
 const PostsListScreen = styled.View`
-  background-color: ${(props) => props.theme.colors.bg.secondary};
+  background-color: ${(props) => props.theme.colors.bg.primary};
 `;
 
 const PostCardContainer = styled.View`

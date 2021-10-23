@@ -8,7 +8,7 @@ export default users = [
     caption: "I want to become a doctor! Here is a sign :)",
     likes: 0,
     numComments: [],
-    url: "https://www.lifeprint.com/asl101/gifs/d/doctor-medic.gif",
+    url: "https://thumbs.gfycat.com/AjarFaithfulHorseshoebat-size_restricted.gif",
   },
   {
     name: "Shane",
@@ -45,7 +45,7 @@ export default users = [
       },
     ],
     url:
-      "https://i.pinimg.com/originals/f6/ab/b3/f6abb389c68bcbd7263aaab7d7fcb8e7.gif",
+      "https://c.tenor.com/37gQ1l4_56wAAAAM/gobble-gobble-good-morning.gif",
   },
   {
     name: "Austin",

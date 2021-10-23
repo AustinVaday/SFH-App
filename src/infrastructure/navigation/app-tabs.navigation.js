@@ -36,6 +36,7 @@ export const AppTabsNavigator = () => (
     tabBarOptions={{
       activeTintColor: colors.brand.primary,
       inactiveTintColor: colors.bg.tertiary,
+      showLabel: false,
     }}
   >
     <AppTab.Screen name="Home" component={HomeNavigator} />

@@ -38,13 +38,15 @@ const error = (theme) => `
 `;
 
 const title = (theme) => `
-    font-family: ${theme.fonts.body_700};
+    font-family: ${theme.fonts.body_800};
     font-size: ${theme.fontSizes.title};
+    color: ${theme.colors.text.white};
 `;
 
 const caption = (theme) => `
-    font-family: ${theme.fonts.body_400};
+    font-family: ${theme.fonts.body_600};
     font-size: ${theme.fontSizes.caption};
+    color: ${theme.colors.text.white};
 `;
 
 const label = (theme) => `
@@ -53,18 +55,21 @@ const label = (theme) => `
 `;
 
 const numbers = (theme) => `
-    font-family: ${theme.fonts.body_600};
-    font-size: ${theme.fontSizes.caption};
+    font-family: ${theme.fonts.body_700};
+    font-size: ${theme.fontSizes.body};
+    color: ${theme.colors.text.white};
 `;
 
 const date = (theme) => `
     font-family: ${theme.fonts.body_400};
     font-size: ${theme.fontSizes.date};
+    color: ${theme.colors.text.white};
 `;
 
 const name = (theme) => `
-    font-size: ${theme.fontSizes.body};
+    font-size: ${theme.fontSizes.button};
     font-family: ${theme.fonts.body_600};
+    color: ${theme.colors.text.white};
 `;
 
 const follow_name = (theme) => `
