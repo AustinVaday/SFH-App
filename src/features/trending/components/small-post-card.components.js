@@ -1,38 +1,33 @@
 import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
-import { Avatar, Card } from "react-native-paper";
+import { Image } from 'react-native-elements';
+import { Card } from "react-native-paper";
 import { Text } from "../../../components/typography/text.components";
+
+import { shadowTextStyle } from "../../../infrastructure/theme/colors";
 import styled from "styled-components/native";
 
 const CardContainer = styled(Card)`
-  width: 95%;
+  width: 100%;
   align-self: center;
 `;
 
 const BottomCard = styled.View`
   padding: ${(props) => props.theme.space[2]};
-  flex-direction: row;
-  align-items: center;
-`;
-
-const AvatarIcon = styled.View`
-  flex: 1;
-  align-items: flex-end;
+  bottom: 0;
+  position: absolute;
 `;
 
 export const SmallPostCard = ({ user, onNavigate }) => {
   return (
-    <CardContainer elevation={2}>
+    <CardContainer>
       <TouchableWithoutFeedback
         onPress={() => onNavigate("ViewPosting", { user })}
       >
-        <Card.Cover source={{ uri: user.url }} />
+        <Image style={{width: '100%', height: 200}} source={{ uri: user.videoThumbnail }} />
       </TouchableWithoutFeedback>
-      <BottomCard>
-        <Text variant="label">{user.videoTitle}</Text>
-        <AvatarIcon>
-          <Avatar.Image size={34} source={{ uri: user.avatar }} />
-        </AvatarIcon>
+      <BottomCard >
+        <Text variant="trending_post_title" style={shadowTextStyle()}>{user.title}</Text>
       </BottomCard>
     </CardContainer>
   );

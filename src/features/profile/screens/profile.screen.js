@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, FlatList } from "react-native";
 import { Avatar, Button, Surface } from "react-native-paper";
 import styled from "styled-components/native";
@@ -72,6 +72,8 @@ const BioText = styled(Text)`
 `;
 
 export const ProfileScreen = ({ navigation }) => {
+  const [user, setUser] = useState(null);
+
   const currentUser = useSelector((state) => state.auth.currentUser);
 
   return (
@@ -95,16 +97,16 @@ export const ProfileScreen = ({ navigation }) => {
 
                 <ProfileInfoContainer>
                   <NameAndIdentify>
-                    <Text variant="title">{currentUser.displayName} </Text>
-                    {currentUser.identify !== "none" ? (
+                    <Text variant="profile_display_name">{currentUser.displayName} </Text>
+                    {(currentUser.identify !== "none") && (
                       <Text variant="profile_identify">
                         • {currentUser.identify}
                       </Text>
-                    ) : null}
+                    )}
                   </NameAndIdentify>
-                  {currentUser.bio !== "" ? (
+                  {(currentUser.bio !== "") && (
                     <BioText>{currentUser.bio}</BioText>
-                  ) : null}
+                  )}
                 </ProfileInfoContainer>
 
                 <StatsSection>

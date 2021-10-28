@@ -4,8 +4,13 @@ import styled from "styled-components/native";
 import { Avatar, IconButton, Card, List } from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Text } from "../../../components/typography/text.components";
-import { Spacer } from "../../../components/spacer/spacer.components";
+import { timeDifference } from "../../../components/utilities/time-difference.components";
 import { colors, shadowTextStyle } from "../../../infrastructure/theme/colors";
+import { Video } from "expo-av";
+import ContentLoader, { Rect, Circle } from "react-content-loader/native";
+import { useIsFocused } from "@react-navigation/native";
+
+import InViewport from "../../../components/utilities/inviewport.components";
 
 const { height } = Dimensions.get("window");
 
@@ -32,7 +37,7 @@ const VideoSettingsButton = styled.View`
   justify-content: flex-end;
 `;
 
-const VideoSection = styled(Card.Cover)`
+const VideoSection = styled(Video)`
   width: 100%;
   position: absolute;
   border-radius: 25px;
@@ -76,14 +81,19 @@ const CommentButton = styled.View`
 `;
 
 const TitleAndCaptionSection = styled.View`
-  padding-left: ${(props) => props.theme.space[1]};
+  padding-left: ${(props) => props.theme.space[2]};
   padding-bottom: ${(props) => props.theme.space[2]};
 `;
 
-export const PostCard = ({ user, onNavigate }) => {
+export const PostCard = ({ post, user, onNavigate }) => {
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const videoRef = useRef();
+
+  const isFocused = useIsFocused();
 
   const clickSave = () => {
     if (saved) {
@@ -116,7 +126,7 @@ export const PostCard = ({ user, onNavigate }) => {
   const onShare = () => {
     try {
       Share.share({
-        url: user.url,
+        url: post.videoURL,
       });
     } catch (error) {
       alert(error.message);
@@ -141,26 +151,63 @@ export const PostCard = ({ user, onNavigate }) => {
     }
   };
 
+  const stopVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.stopAsync();
+    }
+  };
+
+  const playVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.playAsync();
+    }
+  };
+
+  const handlePlaying = (isVisible) => {
+    isVisible && isFocused ? playVideo() : stopVideo();
+  };
+
+  const onPlayPausePress = () => {
+    if (!paused) {
+      videoRef.current.pauseAsync();
+      setPaused(!paused);
+    } else {
+      videoRef.current.playAsync();
+      setPaused(!paused);
+    }
+  };
+
   return (
     <CardContainer style={{ height: height / 1.28 }}>
-      <VideoSection
-        style={{ height: height / 1.28 }}
-        source={{ uri: user.url }}
-      />
+
+      <InViewport onChange={handlePlaying}>
+        <VideoSection
+          ref={videoRef}
+          style={{ height: height / 1.28 }}
+          source={{ uri: post.videoURL }}
+          resizeMode="cover"
+          isLooping={true}
+          onLoadStart={() => setLoading(true)}
+          onLoad={() => setLoading(false)}
+        />
+      </InViewport>
+
       <TopSection>
         <Pressable
           onPress={() => {
             onNavigate("ViewGuestProfile");
           }}
         >
-          <Avatar.Image size={40} source={{ uri: user.avatar }} />
+          <Avatar.Image size={40} source={{ uri: user.profilePhoto }} />
         </Pressable>
         <NameAndDate>
           <Text variant="name" style={shadowTextStyle()}>
-            {user.name}
+            {user.username}
           </Text>
           <Text variant="date" style={shadowTextStyle()}>
-            {user.date}
+            {post.creation === null
+              ? "now"
+              : timeDifference(new Date(), post.creation.toDate())}
           </Text>
         </NameAndDate>
         <VideoSettingsButton>
@@ -201,15 +248,13 @@ export const PostCard = ({ user, onNavigate }) => {
       <BottomCard>
         <TitleAndCaptionSection>
           <Text variant="title" style={shadowTextStyle()}>
-            {user.videoTitle}
+            {post.title}
           </Text>
-          {user.caption !== "" ? (
-            <Spacer position="top" size="small">
-              <Text variant="caption" style={shadowTextStyle()}>
-                {user.caption}
-              </Text>
-            </Spacer>
-          ) : null}
+          {(post.description !== "") && (
+            <Text variant="caption" style={shadowTextStyle()}>
+              {post.description}
+            </Text>
+          )}
         </TitleAndCaptionSection>
 
         <IconsSection>
@@ -223,7 +268,7 @@ export const PostCard = ({ user, onNavigate }) => {
                 size={25}
                 onPress={clickLike}
               />
-              <Text variant="numbers">{user.likes}</Text>
+              <Text variant="numbers">{post.likesCount}</Text>
               <IconButton
                 icon={"arrow-down-bold"}
                 color={colors.icon.primary}
@@ -240,9 +285,9 @@ export const PostCard = ({ user, onNavigate }) => {
                 underlayColor="transparent"
                 style={{ margin: 0 }}
                 size={25}
-                onPress={() => onNavigate("ViewPosting", { user })}
+                onPress={() => onNavigate("ViewPosting", { post })}
               />
-              <Text variant="numbers">{user.numComments.length}</Text>
+              <Text variant="numbers">{post.commentsCount}</Text>
             </CommentButton>
             <IconButton
               icon="send"
@@ -266,6 +311,20 @@ export const PostCard = ({ user, onNavigate }) => {
           </RightIconsSection>
         </IconsSection>
       </BottomCard>
+
+      {loading && (
+        <ContentLoader
+          viewBox="-10 0 380 630"
+          style={{ position: "absolute", backgroundColor: "white" }}
+        >
+          <Circle cx="25" cy="30" r="20" />
+          <Rect x="60" y="17" rx="4" ry="4" width="300" height="10" />
+          <Rect x="60" y="40" rx="3" ry="3" width="300" height="10" />
+          <Rect x="0" y="70" rx="3" ry="3" width="363" height={height / 1.8} />
+          <Rect x="0" y="560" rx="3" ry="3" width="360" height="10" />
+          <Rect x="0" y="585" rx="3" ry="3" width="360" height="30" />
+        </ContentLoader>
+      )}
     </CardContainer>
   );
 };

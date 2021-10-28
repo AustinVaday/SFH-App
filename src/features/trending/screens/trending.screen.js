@@ -1,31 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { FlatList } from "react-native";
+import {
+  FlatList,
+  StatusBar,
+  Dimensions,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import styled from "styled-components/native";
-import { Searchbar } from "react-native-paper";
+import { SearchBar } from "react-native-elements";
+import { queryUsersByUsername } from "../../../services/user";
 
 import { SafeArea } from "../../../components/utilities/safe-area.components";
+import { Text } from "../../../components/typography/text.components";
 import { SmallPostCard } from "../components/small-post-card.components";
+import { useSelector } from "react-redux";
 
-import dataTrending from "../../../utils/mock/dataTrending";
+const TrendingScreenContainer = styled.View`
+  position: relative;
+`;
 
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-  width: 100%;
+const SearchScreenContainer = styled.View`
+  position: absolute;
+  background-color: white;
+  left: 0px;
+  z-index: 9999;
+`;
+
+const UserRowCard = styled(TouchableOpacity)`
+  flex: 1;
+  background-color: white;
+  padding: 10px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const UserImage = styled(Image)`
+  background-color: gray;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
 `;
 
 const VideoContainer = styled.View`
-  padding-bottom: ${(props) => props.theme.space[2]};
+  padding: 2px;
   width: 50%;
 `;
 
-const VideosList = styled(FlatList)`
-  padding: ${(props) => props.theme.space[1]};
-`;
+const { height, width } = Dimensions.get("window");
 
-// to get the data in the order for the most views
-const mostViewsData = dataTrending.sort((a, b) => b.views - a.views);
-
-export const TrendingScreen = ({ navigation }) => {
+export const TrendingScreen = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [videoLength, setVideoLength] = useState(10);
@@ -33,14 +56,17 @@ export const TrendingScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [inputSearch, setInputSearch] = useState("");
 
+  const [textInputFocussed, setTextInputFocussed] = useState(false);
+
+  const trendingPosts = useSelector((state) => state.posts.trendingPosts);
+
   useEffect(() => {
     setLoading(true);
     makeRemoteRequest();
   }, []);
 
   const makeRemoteRequest = () => {
-    const newData = mostViewsData;
-    console.log(videoLength);
+    const newData = trendingPosts;
     try {
       setData(
         videoLength === 10
@@ -50,25 +76,9 @@ export const TrendingScreen = ({ navigation }) => {
       setError(null);
       setLoading(false);
       setRefreshing(false);
-      // searchFilterFunction("");
     } catch (err) {
       setError(err);
       setLoading(false);
-    }
-  };
-
-  const searchFilterFunction = (text) => {
-    if (text) {
-      const newData = dataTrending.filter((item) => {
-        const itemData = `${item.videoTitle.toUpperCase()}`;
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      setInputSearch(text);
-      setData(newData);
-    } else {
-      setData(data);
-      setInputSearch(text);
     }
   };
 
@@ -86,37 +96,75 @@ export const TrendingScreen = ({ navigation }) => {
     makeRemoteRequest();
   };
 
+  const [searchUsers, setSearchUsers] = useState([]);
+  const [textInput, setTextInput] = useState("");
+
+  useEffect(() => {
+    queryUsersByUsername(textInput).then(setSearchUsers);
+  }, [textInput]);
+
   return (
     <SafeArea>
-      <SearchContainer>
-        <Searchbar
-          placeholder="Search for a signing"
-          icon="card-search-outline"
-          value={inputSearch}
-          onChangeText={(text) => searchFilterFunction(text)}
+      <TrendingScreenContainer>
+        <SearchBar
+          placeholder="Search"
+          containerStyle={{
+            backgroundColor: "white",
+            borderBottomWidth: 0,
+            borderTopWidth: 0,
+          }}
+          inputContainerStyle={{ backgroundColor: "#E5E4E9" }}
+          value={textInput}
+          onChangeText={setTextInput}
+          onFocus={() => setTextInputFocussed(true)}
+          platform="ios"
+          onCancel={() => setTextInputFocussed(false)}
+          showCancel={textInputFocussed}
         />
-      </SearchContainer>
-      <VideosList
-        data={data}
-        renderItem={({ item }) => {
-          return (
-            <VideoContainer>
-              <SmallPostCard user={item} onNavigate={navigation.navigate} />
-            </VideoContainer>
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        onEndReachedThreshold={0.01}
-        onEndReached={handleOnEndReached}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-        // I comment this out because in case if there is lag while scrolling
-        // uncomment this to fix it for control initial number
-        // of items to render and max render per batch
-        // initialNumToRender={10}
-        // maxToRenderPerBatch={10}
-      />
+        {textInputFocussed && (
+          <SearchScreenContainer
+            style={{
+              top: StatusBar.currentHeight + 65,
+              width: width,
+              height: height,
+            }}
+          >
+            <FlatList
+              data={searchUsers}
+              renderItem={({ item }) => {
+                return (
+                  <UserRowCard onPress={() => console.log("clicked")}>
+                    <Text variant="search_username">{item.username}</Text>
+                    <UserImage source={{ uri: item.profilePhoto }} />
+                  </UserRowCard>
+                );
+              }}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          </SearchScreenContainer>
+        )}
+        <FlatList
+          data={data}
+          renderItem={({ item }) => {
+            return (
+              <VideoContainer>
+                <SmallPostCard user={item} />
+              </VideoContainer>
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          onEndReachedThreshold={0.01}
+          onEndReached={handleOnEndReached}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          // I comment this out because in case if there is lag while scrolling
+          // uncomment this to fix it for control initial number
+          // of items to render and max render per batch
+          // initialNumToRender={10}
+          // maxToRenderPerBatch={10}
+        />
+      </TrendingScreenContainer>
     </SafeArea>
   );
 };

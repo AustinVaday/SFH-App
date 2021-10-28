@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Dimensions, Pressable } from "react-native";
 import { IconButton, Button } from "react-native-paper";
-import { requestPermissionsAsync, getAssetsAsync } from "expo-media-library";
+import {
+  requestPermissionsAsync,
+  getAssetsAsync,
+  getAssetInfoAsync,
+} from "expo-media-library";
 import { Video } from "expo-av";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import BigList from "react-native-big-list";
@@ -48,6 +52,7 @@ export const LibraryScreen = ({ navigation }) => {
   const [shouldPlay, setShouldPlay] = useState(false);
   const [selectedGalleryVideo, setSelectedGalleryVideo] = useState(null);
   const [galleryVideos, setGalleryVideos] = useState(null);
+  const [getLocalUri, setGetLocalUri] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -76,6 +81,8 @@ export const LibraryScreen = ({ navigation }) => {
       }
     })();
   }, []);
+
+  // console.log(galleryVideos)
 
   if (hasGalleryPermissions === false) {
     return (
@@ -123,16 +130,21 @@ export const LibraryScreen = ({ navigation }) => {
     }
   };
 
-  const handleToSelectVideo = (uri) => {
+  const handleToSelectVideo = async (uri, id) => {
     if (shouldPlay) {
       setShouldPlay(false);
     }
+    setGetLocalUri(id);
     setSelectedGalleryVideo(uri);
   };
 
   const handleSubmit = async () => {
-    let sourceThumb = await generateThumbnail(selectedGalleryVideo);
-    navigation.navigate("Preview", { source: selectedGalleryVideo, sourceThumb });
+    const assetLocalUri = await getAssetInfoAsync(getLocalUri);
+    let sourceThumb = await generateThumbnail(assetLocalUri.localUri);
+    navigation.navigate("Preview", {
+      source: assetLocalUri.localUri,
+      sourceThumb,
+    });
   };
 
   const generateThumbnail = async (source) => {
@@ -148,7 +160,10 @@ export const LibraryScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <>
-      <Pressable key={item} onPress={() => handleToSelectVideo(item.uri)}>
+      <Pressable
+        key={item}
+        onPress={() => handleToSelectVideo(item.uri, item.id)}
+      >
         <Video
           source={{ uri: item.uri }}
           resizeMode="cover"

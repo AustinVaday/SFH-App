@@ -15,7 +15,6 @@ import {
   Provider,
   TextInput,
   Surface,
-  HelperText,
 } from "react-native-paper";
 import { Keyboard } from "react-native";
 import { Formik } from "formik";
@@ -24,6 +23,9 @@ import styled from "styled-components/native";
 import Toast from "react-native-toast-message";
 
 import { CommonActions, useNavigation } from "@react-navigation/native";
+
+import { useDispatch } from "react-redux";
+import { createPost } from "../../../services/redux/actions/post.actions";
 
 import { colors } from "../../../infrastructure/theme/colors";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
@@ -42,15 +44,18 @@ const PostText = styled(Text)`
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Please fill out the title"),
-  caption: Yup.string().label("Caption"),
+  description: Yup.string().label("Description"),
 });
 
 export const PostScreen = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [requestRunning, setRequestRunning] = useState(false);
 
   const titleRef = createRef();
-  const captionRef = createRef();
+  const descriptionRef = createRef();
+
+  const dispatch = useDispatch();
 
   const { source, sourceThumb } = props.route.params;
 
@@ -73,15 +78,38 @@ export const PostScreen = (props) => {
         topOffset: 45,
       });
       setIsSubmitting(false);
-    } else if (!errors.title && !errors.caption) {
+    } else if (!errors.title && !errors.description) {
       submit(values);
     }
   };
 
   const submit = async (values) => {
     setIsSubmitting(false);
-    navigation.dispatch(CommonActions.reset({index: 1, routes: [{name: "Home"}]}));
+    setRequestRunning(true);
+
+    dispatch(
+      createPost(
+        values.title,
+        values.description,
+        source,
+        sourceThumb
+      )
+    )
+      .then(() =>
+        navigation.dispatch(
+          CommonActions.reset({ index: 1, routes: [{ name: "Home" }] })
+        )
+      )
+      .catch(() => setRequestRunning(false));
   };
+
+  if (requestRunning) {
+    return (
+      <View style={{flex: 1, alignItems: "center", justifyContent: 'center',}}>
+        <ActivityIndicator color="red" size="large" />
+      </View>
+    );
+  }
 
   return (
     <Provider>
@@ -125,7 +153,7 @@ export const PostScreen = (props) => {
             </TouchableOpacity>
           </VideoPreview>
           <Formik
-            initialValues={{ title: "", caption: "" }}
+            initialValues={{ title: "", description: "" }}
             validationSchema={validationSchema}
           >
             {({ handleChange, values, errors, touched }) => (
@@ -141,30 +169,25 @@ export const PostScreen = (props) => {
                   maxLength={20}
                   returnKeyType="done"
                   onSubmitEditing={() =>
-                    captionRef.current && captionRef.current.focus()
+                    descriptionRef.current && descriptionRef.current.focus()
                   }
                   blurOnSubmit={false}
                 />
-                <HelperText type="error" visible={errors}>
-                  {touched.title && errors.title}
-                </HelperText>
                 <TextInput
-                  value={values.caption}
-                  label="Caption"
+                  value={values.description}
+                  label="Description (optional)"
                   theme={{ colors: { primary: colors.brand.primary } }}
                   style={{ backgroundColor: "white" }}
                   multiline={true}
                   maxLength={100}
                   placeholderTextColor={"#888"}
-                  onChangeText={handleChange("caption")}
-                  ref={captionRef}
+                  onChangeText={handleChange("description")}
+                  ref={descriptionRef}
                   returnKeyType="done"
                   onSubmitEditing={Keyboard.dismiss}
                   blurOnSubmit={false}
                 />
-                <HelperText type="error" visible={errors}>
-                  {touched.caption && errors.caption}
-                </HelperText>
+                {console.log(values.description)}
                 <Button
                   style={{
                     alignSelf: "center",

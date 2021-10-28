@@ -8,6 +8,23 @@ const defaultTextStyles = (theme) => `
   margin-bottom: 0px;
 `;
 
+const search_username = (theme) => `
+    flex: 1;
+    font-family: ${theme.fonts.body_600};
+    font-size: ${theme.fontSizes.body};
+`;
+
+const trending_post_title = (theme) => `
+    font-family: ${theme.fonts.body_800};
+    font-size: ${theme.fontSizes.body};
+    color: ${theme.colors.text.white};
+`;
+
+const profile_display_name = (theme) => `
+    font-family: ${theme.fonts.body_800};
+    font-size: ${theme.fontSizes.title};
+`;
+
 const screen_title = (theme) => `
     font-family: ${theme.fonts.body_800};
     font-size: ${theme.fontSizes.body};
@@ -199,7 +216,10 @@ const variants = {
   comment_name,
   profile_numbers,
   profile_labels,
-  profile_identify
+  profile_identify,
+  trending_post_title,
+  profile_display_name,
+  search_username
 };
 
 export const Text = styled.Text`
