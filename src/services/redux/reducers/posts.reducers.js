@@ -1,8 +1,9 @@
-import { CURRENT_USER_POSTS_UPDATE, POSTS_TRENDING } from "../constants";
+import { CURRENT_USER_POSTS_UPDATE, POSTS_TRENDING, USER_FOLLOWING_STATE_CHANGE } from "../constants";
 
 const initialState = {
   currentUserPosts: null,
   trendingPosts: null,
+  following: [],
 };
 
 export const posts = (state = initialState, action) => {
@@ -17,6 +18,12 @@ export const posts = (state = initialState, action) => {
         ...state,
         trendingPosts: action.trendingPosts,
       };
+      case USER_FOLLOWING_STATE_CHANGE:
+        console.log("enter")
+        return {
+          ...state,
+          following: action.following,
+        };
     default:
       return state;
   }

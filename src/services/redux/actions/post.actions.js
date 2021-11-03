@@ -3,7 +3,11 @@ require("firebase/firebase-auth");
 require("firebase/firestore");
 
 import { saveMediaToStorage } from "../../../services/user/random";
-import { CURRENT_USER_POSTS_UPDATE, POSTS_TRENDING } from "../constants";
+import {
+  CURRENT_USER_POSTS_UPDATE,
+  POSTS_TRENDING,
+  USER_FOLLOWING_STATE_CHANGE,
+} from "../constants";
 
 import uuid from "uuid-random";
 
@@ -92,5 +96,24 @@ export const getPostsForTrending = () => (dispatch) =>
           type: POSTS_TRENDING,
           trendingPosts: posts,
         });
+      });
+  });
+
+export const fetchUserFollowing = () => (dispatch) =>
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .onSnapshot((snapshot) => {
+        let following = snapshot.docs.map((doc) => {
+          const id = doc.id;
+          return id;
+        });
+        dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
+        // for (let i = 0; i < following.length; i++) {
+        //   dispatch(fetchUsersData(following[i], true));
+        // }
       });
   });

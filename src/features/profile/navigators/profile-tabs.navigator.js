@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { colors } from "../../../infrastructure/theme/colors";
@@ -11,9 +11,7 @@ const { width } = Dimensions.get("window");
 
 const Tab = createMaterialTopTabNavigator();
 
-export const ProfileTabs = ({ newitem }) => {
-  const [activeTab, setActiveTab] = useState("Posts");
-
+export const ProfileTabs = ({ uid }) => {
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -26,9 +24,14 @@ export const ProfileTabs = ({ newitem }) => {
     >
       <Tab.Screen
         name="Posts"
-        component={activeTab === "Posts" ? PostsTab : SavesTab}
-        initialParams={{ newitem: newitem }}
-        listeners={{ focus: () => setActiveTab("Posts") }}
+        component={PostsTab}
+        initialParams={{ uid: uid }}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.navigate("Posts");
+          },
+        })}
         options={{
           tabBarLabel: "Posts",
           tabBarIcon: ({ color }) => (
@@ -38,9 +41,14 @@ export const ProfileTabs = ({ newitem }) => {
       />
       <Tab.Screen
         name="Saves"
-        component={activeTab === "Saves" ? SavesTab : PostsTab}
-        initialParams={{ newitem: newitem }}
-        listeners={{ focus: () => setActiveTab("Saves") }}
+        component={SavesTab}
+        initialParams={{ uid: uid }}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.navigate("Saves");
+          },
+        })}
         options={{
           tabBarLabel: "Saves",
           tabBarIcon: ({ color }) => (

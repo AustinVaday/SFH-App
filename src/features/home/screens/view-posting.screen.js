@@ -25,12 +25,12 @@ const { height } = Dimensions.get("window");
 export const ViewPostingScreen = ({ navigation, route }) => {
   const [comment, setComment] = useState("");
 
-  const { user } = route.params;
+  const { post } = route.params;
 
   return (
     <SafeArea>
       <FlatList
-        data={user.numComments}
+        data={post}
         ListEmptyComponent={() => {
           return (
             <ListEmptySection style={{ height: height / 4 }}>
@@ -51,11 +51,11 @@ export const ViewPostingScreen = ({ navigation, route }) => {
             </ListEmptySection>
           );
         }}
-        ListHeaderComponent={<HeaderDetailPosting user={user} />}
+        ListHeaderComponent={<HeaderDetailPosting post={post} />}
         renderItem={({ item }) => (
           <CommentDetailPosting item={item} onNavigate={navigation.navigate} />
         )}
-        keyExtractor={(item) => item.commentID.toString()}
+        keyExtractor={(item) => item.creator.toString()}
       />
       <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={120}>
         <CommentSection>

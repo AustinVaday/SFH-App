@@ -53,3 +53,25 @@ export const queryUsersByUsername = (username) =>
       })
       .catch(() => reject());
   });
+
+export const followUser = (uid) =>
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(uid)
+      .set({});
+  });
+
+export const unfollowUser = (uid) =>
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("following")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollowing")
+      .doc(uid)
+      .delete();
+  });

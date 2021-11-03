@@ -1,8 +1,10 @@
 import React from "react";
-import { TouchableWithoutFeedback } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Image } from 'react-native-elements';
 import { Card } from "react-native-paper";
 import { Text } from "../../../components/typography/text.components";
+
+import { useNavigation } from "@react-navigation/native";
 
 import { shadowTextStyle } from "../../../infrastructure/theme/colors";
 import styled from "styled-components/native";
@@ -18,16 +20,18 @@ const BottomCard = styled.View`
   position: absolute;
 `;
 
-export const SmallPostCard = ({ user, onNavigate }) => {
+export const SmallPostCard = ({ post }) => {
+  const navigation = useNavigation();
+
   return (
     <CardContainer>
-      <TouchableWithoutFeedback
-        onPress={() => onNavigate("ViewPosting", { user })}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ViewPosting", { post })}
       >
-        <Image style={{width: '100%', height: 200}} source={{ uri: user.videoThumbnail }} />
-      </TouchableWithoutFeedback>
+        <Image style={{width: '100%', height: 200}} source={{ uri: post.videoThumbnail }} />
+      </TouchableOpacity>
       <BottomCard >
-        <Text variant="trending_post_title" style={shadowTextStyle()}>{user.title}</Text>
+        <Text variant="trending_post_title" style={shadowTextStyle()}>{post.title}</Text>
       </BottomCard>
     </CardContainer>
   );

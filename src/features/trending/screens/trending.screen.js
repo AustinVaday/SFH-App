@@ -15,6 +15,8 @@ import { Text } from "../../../components/typography/text.components";
 import { SmallPostCard } from "../components/small-post-card.components";
 import { useSelector } from "react-redux";
 
+import { useNavigation } from "@react-navigation/native";
+
 const TrendingScreenContainer = styled.View`
   position: relative;
 `;
@@ -55,8 +57,9 @@ export const TrendingScreen = () => {
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [inputSearch, setInputSearch] = useState("");
-
   const [textInputFocussed, setTextInputFocussed] = useState(false);
+
+  const navigation = useNavigation();
 
   const trendingPosts = useSelector((state) => state.posts.trendingPosts);
 
@@ -133,7 +136,14 @@ export const TrendingScreen = () => {
               data={searchUsers}
               renderItem={({ item }) => {
                 return (
-                  <UserRowCard onPress={() => console.log("clicked")}>
+                  <UserRowCard
+                    onPress={() =>
+                      navigation.navigate("GuestProfile", {
+                        uid: item.id,
+                        guestUsername: item.username,
+                      })
+                    }
+                  >
                     <Text variant="search_username">{item.username}</Text>
                     <UserImage source={{ uri: item.profilePhoto }} />
                   </UserRowCard>
@@ -148,7 +158,7 @@ export const TrendingScreen = () => {
           renderItem={({ item }) => {
             return (
               <VideoContainer>
-                <SmallPostCard user={item} />
+                <SmallPostCard post={item} />
               </VideoContainer>
             );
           }}

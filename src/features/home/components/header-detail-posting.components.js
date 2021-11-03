@@ -45,7 +45,7 @@ const TitleAndCaptionSection = styled.View`
   padding-bottom: ${(props) => props.theme.space[3]};
 `;
 
-export const HeaderDetailPosting = ({ user, onNavigate }) => {
+export const HeaderDetailPosting = ({ post, onNavigate }) => {
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -81,7 +81,7 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
   const onShare = () => {
     try {
       Share.share({
-        url: user.url,
+        url: post.videoThumbnail,
       });
     } catch (error) {
       alert(error.message);
@@ -90,13 +90,13 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
 
   return (
     <>
-      <VideoSection source={{ uri: user.url }} />
+      <VideoSection source={{ uri: post.videoThumbnail }} />
       <BottomCard>
         <TitleAndCaptionSection>
-          <Text variant="title">{user.videoTitle}</Text>
-          {user.caption !== "" ? (
+          <Text variant="title">{post.title}</Text>
+          {post.description !== "" ? (
             <Spacer position="top" size="small">
-              <Text variant="caption">{user.caption}</Text>
+              <Text variant="caption">{post.description}</Text>
             </Spacer>
           ) : null}
         </TitleAndCaptionSection>
@@ -111,7 +111,7 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
               size={25}
               onPress={clickLike}
             />
-            <Text variant="label">{user.likes}</Text>
+            <Text variant="label">{post.likesCount}</Text>
             <IconButton
               icon={downvoted ? "arrow-down-bold" : "arrow-down-bold-outline"}
               color={downvoted ? colors.brand.primary : colors.icon.secondary}
@@ -130,7 +130,7 @@ export const HeaderDetailPosting = ({ user, onNavigate }) => {
               size={25}
               onPress={() => {}}
             />
-            <Text variant="label">{user.numComments.length}</Text>
+            <Text variant="label">{post.commentsCount}</Text>
           </CommentButton>
           <IconButton
             icon="share-outline"

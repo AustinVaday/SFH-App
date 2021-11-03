@@ -1,67 +1,88 @@
-import React from "react";
-import { FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
-import { Avatar, Card, TouchableRipple } from "react-native-paper";
+import { Image } from "react-native-elements";
+import { Card } from "react-native-paper";
 
 import { Text } from "../../../components/typography/text.components";
+import { shadowTextStyle } from "../../../infrastructure/theme/colors";
+
+import { firebase } from "../../../utils/firebase";
+import { useSelector } from "react-redux";
 
 const CardContainer = styled(Card)`
-  width: 95%;
+  width: 100%;
   align-self: center;
 `;
 
 const BottomCard = styled.View`
   padding: ${(props) => props.theme.space[2]};
-  flex-direction: row;
-  align-items: center;
-`;
-
-const AvatarIcon = styled.View`
-  flex: 1;
-  align-items: flex-end;
+  bottom: 0;
+  position: absolute;
 `;
 
 const VideoContainer = styled.View`
-  padding-bottom: ${(props) => props.theme.space[2]};
-  width: 50%;
+  padding: 1px;
+  width: 33.3%;
 `;
 
 const PostsList = styled(FlatList)`
-  padding: ${(props) => props.theme.space[2]};
   background-color: ${(props) => props.theme.colors.bg.primary};
+  flex: 1;
 `;
 
-export const PostsTab = ({ route, navigation }) => {
-  const { newitem } = route.params;
+export const PostsTab = ({ route }) => {
+  const { uid } = route.params;
+  const [userPosts, setUserPosts] = useState([]);
+
+  const currentUserPosts = useSelector((state) => state.posts.currentUserPosts);
+
+  useEffect(() => {
+    if (uid === firebase.auth().currentUser.uid) {
+      setUserPosts(currentUserPosts);
+    } else {
+      firebase
+        .firestore()
+        .collection("posts")
+        .where("creator", "==", uid)
+        .orderBy("creation", "desc")
+        .get()
+        .then((snapshot) => {
+          let posts = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+            return { id, ...data };
+          });
+          setUserPosts(posts);
+        });
+    }
+  }, [uid]);
+
   return (
     <PostsList
-      data={newitem.posts}
+      data={userPosts}
       renderItem={({ item }) => {
         return (
           <VideoContainer>
-            <CardContainer elevation={2}>
-              <TouchableRipple
-                onPress={() => {
-                  navigation.navigate("ViewPosting");
-                }}
-              >
-                <Card.Cover source={{ uri: item.url }} />
-              </TouchableRipple>
+            <CardContainer>
+              <TouchableOpacity onPress={() => {}}>
+                <Image
+                  style={{ width: "100%", height: 150 }}
+                  source={{ uri: item.videoThumbnail }}
+                />
+              </TouchableOpacity>
               <BottomCard>
-                <Text variant="label">
-                  {item.videoTitle}
+                <Text variant="trending_post_title" style={shadowTextStyle()}>
+                  {item.title}
                 </Text>
-                <AvatarIcon>
-                  <Avatar.Image size={34} source={{ uri: item.avatar }} />
-                </AvatarIcon>
               </BottomCard>
             </CardContainer>
           </VideoContainer>
         );
       }}
-      keyExtractor={(item) => item.id}
-      listKey={(item) => item.id}
-      numColumns={2}
+      keyExtractor={(item) => item.id.toString()}
+      listKey={(item) => item.id.toString()}
+      numColumns={3}
     />
   );
 };

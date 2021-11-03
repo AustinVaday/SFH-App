@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity, FlatList } from "react-native";
-import { Avatar, Button, Surface } from "react-native-paper";
+import { TouchableOpacity, FlatList, View } from "react-native";
+import { Button, Avatar } from "react-native-elements";
 import styled from "styled-components/native";
 
 import { ProfileTabs } from "../navigators/profile-tabs.navigator";
@@ -8,12 +8,16 @@ import { ProfileTabs } from "../navigators/profile-tabs.navigator";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
+import { firebase } from "../../../utils/firebase";
 import { useSelector } from "react-redux";
 
-import userProfile from "../../../utils/mock/userProfile";
+import { useNavigation } from "@react-navigation/native";
+
+import { followUser, unfollowUser } from "../../../services/user";
 
 const ProfileBackground = styled.View`
   background-color: ${(props) => props.theme.colors.bg.primary};
+  flex-grow: 1;
 `;
 
 const StatsSection = styled.View`
@@ -34,12 +38,6 @@ const FollowingSection = styled.View`
 const FollowersSection = styled.View`
   padding-right: ${(props) => props.theme.space[4]};
   flex: 1;
-`;
-
-const EditProfileButton = styled(Button)`
-  border-width: 1px;
-  border-radius: 5px;
-  border-color: ${(props) => props.theme.colors.brand.primary};
 `;
 
 const EditProfileButtonContainer = styled.View`
@@ -71,116 +69,227 @@ const BioText = styled(Text)`
   padding-top: ${(props) => props.theme.space[1]};
 `;
 
-export const ProfileScreen = ({ navigation }) => {
-  const [user, setUser] = useState(null);
+export const ProfileScreen = ({ route }) => {
+  const [user, setUser] = useState([]);
+  const [userPosts, setUserPosts] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const { uid } = route.params;
+
+  const navigation = useNavigation();
+
+  const { currentUser } = useSelector((state) => state.auth);
+  const { currentUserPosts, following } = useSelector((state) => state.posts);
+
+  useEffect(() => {
+    console.log("updated");
+
+    if (uid === firebase.auth().currentUser.uid) {
+      setUser(currentUser);
+      setUserPosts(currentUserPosts);
+    } else {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            setUser({ uid: uid, ...snapshot.data() });
+          }
+        });
+
+      firebase
+        .firestore()
+        .collection("posts")
+        .where("creator", "==", uid)
+        .orderBy("creation", "desc")
+        .get()
+        .then((snapshot) => {
+          let posts = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+            return { id, ...data };
+          });
+          setUserPosts(posts);
+        });
+    }
+
+    if (following.indexOf(uid) > -1) {
+      setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [uid, following, currentUser, currentUserPosts]);
+
+  const profileHeader = () => {
+    return (
+      <Profile>
+        <AvatarImageContainer>
+          <Avatar
+            size="xlarge"
+            rounded
+            source={{
+              uri: user.profilePhoto,
+            }}
+          />
+        </AvatarImageContainer>
+
+        <ProfileInfoContainer>
+          <NameAndIdentify>
+            <Text variant="profile_display_name">{user.displayName} </Text>
+            {user.identify !== "none" && (
+              <Text variant="profile_identify">• {user.identify}</Text>
+            )}
+          </NameAndIdentify>
+          {user.bio !== "" && <BioText>{user.bio}</BioText>}
+        </ProfileInfoContainer>
+
+        <StatsSection>
+          <PostsSection>
+            <TouchableOpacity
+              style={{ alignItems: "center" }}
+              activeOpacity={1}
+              onPress={() => {}}
+            >
+              <Text variant="profile_numbers">{userPosts.length}</Text>
+              <Text variant="profile_labels">Posts</Text>
+            </TouchableOpacity>
+          </PostsSection>
+          <Text> | </Text>
+          <FollowingSection>
+            <TouchableOpacity
+              style={{ alignItems: "center" }}
+              activeOpacity={1}
+              onPress={() => {
+                navigation.navigate("FollowList", {
+                  following,
+                  tab: "Following",
+                });
+              }}
+            >
+              <Text variant="profile_numbers">{user.followingCount}</Text>
+              <Text variant="profile_labels">Following</Text>
+            </TouchableOpacity>
+          </FollowingSection>
+          <Text> | </Text>
+          <FollowersSection>
+            <TouchableOpacity
+              style={{ alignItems: "center" }}
+              activeOpacity={1}
+              onPress={() => {
+                navigation.navigate("FollowList", {
+                  following,
+                  tab: "Followers",
+                });
+              }}
+            >
+              <Text variant="profile_numbers">{user.followersCount}</Text>
+              <Text variant="profile_labels">Followers</Text>
+            </TouchableOpacity>
+          </FollowersSection>
+        </StatsSection>
+
+        {uid !== firebase.auth().currentUser.uid ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignSelf: "center",
+              padding: 10,
+            }}
+          >
+            {isFollowing ? (
+              <Button
+                onPress={() => {
+                  unfollowUser(uid);
+                }}
+                type="outline"
+                buttonStyle={{
+                  height: 50,
+                  width: 150,
+                  borderColor: colors.brand.primary,
+                }}
+                containerStyle={{ paddingRight: 5 }}
+                title={
+                  <Text
+                    variant="text_button"
+                    style={{ color: colors.text.brand }}
+                  >
+                    Following
+                  </Text>
+                }
+              />
+            ) : (
+              <Button
+                onPress={() => {
+                  followUser(uid);
+                }}
+                type="solid"
+                buttonStyle={{
+                  height: 50,
+                  width: 150,
+                  backgroundColor: colors.brand.primary,
+                }}
+                containerStyle={{ paddingRight: 5 }}
+                title={
+                  <Text
+                    variant="text_button"
+                    style={{ color: colors.text.white }}
+                  >
+                    Follow
+                  </Text>
+                }
+              />
+            )}
+            <Button
+              onPress={() => console.log("message")}
+              type="outline"
+              buttonStyle={{
+                height: 50,
+                width: 150,
+                borderColor: colors.brand.primary,
+              }}
+              containerStyle={{ paddingLeft: 5 }}
+              title={
+                <Text
+                  variant="text_button"
+                  style={{ color: colors.text.brand }}
+                >
+                  Message
+                </Text>
+              }
+            />
+          </View>
+        ) : (
+          <EditProfileButtonContainer>
+            <Button
+              onPress={() => {
+                navigation.navigate("EditProfile", { user });
+              }}
+              type="outline"
+              buttonStyle={{ height: 50 }}
+              title={
+                <Text
+                  variant="text_button"
+                  style={{ color: colors.text.brand }}
+                >
+                  Edit Profile
+                </Text>
+              }
+              color={colors.ui.quaternary}
+            />
+          </EditProfileButtonContainer>
+        )}
+        <ProfileTabs uid={uid} />
+      </Profile>
+    );
+  };
 
   return (
     <ProfileBackground>
       <FlatList
-        data={userProfile}
-        renderItem={({ item }) => {
-          return (
-            <>
-              <Profile>
-                <AvatarImageContainer>
-                    <Surface style={{ borderRadius: 80, elevation: 1 }}>
-                      <Avatar.Image
-                        size={120}
-                        source={{
-                          uri: currentUser.profilePhoto,
-                        }}
-                      />
-                    </Surface>
-                </AvatarImageContainer>
-
-                <ProfileInfoContainer>
-                  <NameAndIdentify>
-                    <Text variant="profile_display_name">{currentUser.displayName} </Text>
-                    {(currentUser.identify !== "none") && (
-                      <Text variant="profile_identify">
-                        • {currentUser.identify}
-                      </Text>
-                    )}
-                  </NameAndIdentify>
-                  {(currentUser.bio !== "") && (
-                    <BioText>{currentUser.bio}</BioText>
-                  )}
-                </ProfileInfoContainer>
-
-                <StatsSection>
-                  <PostsSection>
-                    <TouchableOpacity
-                      style={{ alignItems: "center" }}
-                      activeOpacity={1}
-                      onPress={() => {}}
-                    >
-                      <Text variant="profile_numbers">{item.posts.length}</Text>
-                      <Text variant="profile_labels">Posts</Text>
-                    </TouchableOpacity>
-                  </PostsSection>
-                  <Text> | </Text>
-                  <FollowingSection>
-                    <TouchableOpacity
-                      style={{ alignItems: "center" }}
-                      activeOpacity={1}
-                      onPress={() => {
-                        navigation.navigate("FollowList", {
-                          item,
-                          tab: "Following",
-                        });
-                      }}
-                    >
-                      <Text variant="profile_numbers">
-                        {currentUser.followingCount}
-                      </Text>
-                      <Text variant="profile_labels">Following</Text>
-                    </TouchableOpacity>
-                  </FollowingSection>
-                  <Text> | </Text>
-                  <FollowersSection>
-                    <TouchableOpacity
-                      style={{ alignItems: "center" }}
-                      activeOpacity={1}
-                      onPress={() => {
-                        navigation.navigate("FollowList", {
-                          item,
-                          tab: "Followers",
-                        });
-                      }}
-                    >
-                      <Text variant="profile_numbers">
-                        {currentUser.followersCount}
-                      </Text>
-                      <Text variant="profile_labels">Followers</Text>
-                    </TouchableOpacity>
-                  </FollowersSection>
-                </StatsSection>
-
-                <EditProfileButtonContainer>
-                  <EditProfileButton
-                    onPress={() => {
-                      navigation.navigate("EditProfile", { currentUser });
-                    }}
-                    mode="outlined"
-                    color={colors.ui.quaternary}
-                  >
-                    <Text
-                      variant="text_button"
-                      style={{ color: colors.text.brand }}
-                    >
-                      Edit Profile
-                    </Text>
-                  </EditProfileButton>
-                </EditProfileButtonContainer>
-              </Profile>
-              <ProfileTabs newitem={item} />
-            </>
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        stickyHeaderIndices={[1]}
+        data={[{ key: "tabbed" }]}
+        ListHeaderComponent={profileHeader()}
       />
     </ProfileBackground>
   );
