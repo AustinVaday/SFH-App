@@ -36,7 +36,7 @@ const OrSection = styled.View`
 
 const OrText = styled(Text)`
   font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.button};
+  font-size: ${(props) => props.theme.fontSizes.medium};
   color: ${(props) => props.theme.colors.text.secondary};
   text-align: center;
   width: 50px;

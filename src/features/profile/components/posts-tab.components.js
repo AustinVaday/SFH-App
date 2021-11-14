@@ -3,6 +3,7 @@ import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Image } from "react-native-elements";
 import { Card } from "react-native-paper";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import { Text } from "../../../components/typography/text.components";
 import { shadowTextStyle } from "../../../infrastructure/theme/colors";
@@ -29,6 +30,12 @@ const VideoContainer = styled.View`
 const PostsList = styled(FlatList)`
   background-color: ${(props) => props.theme.colors.bg.primary};
   flex: 1;
+`;
+
+const ListEmptySection = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: ${hp("25%")}px;
 `;
 
 export const PostsTab = ({ route }) => {
@@ -58,9 +65,35 @@ export const PostsTab = ({ route }) => {
     }
   }, [uid]);
 
+  const listEmptyComponent = () => {
+    return (
+      <ListEmptySection>
+        <Text
+          variant="list_empty_message"
+          style={{
+            paddingBottom: 20,
+            paddingTop: 20,
+          }}
+        >
+          Post your first video
+        </Text>
+        <Text
+          variant="list_empty_message"
+          style={{
+            paddingBottom: 20,
+            paddingTop: 20,
+          }}
+        >
+          Record or upload a video. Your videos will appear here.
+        </Text>
+      </ListEmptySection>
+    );
+  };
+
   return (
     <PostsList
       data={userPosts}
+      ListEmptyComponent={listEmptyComponent}
       renderItem={({ item }) => {
         return (
           <VideoContainer>

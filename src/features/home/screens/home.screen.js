@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import { FlatList, Dimensions } from "react-native";
-import { MaterialCommunityIcons as MCIcon } from "@expo/vector-icons";
-import BigList from "react-native-big-list";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-import { PostCard } from "../components/post-card.components";
+import { HomePostCard } from "../components/home-post-card.components";
 import { colors } from "../../../infrastructure/theme/colors";
 import { Text } from "../../../components/typography/text.components";
 
@@ -14,11 +13,6 @@ const PostsListScreen = styled.View`
   flex: 1;
   justify-content: center;
   background-color: ${(props) => props.theme.colors.bg.primary};
-`;
-
-const PostCardContainer = styled.View`
-  justify-content: center;
-  align-items: center;
 `;
 
 const ListEmptySection = styled.View`
@@ -33,14 +27,12 @@ export const HomeScreen = ({ navigation }) => {
 
   const renderItem = useCallback(({ item, index }) => {
     return (
-      <PostCardContainer style={{ height: height / 1.24 }}>
-        <PostCard
+        <HomePostCard
           post={item}
           user={item.user}
           onNavigate={navigation.navigate}
           paramsNavigation={navigation}
         />
-      </PostCardContainer>
     );
   }, []);
 
@@ -62,7 +54,7 @@ export const HomeScreen = ({ navigation }) => {
         ListEmptyComponent={() => {
           return (
             <ListEmptySection style={{ height: height / 2 }}>
-              <MCIcon
+              <MaterialCommunityIcons
                 name={"post-outline"}
                 size={120}
                 color={colors.icon.secondary}

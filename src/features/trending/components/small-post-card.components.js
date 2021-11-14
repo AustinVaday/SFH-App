@@ -26,7 +26,7 @@ export const SmallPostCard = ({ post }) => {
   return (
     <CardContainer>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ViewPosting", { post })}
+        onPress={() => navigation.navigate("ViewPost", { post })}
       >
         <Image style={{width: '100%', height: 200}} source={{ uri: post.videoThumbnail }} />
       </TouchableOpacity>

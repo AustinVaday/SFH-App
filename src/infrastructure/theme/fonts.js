@@ -7,11 +7,11 @@ export const fonts = {
 };
 
 export const fontSizes = {
-  date: "10px",
-  caption: "12px",
-  button: "14px",
-  body: "16px",
-  title: "20px",
+  xsmall: "10px",
+  small: "12px",
+  medium: "14px",
+  large: "16px",
+  xlarge: "20px",
   h5: "24px",
   h4: "34px",
   h3: "45px",

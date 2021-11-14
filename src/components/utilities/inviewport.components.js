@@ -63,7 +63,7 @@ export default class InViewport extends Component {
     const isVisible =
       this.state.rectBottom != 0 &&
       this.state.rectTop >= 0 &&
-      this.state.rectBottom <= HEIGHT / 1.26 &&
+      this.state.rectBottom <= HEIGHT / 1.04 &&
       this.state.rectWidth > 0 &&
       this.state.rectWidth <= WIDTH;
     if (this.lastValue !== isVisible) {

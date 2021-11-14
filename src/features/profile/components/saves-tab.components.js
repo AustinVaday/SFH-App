@@ -3,6 +3,7 @@ import { FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Image } from "react-native-elements";
 import { Card } from "react-native-paper";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import { Text } from "../../../components/typography/text.components";
 import { shadowTextStyle } from "../../../infrastructure/theme/colors";
@@ -29,6 +30,12 @@ const VideoContainer = styled.View`
 const SavesList = styled(FlatList)`
   background-color: ${(props) => props.theme.colors.bg.primary};
   flex-grow: 1;
+`;
+
+const ListEmptySection = styled.View`
+  align-items: center;
+  justify-content: center;
+  height: ${hp("25%")}px;
 `;
 
 export const SavesTab = ({ route, navigation }) => {
@@ -60,9 +67,35 @@ export const SavesTab = ({ route, navigation }) => {
     });
   }, [uid]);
 
+  const listEmptyComponent = () => {
+    return (
+      <ListEmptySection>
+        <Text
+          variant="list_empty_message"
+          style={{
+            paddingBottom: 20,
+            paddingTop: 20,
+          }}
+        >
+          Save the first video
+        </Text>
+        <Text
+          variant="list_empty_message"
+          style={{
+            paddingBottom: 20,
+            paddingTop: 20,
+          }}
+        >
+          Favorite any video you want to save and rewatch later. Saved videos will appear here.
+        </Text>
+      </ListEmptySection>
+    );
+  };
+
   return (
     <SavesList
       data={userPosts}
+      ListEmptyComponent={listEmptyComponent}
       renderItem={({ item }) => {
         return (
           <VideoContainer>

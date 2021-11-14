@@ -37,7 +37,7 @@ export const createPost =
               videoThumbnail: media[1],
               title,
               description,
-              likesCount: 0,
+              votesCount: 0,
               commentsCount: 0,
               creation: firebase.firestore.FieldValue.serverTimestamp(),
             })

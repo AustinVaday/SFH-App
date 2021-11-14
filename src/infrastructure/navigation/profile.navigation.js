@@ -13,7 +13,7 @@ import { ProfileScreen } from "../../features/profile/screens/profile.screen";
 import { SettingsScreen } from "../../features/profile/screens/settings.screen";
 import { FollowListScreen } from "../../features/profile/screens/follow-list.screen";
 import { EditProfileScreen } from "../../features/profile/screens/edit-profile.screen";
-import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
+import { ViewPostScreen } from "../../features/app/screens/view-post.screen";
 import { NameEditScreen } from "../../features/profile/screens/name-edit.screen";
 import { UsernameEditScreen } from "../../features/profile/screens/username-edit.screen";
 import { BioEditScreen } from "../../features/profile/screens/bio-edit.screen";
@@ -134,8 +134,8 @@ export const ProfileNavigator = () => {
         })}
       />
       <ProfileStack.Screen
-        name="ViewPosting"
-        component={ViewPostingScreen}
+        name="ViewPost"
+        component={ViewPostScreen}
         options={{ headerShown: false }}
       />
     </ProfileStack.Navigator>

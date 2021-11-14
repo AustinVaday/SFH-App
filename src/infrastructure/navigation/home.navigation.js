@@ -9,7 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { HomeScreen } from "../../features/home/screens/home.screen";
 import { ActivityScreen } from "../../features/home/screens/activity.screen";
-import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
+import { ViewPostScreen } from "../../features/app/screens/view-post.screen";
 
 import { ViewPostingLeftHeader } from "../components/view-posting-left-header.components";
 import { ViewPostingRightHeader } from "../components/view-posting-right-header.components";
@@ -52,9 +52,9 @@ export const HomeNavigator = () => {
           headerTintColor: colors.text.primary,
         })}
       />
-      <HomeStack.Screen
-        name="ViewPosting"
-        component={ViewPostingScreen}
+      {/* <HomeStack.Screen
+        name="ViewPost"
+        component={ViewPostScreen}
         options={({ route, navigation }) => ({
           headerShown: true,
           headerBackTitleVisible: false,
@@ -70,7 +70,7 @@ export const HomeNavigator = () => {
           ),
           headerRight: () => <ViewPostingRightHeader />,
         })}
-      />
+      /> */}
     </HomeStack.Navigator>
   );
 };

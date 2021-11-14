@@ -54,6 +54,20 @@ export const queryUsersByUsername = (username) =>
       .catch(() => reject());
   });
 
+export const getUserById = (id) =>
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(id)
+      .get()
+      .then((snapshot) => {
+        console.log(snapshot.exists);
+        resolve(snapshot.exists ? snapshot.data() : null);
+      })
+      .catch(() => reject());
+  });
+
 export const followUser = (uid) =>
   new Promise((resolve, reject) => {
     firebase
@@ -74,4 +88,45 @@ export const unfollowUser = (uid) =>
       .collection("userFollowing")
       .doc(uid)
       .delete();
+  });
+
+export const getVoteById = (postId, uid) =>
+  new Promise((resolve, reject) => {
+    console.log(postId)
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(postId)
+      .collection("votes")
+      .doc(uid)
+      .get()
+      .then((res) => {
+        resolve(res.data());
+      })
+      .catch(() => reject());
+  });
+
+export const updateVote = (postId, uid, upvoted, downvoted) =>
+  new Promise((resolve, reject) => {
+    console.log(upvoted + " " + downvoted + " " + uid);
+    if (upvoted === false && downvoted === false) {
+      firebase
+        .firestore()
+        .collection("posts")
+        .doc(postId)
+        .collection("votes")
+        .doc(uid)
+        .delete();
+    } else {
+      firebase
+        .firestore()
+        .collection("posts")
+        .doc(postId)
+        .collection("votes")
+        .doc(uid)
+        .set({
+          upvoted,
+          downvoted,
+        });
+    }
   });

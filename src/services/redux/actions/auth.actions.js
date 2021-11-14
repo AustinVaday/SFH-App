@@ -81,6 +81,7 @@ export const register =
             followersCount: 0,
             bio: "",
             identify: "none",
+            id: firebase.auth().currentUser.uid,
           });
         dispatch({ type: LOADING, loading: false });
       })

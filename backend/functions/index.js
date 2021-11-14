@@ -42,3 +42,80 @@ exports.removeFollower = functions.firestore
                 });
           });
     });
+
+exports.addComment = functions.firestore
+    .document("/posts/{postId}/comments/{userId}")
+    .onCreate((snap, context) => {
+      return db
+          .collection("posts")
+          .doc(context.params.postId)
+          .update({
+            commentsCount: admin.firestore.FieldValue.increment(1),
+          });
+    });
+
+exports.addVote = functions.firestore
+    .document("/posts/{postId}/votes/{uid}")
+    .onCreate((snap, context) => {
+      const userVote = snap.data();
+
+      if (userVote.upvoted) {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(1),
+            });
+      } else {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-1),
+            });
+      }
+    });
+
+exports.updateVote = functions.firestore
+    .document("/posts/{postId}/votes/{uid}")
+    .onUpdate((snap, context) => {
+      const newUserVote = snap.after.data();
+
+      if (newUserVote.upvoted) {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(2),
+            });
+      } else {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-2),
+            });
+      }
+    });
+
+exports.deleteVote = functions.firestore
+    .document("/posts/{postId}/votes/{uid}")
+    .onDelete((snap, context) => {
+      const userVote = snap.data();
+
+      if (userVote.upvoted) {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-1),
+            });
+      } else {
+        return db
+            .collection("posts")
+            .doc(context.params.postId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(1),
+            });
+      }
+    });

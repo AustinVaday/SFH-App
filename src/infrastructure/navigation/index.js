@@ -35,11 +35,13 @@ export const Navigation = () => {
             options={{ animationEnabled: false }}
           />
         ) : (
-          <Stack.Screen
-            name="App"
-            component={AppNavigator}
-            options={{ animationEnabled: false }}
-          />
+          <>
+            <Stack.Screen
+              name="App"
+              component={AppNavigator}
+              options={{ animationEnabled: false }}
+            />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

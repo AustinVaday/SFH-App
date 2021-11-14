@@ -4,12 +4,15 @@ import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
 import { Provider as PaperProvider } from "react-native-paper";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { Provider } from "react-redux";
-import { applyMiddleware, createStore } from "redux";
+import { applyMiddleware, createStore, compose } from "redux";
 import thunk from "redux-thunk";
 import rootReducer from "./src/services/redux/reducers";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import { colors } from "./src/infrastructure/theme/colors";
 
@@ -64,7 +67,18 @@ const toastConfig = {
   ),
 };
 
+// for Redux debugging purposes
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// const store = createStore(
+//   rootReducer,
+//   composeEnhancers(applyMiddleware(thunk))
+// );
+
 const store = createStore(rootReducer, applyMiddleware(thunk));
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchInterval: false, staleTime: Infinity } },
+});
 
 export default function App() {
   const [openSansLoaded] = useFonts({
@@ -81,16 +95,23 @@ export default function App() {
     return (
       <>
         <ThemeProvider theme={theme}>
-          <PaperProvider>
-            <ActionSheetProvider>
-              <Provider store={store}>
-                <Navigation />
-              </Provider>
-            </ActionSheetProvider>
-          </PaperProvider>
+          <SafeAreaProvider>
+            <PaperProvider>
+              <ActionSheetProvider>
+                <Provider store={store}>
+                  <QueryClientProvider client={queryClient}>
+                    <BottomSheetModalProvider>
+                      <Navigation />
+                    </BottomSheetModalProvider>
+                  </QueryClientProvider>
+                </Provider>
+              </ActionSheetProvider>
+            </PaperProvider>
+          </SafeAreaProvider>
         </ThemeProvider>
+
         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-        <ExpoStatusBar style="auto" />
+        <ExpoStatusBar animated={true} style="auto" />
       </>
     );
   }

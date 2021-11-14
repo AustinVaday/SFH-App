@@ -264,7 +264,7 @@ export const ProfileScreen = ({ route }) => {
           <EditProfileButtonContainer>
             <Button
               onPress={() => {
-                navigation.navigate("EditProfile", { user });
+                navigation.navigate("EditProfile", { currentUser: user });
               }}
               type="outline"
               buttonStyle={{ height: 50 }}

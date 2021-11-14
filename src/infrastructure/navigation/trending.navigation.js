@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { TrendingScreen } from "../../features/trending/screens/trending.screen";
 import { ProfileScreen } from "../../features/profile/screens/profile.screen";
-import { ViewPostingScreen } from "../../features/home/screens/view-posting.screen";
+import { ViewPostScreen } from "../../features/app/screens/view-post.screen";
 
 import { Text } from "../../components/typography/text.components";
 
@@ -29,11 +29,11 @@ export const TrendingNavigator = () => {
           ),
         })}
       />
-      <TrendingStack.Screen
+      {/* <TrendingStack.Screen
         name="ViewPosting"
         component={ViewPostingScreen}
         options={{ headerShown: false }}
-      />
+      /> */}
     </TrendingStack.Navigator>
   );
 };

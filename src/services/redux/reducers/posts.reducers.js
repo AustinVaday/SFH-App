@@ -1,8 +1,8 @@
 import { CURRENT_USER_POSTS_UPDATE, POSTS_TRENDING, USER_FOLLOWING_STATE_CHANGE } from "../constants";
 
 const initialState = {
-  currentUserPosts: null,
-  trendingPosts: null,
+  currentUserPosts: [],
+  trendingPosts: [],
   following: [],
 };
 
