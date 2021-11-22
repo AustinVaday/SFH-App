@@ -1,16 +1,23 @@
 import React, { useCallback, useRef, useMemo } from "react";
 import { Platform } from "react-native";
-import { ListItem, Avatar, Icon } from "react-native-elements";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { ListItem, Avatar } from "react-native-elements";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { useNavigation } from "@react-navigation/native";
 
 import { timeDifference } from "../../../components/utilities/time-difference.components";
 import { Text } from "../../../components/typography/text.components";
-import { colors, shadowTextStyle } from "../../../infrastructure/theme/colors";
+import { colors } from "../../../infrastructure/theme/colors";
 
-import { TopSection, NameAndDate, PostSettingsButton } from "../styles";
+import {
+  TopPostContainer,
+  UsernameAndDateContainer,
+  PostSettingsButtonContainer,
+  BackButton,
+  PostSettingsButton,
+  ReportIcon,
+  UnfollowIcon
+} from "../styles/post-top-section.styles";
 
 export const PostTopSection = ({ isViewPost, post, user }) => {
   const navigation = useNavigation();
@@ -36,13 +43,13 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
     () => (
       <>
         <ListItem onPress={() => console.log("clicked report")}>
-          <Ionicons name="flag" size={24} color="black" />
+          <ReportIcon />
           <ListItem.Content>
             <ListItem.Title>Report</ListItem.Title>
           </ListItem.Content>
         </ListItem>
         <ListItem onPress={() => console.log("clicked unfollow")}>
-          <AntDesign name="deleteuser" size={24} color="black" />
+          <UnfollowIcon />
           <ListItem.Content>
             <ListItem.Title>Unfollow</ListItem.Title>
           </ListItem.Content>
@@ -53,14 +60,9 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
   );
 
   return (
-    <TopSection style={{ paddingLeft: isViewPost ? 0 : 15 }}>
+    <TopPostContainer isViewPost={isViewPost}>
       {isViewPost && (
-        <Icon
-          size={35}
-          name="chevron-left"
-          type="ionicons"
-          color={colors.icon.primary}
-          containerStyle={{marginRight: 10}}
+        <BackButton
           onPress={() => {
             navigation.goBack();
           }}
@@ -70,29 +72,25 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
         rounded
         size="small"
         activeOpacity={0.7}
+        name="chevron-left"
+        type="ionicons"
+        color={colors.icon.secondary}
         onPress={() => console.log("clicked avatar")}
-        source={{ uri: user !== undefined ? user.profilePhoto : null }}
+        source={{ uri: user?.profilePhoto }}
       />
-      <NameAndDate>
-        <Text variant="name" style={shadowTextStyle()}>
-          {user!== undefined ? user.username : null}
-        </Text>
-        <Text variant="date" style={shadowTextStyle()}>
+      <UsernameAndDateContainer>
+        <Text variant="post_username">{user?.username}</Text>
+        <Text variant="post_date">
           {post.creation === null
             ? "now"
             : timeDifference(new Date(), post.creation.toDate())}
         </Text>
-      </NameAndDate>
-      <PostSettingsButton>
-        <Icon
-          name={Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical"}
-          type="material-community"
+      </UsernameAndDateContainer>
+      <PostSettingsButtonContainer>
+        <PostSettingsButton
           onPress={() => postSettingsSheetRef.current?.present()}
-          underlayColor="transparent"
-          color={colors.icon.primary}
-          size={30}
         />
-      </PostSettingsButton>
+      </PostSettingsButtonContainer>
 
       <BottomSheetModal
         ref={postSettingsSheetRef}
@@ -105,6 +103,6 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
         android_keyboardInputMode="adjustResize"
         children={renderPostSettings}
       />
-    </TopSection>
+    </TopPostContainer>
   );
 };

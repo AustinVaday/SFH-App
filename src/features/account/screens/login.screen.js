@@ -1,92 +1,171 @@
-import React from "react";
-import { Button } from "react-native-paper";
+import React, { useState } from "react";
+import { Formik } from "formik";
+import Toast from "react-native-toast-message";
+import * as yup from "yup";
 
-import NetInfo from "@react-native-community/netinfo";
-import styled from "styled-components/native";
-
-import { colors } from "../../../infrastructure/theme/colors";
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
-import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
-import { FormLogin } from "../components/form-login.components";
+import { colors } from "../../../infrastructure/theme/colors";
 
-const TopTextSection = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-`;
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../../services/redux/actions/auth.actions";
 
-const SignUpSection = styled.View`
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-`;
+import {
+  LoginBackground,
+  EmailInput,
+  PasswordInput,
+  ForgotPasswordButton,
+  FormSection,
+  LoginButton,
+  LoginText,
+  RightIconsInputContainer,
+  SeeIcon,
+  ClearIcon,
+} from "../styles/login.styles";
 
-const HorizontalLine = styled.View`
-  flex: 1;
-  height: 1px;
-  background-color: ${(props) => props.theme.colors.text.secondary};
-`;
-
-const OrSection = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-left: ${(props) => props.theme.space[4]};
-  padding-right: ${(props) => props.theme.space[4]};
-`;
-
-const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.medium};
-  color: ${(props) => props.theme.colors.text.secondary};
-  text-align: center;
-  width: 50px;
-`;
-
-const WhiteSpaceSection = styled.View`
-  flex-grow: 1;
-`;
-
-// create the Network Information
-const unsubscribe = NetInfo.addEventListener((state) => {
-  console.log("Connection type", state.type);
-  console.log("Is connected?", state.isConnected);
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .label("Email")
+    .email("Enter a valid email")
+    .required("Please enter your email"),
+  password: yup
+    .string()
+    .label("Password")
+    .required("Please enter your password")
+    .min(8, "Password should be at least 5 characters"),
 });
 
-// to unsubscribe to these update, just use:
-unsubscribe();
-
 export const LoginScreen = ({ navigation }) => {
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const isLoading = useSelector((state) => state.auth.loading);
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values, errors) => {
+    onSignIn(values);
+  };
+
+  const onSignIn = async (values) => {
+    const { email, password } = values;
+
+    try {
+      dispatch(login(email, password));
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+        topOffset: 45,
+      });
+    }
+  };
+
   return (
-    <SafeArea>
-      <TopTextSection>
-        <Text variant="account_title" style={{ textAlign: "left" }}>
-          Welcome
-        </Text>
-        <Text variant="account_message">Log in to continue!</Text>
-      </TopTextSection>
-      <FormLogin onNavigate={navigation.navigate} />
-      <OrSection>
-        <HorizontalLine />
-        <OrText>OR</OrText>
-        <HorizontalLine />
-      </OrSection>
-      <Spacer size="medium" />
-      <FacebookAndGoogleButtons />
-      <WhiteSpaceSection />
-      <SignUpSection>
-        <Text variant="text_button">Don't have an account?</Text>
-        <Button
-          onPress={() => {
-            navigation.navigate("Register");
-          }}
-          color={colors.ui.tertiary}
-          uppercase={false}
-        >
-          <Text variant="text_button" style={{ color: colors.text.brand }}>
-            Sign up
-          </Text>
-        </Button>
-      </SignUpSection>
-    </SafeArea>
+    <LoginBackground>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        validationSchema={validationSchema}
+      >
+        {({
+          handleChange,
+          values,
+          errors,
+          touched,
+          setFieldValue,
+          handleBlur,
+        }) => (
+          <FormSection>
+            <EmailInput
+              touched={touched.email}
+              errors={errors.email}
+              label="Email"
+              placeholder="abc123@gmail.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoFocus={true}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              value={values.email}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
+              rightIcon={
+                values.email !== "" && {
+                  type: "material-community",
+                  name: "close-circle",
+                  size: 20,
+                  color: colors.icon.gray,
+                  onPress: () => setFieldValue("email", ""),
+                }
+              }
+            />
+
+            <Spacer size="large" />
+
+            <PasswordInput
+              touched={touched.password}
+              errors={errors.password}
+              label="Password"
+              placeholder="Set strong password"
+              secureTextEntry={hidePassword}
+              value={values.password}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
+              onSubmitEditing={() => {
+                handleSubmit(values, errors);
+              }}
+              rightIcon={
+                <RightIconsInputContainer>
+                  {values.password !== "" && (
+                    <ClearIcon onPress={() => setFieldValue("password", "")} />
+                  )}
+                  <Spacer size="medium" position="left" />
+                  <SeeIcon
+                    hidePassword={hidePassword}
+                    onPress={() => {
+                      if (hidePassword) {
+                        setHidePassword(false);
+                      } else {
+                        setHidePassword(true);
+                      }
+                    }}
+                  />
+                </RightIconsInputContainer>
+              }
+            />
+
+            <Spacer size="medium" />
+
+            <ForgotPasswordButton
+              title={
+                <Text variant="forgot_password_button">Forgot password?</Text>
+              }
+              onPress={() => {
+                navigation.navigate("ForgotPassword");
+              }}
+            />
+
+            <Spacer size="large" />
+
+            <LoginButton
+              enableButton={touched.email && !errors.email && !errors.password}
+              title={
+                <LoginText
+                  enableButton={
+                    touched.email && !errors.email && !errors.password
+                  }
+                >
+                  Login
+                </LoginText>
+              }
+              loading={isLoading}
+              onPress={() => {
+                handleSubmit(values, errors);
+              }}
+            />
+          </FormSection>
+        )}
+      </Formik>
+    </LoginBackground>
   );
 };

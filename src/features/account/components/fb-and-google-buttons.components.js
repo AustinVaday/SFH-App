@@ -5,11 +5,7 @@
 // CHECK: https://github.com/expo/expo/issues/11471
 // If Android device has issues with using Facebook login, check that website for resolve
 
-import React, { useEffect, useState, useContext } from "react";
-import { Dimensions } from "react-native";
-import { Button } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import styled from "styled-components/native";
+import React, { useEffect, useState } from "react";
 
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { useAuthRequest } from "expo-auth-session/providers/facebook";
@@ -19,7 +15,6 @@ import { firebase } from "../../../utils/firebase";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -29,13 +24,11 @@ import {
 
 import { FBAPPID, WEBCLIENTID } from "@env";
 
-const AuthButtonsSection = styled.View`
-  padding-top: ${(props) => props.theme.space[3]};
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[3]};
-`;
-
-const { width } = Dimensions.get("window");
+import {
+  AuthenticationsButtonsSection,
+  FacebookButton,
+  GoogleButton,
+} from "../styles/fb-and-google-buttons.styles";
 
 maybeCompleteAuthSession();
 
@@ -82,46 +75,26 @@ export const FacebookAndGoogleButtons = ({ navigation }) => {
   }, [responseFacebook, responseGoogle]);
 
   return (
-    <AuthButtonsSection>
-      <Button
-        icon={() => (
-          <Ionicons
-            name="logo-facebook"
-            size={30}
-            color={colors.icon.primary}
-          />
-        )}
-        mode="contained"
-        color={colors.icon.facebook}
-        contentStyle={{ width: width / 1.2, height: 50 }}
+    <AuthenticationsButtonsSection>
+      <FacebookButton
+        title={
+          <Text variant="fb_google_textbutton">Continue with Facebook</Text>
+        }
         onPress={() => {
           setOnFacebook(true);
           promptAsyncFacebook();
         }}
         loading={isFacebookLoading}
-      >
-        {!isFacebookLoading ? (
-          <Text variant="contained_button">Continue with Facebook</Text>
-        ) : null}
-      </Button>
+      />
       <Spacer size="medium" />
-      <Button
-        icon={() => (
-          <Ionicons name="logo-google" size={30} color={colors.icon.primary} />
-        )}
-        mode="contained"
-        color={colors.icon.google}
-        contentStyle={{ width: width / 1.2, height: 50 }}
+      <GoogleButton
+        title={<Text variant="fb_google_textbutton">Continue with Google</Text>}
         onPress={() => {
           setOnGoogle(true);
           promptAsyncGoogle();
         }}
         loading={isGoogleLoading}
-      >
-        {!isGoogleLoading ? (
-          <Text variant="contained_button">Continue with Google</Text>
-        ) : null}
-      </Button>
-    </AuthButtonsSection>
+      />
+    </AuthenticationsButtonsSection>
   );
 };

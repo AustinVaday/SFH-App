@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "react-native-paper";
+import { Button } from "react-native-elements";
 
 import { saveUserField } from "../../services/user";
 
@@ -14,12 +14,9 @@ export const SaveRightHeader = ({ params, onNavigate }) => {
 
   return (
     <Button
-      uppercase={false}
-      color={colors.ui.quaternary}
-      labelStyle={{ color: colors.icon.brand }}
+      title="Save"
+      titleStyle={{ color: colors.icon.primary }}
       onPress={() => onSave()}
-    >
-      Save
-    </Button>
+    />
   );
 };

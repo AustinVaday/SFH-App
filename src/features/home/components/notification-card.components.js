@@ -1,24 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Image, TouchableWithoutFeedback, Platform } from "react-native";
-import { Avatar, List, Button } from "react-native-paper";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
+import { Platform } from "react-native";
+import { ListItem, Avatar } from "react-native-elements";
 import { getThumbnailAsync } from "expo-video-thumbnails";
-import RBSheet from "react-native-raw-bottom-sheet";
-import styled from "styled-components/native";
+import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
-const ListItem = styled(List.Item).attrs({
-  underlayColor: colors.bg.secondary,
-})`
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[4]};
-  background-color: ${colors.bg.primary};
-`;
+import { PostImage, FollowButton } from "../styles/notification-card.styles";
 
-export const NotificationCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
+export const NotificationCard = ({ user, navigation, onDeleteRow, rowMap }) => {
   const [image, setImage] = useState(null);
-  const refRBSheet = useRef();
+
+  const androidBottomSheetRef = useRef();
+
+  const snapPoints = useMemo(() => ["20%"], []);
 
   useEffect(() => {
     async function fetchVideo() {
@@ -37,84 +38,94 @@ export const NotificationCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
   const typeOfNotification = (type) => {
     if (type === "comment") {
       return (
-        <TouchableWithoutFeedback onPress={() => {}}>
-          <Image
-            source={{ uri: image }}
-            style={{ width: 50, height: 50, alignSelf: "center" }}
-          />
-        </TouchableWithoutFeedback>
+        <PostImage
+          source={{ uri: image }}
+          onPress={() => console.log("click view post")}
+        />
       );
     } else if (type === "upvote") {
       return (
-        <TouchableWithoutFeedback onPress={() => {}}>
-          <Image
-            source={{ uri: image }}
-            style={{ width: 50, height: 50, alignSelf: "center" }}
-          />
-        </TouchableWithoutFeedback>
+        <PostImage
+          source={{ uri: image }}
+          onPress={() => console.log("click view post")}
+        />
       );
     } else if (type === "follow") {
       return (
-        <Button
-          mode="contained"
-          color={colors.brand.primary}
-          style={{ width: 90, alignSelf: "center" }}
-          uppercase={false}
-          onPress={() => {}}
-        >
-          <Text variant="contained_button">Follow</Text>
-        </Button>
+        <FollowButton
+          title={<Text variant="activity_textbutton">Follow</Text>}
+          onPress={() => console.log("click follow")}
+        />
       );
     }
   };
+
+  const renderPostSettings = useCallback(
+    () => (
+      <>
+        <ListItem onPress={() => onDeleteRow(rowMap, user.id)}>
+          <ListItem.Content>
+            <Text variant="android_bottomsheet_delete">Delete</Text>
+          </ListItem.Content>
+        </ListItem>
+        <ListItem onPress={() => androidBottomSheetRef.current?.close()}>
+          <ListItem.Content>
+            <Text variant="android_bottomsheet_cancel">Cancel</Text>
+          </ListItem.Content>
+        </ListItem>
+      </>
+    ),
+    []
+  );
+
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.3}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   return (
     <>
       <ListItem
         onPress={() => {}}
         onLongPress={
-          Platform.OS === "android" ? () => refRBSheet.current.open() : null
+          Platform.OS === "android"
+            ? () => androidBottomSheetRef.current?.present()
+            : null
         }
-        title={<Text variant="notifications_name">{user.name}</Text>}
-        description={
-          <>
-            <Text variant="notifications_message">{user.message}</Text>
-            <Text variant="date" style={{ color: colors.text.secondary }}>
-              {"\n" + user.timestamp}
-            </Text>
-          </>
-        }
-        left={() => (
-          <TouchableWithoutFeedback onPress={() => onNavigate("ViewProfile")}>
-            <Avatar.Image size={60} source={{ uri: user.avatar }} />
-          </TouchableWithoutFeedback>
-        )}
-        right={() => typeOfNotification(user.type)}
-      />
-      <RBSheet
-        ref={refRBSheet}
-        closeOnDragDown={true}
-        minClosingHeight={130}
-        height={130}
-        customStyles={{
-          container: {
-            borderTopRightRadius: 10,
-            borderTopLeftRadius: 10,
-          },
-          draggableIcon: { margin: 0, backgroundColor: colors.bg.primary },
-        }}
       >
-        <List.Item
-          onPress={() => onDeleteRow(rowMap, user.id)}
-          titleStyle={{ textAlign: "center" }}
-          title={<Text style={{ color: colors.text.error }}>Delete</Text>}
+        <Avatar
+          rounded
+          size="medium"
+          onPress={() => navigation.navigate("ViewProfile")}
+          source={{ uri: user.avatar }}
         />
-        <List.Item
-          onPress={() => refRBSheet.current.close()}
-          titleStyle={{ textAlign: "center" }}
-          title={<Text>Cancel</Text>}
-        />
-      </RBSheet>
+        <ListItem.Content>
+          <Text variant="activity_username">{user.name}</Text>
+          <Text variant="activity_message">{user.message}</Text>
+          <Text variant="activity_date">{user.timestamp}</Text>
+        </ListItem.Content>
+        {typeOfNotification(user.type)}
+      </ListItem>
+
+      <BottomSheetModal
+        ref={androidBottomSheetRef}
+        key="android-bottom-sheet-modal"
+        index={0}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={Platform.OS === "ios" ? "extend" : "interactive"}
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        children={renderPostSettings}
+      />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { colors } from "../../../infrastructure/theme/colors";
@@ -15,8 +15,8 @@ export const ProfileTabs = ({ uid }) => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: colors.icon.brand,
-        inactiveTintColor: colors.icon.secondary,
+        activeTintColor: colors.icon.primary,
+        inactiveTintColor: colors.icon.lightgray,
         showIcon: true,
         showLabel: false,
         indicatorStyle: { width: width / 4, left: width / 8 },

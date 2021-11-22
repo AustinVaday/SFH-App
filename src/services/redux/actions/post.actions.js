@@ -5,8 +5,9 @@ require("firebase/firestore");
 import { saveMediaToStorage } from "../../../services/user/random";
 import {
   CURRENT_USER_POSTS_UPDATE,
-  POSTS_TRENDING,
+  POSTS_DISCOVER,
   USER_FOLLOWING_STATE_CHANGE,
+  USERS_STATE_CHANGE
 } from "../constants";
 
 import uuid from "uuid-random";
@@ -79,7 +80,7 @@ export const getPostsByUser =
         });
     });
 
-export const getPostsForTrending = () => (dispatch) =>
+export const getPostsForDiscover = () => (dispatch) =>
   new Promise((resolve, reject) => {
     firebase
       .firestore()
@@ -93,8 +94,8 @@ export const getPostsForTrending = () => (dispatch) =>
         });
 
         dispatch({
-          type: POSTS_TRENDING,
-          trendingPosts: posts,
+          type: POSTS_DISCOVER,
+          discoverPosts: posts,
         });
       });
   });
@@ -112,8 +113,29 @@ export const fetchUserFollowing = () => (dispatch) =>
           return id;
         });
         dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
-        // for (let i = 0; i < following.length; i++) {
-        //   dispatch(fetchUsersData(following[i], true));
-        // }
+        for (let i = 0; i < following.length; i++) {
+          dispatch(fetchUsersData(following[i]));
+        }
       });
   });
+
+export function fetchUsersData(uid) {
+  return (dispatch, getState) => {
+    // const found = getState().usersState.users.some((el) => el.uid === uid);
+    // if (!found) {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            let user = snapshot.data();
+            user.uid = snapshot.id;
+
+            dispatch({ type: USERS_STATE_CHANGE, user });
+          }
+        });
+    // }
+  };
+}

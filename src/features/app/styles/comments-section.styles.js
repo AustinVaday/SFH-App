@@ -1,6 +1,8 @@
 import styled from "styled-components/native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Icon } from "react-native-elements";
 
 export const ListEmptySection = styled.View`
   align-items: center;
@@ -9,22 +11,23 @@ export const ListEmptySection = styled.View`
 `;
 
 export const CommentInputBar = styled(BottomSheetTextInput)`
-  background-color: #f1f1f2;
+  background-color: ${(props) => props.theme.colors.input.cultured};
   padding-left: ${(props) => props.theme.space[2]};
   padding-top: ${(props) => props.theme.space[2]};
   padding-bottom: ${(props) => props.theme.space[2]};
   border-radius: 5px;
-  color: black;
+  color: ${(props) => props.theme.colors.text.black};
   flex: 1;
 `;
 
 export const CommentBarContainer = styled.View`
-  background-color: ${(props) => props.theme.colors.bg.primary};
+  background-color: ${(props) => props.theme.colors.bg.secondary};
   flex-direction: row;
   align-items: center;
   padding: ${(props) => props.theme.space[2]};
+  padding-bottom: ${(props) => props.isKeyboardOpen ? 5 : props.insetsBottom}px;
   border-top-width: 1px;
-  border-top-color: #f1f1f2;
+  border-top-color: ${(props) => props.theme.colors.bg.cultured};
 `;
 
 export const AvatarContainer = styled.View`
@@ -34,3 +37,20 @@ export const AvatarContainer = styled.View`
 export const SendIconContainer = styled.View`
   padding-left: ${(props) => props.theme.space[2]};
 `;
+
+export const CommentTextIcon = styled(MaterialCommunityIcons).attrs(
+  (props) => ({
+    name: "comment-text-outline",
+    size: 100,
+    color: props.theme.colors.icon.lightgray,
+  })
+)``;
+
+export const CommentSendButton = styled(Icon).attrs(
+  (props) => ({
+    name: "sc-telegram",
+    type: "evilicon",
+    size: 32,
+    color: props.theme.colors.icon.primary,
+  })
+)``;

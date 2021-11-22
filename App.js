@@ -2,7 +2,6 @@ import React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
-import { Provider as PaperProvider } from "react-native-paper";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
@@ -33,16 +32,16 @@ const toastConfig = {
       {...props}
       contentContainerStyle={{ backgroundColor: colors.bg.success }}
       leadingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-      leadingIconStyle={{ tintColor: colors.icon.primary }}
+      leadingIconStyle={{ tintColor: colors.icon.secondary }}
       trailingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-      trailingIconStyle={{ tintColor: colors.icon.primary }}
+      trailingIconStyle={{ tintColor: colors.icon.secondary }}
       text1Style={{
         fontSize: 15,
-        color: colors.text.white,
+        color: colors.text.secondary,
       }}
       text2Style={{
         fontSize: 15,
-        color: colors.text.white,
+        color: colors.text.secondary,
       }}
     />
   ),
@@ -52,16 +51,16 @@ const toastConfig = {
       {...props}
       contentContainerStyle={{ backgroundColor: colors.bg.error }}
       leadingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-      leadingIconStyle={{ tintColor: colors.icon.primary }}
+      leadingIconStyle={{ tintColor: colors.icon.secondary }}
       trailingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-      trailingIconStyle={{ tintColor: colors.icon.primary }}
+      trailingIconStyle={{ tintColor: colors.icon.secondary }}
       text1Style={{
         fontSize: 15,
-        color: colors.text.white,
+        color: colors.text.secondary,
       }}
       text2Style={{
         fontSize: 15,
-        color: colors.text.white,
+        color: colors.text.secondary,
       }}
     />
   ),
@@ -96,17 +95,15 @@ export default function App() {
       <>
         <ThemeProvider theme={theme}>
           <SafeAreaProvider>
-            <PaperProvider>
-              <ActionSheetProvider>
-                <Provider store={store}>
-                  <QueryClientProvider client={queryClient}>
-                    <BottomSheetModalProvider>
-                      <Navigation />
-                    </BottomSheetModalProvider>
-                  </QueryClientProvider>
-                </Provider>
-              </ActionSheetProvider>
-            </PaperProvider>
+            <ActionSheetProvider>
+              <Provider store={store}>
+                <QueryClientProvider client={queryClient}>
+                  <BottomSheetModalProvider>
+                    <Navigation />
+                  </BottomSheetModalProvider>
+                </QueryClientProvider>
+              </Provider>
+            </ActionSheetProvider>
           </SafeAreaProvider>
         </ThemeProvider>
 

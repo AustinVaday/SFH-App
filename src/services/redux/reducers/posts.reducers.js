@@ -1,9 +1,15 @@
-import { CURRENT_USER_POSTS_UPDATE, POSTS_TRENDING, USER_FOLLOWING_STATE_CHANGE } from "../constants";
+import {
+  CURRENT_USER_POSTS_UPDATE,
+  POSTS_DISCOVER,
+  USER_FOLLOWING_STATE_CHANGE,
+  USERS_STATE_CHANGE
+} from "../constants";
 
 const initialState = {
   currentUserPosts: [],
-  trendingPosts: [],
+  discoverPosts: [],
   following: [],
+  users: [],
 };
 
 export const posts = (state = initialState, action) => {
@@ -13,17 +19,21 @@ export const posts = (state = initialState, action) => {
         ...state,
         currentUserPosts: action.currentUserPosts,
       };
-    case POSTS_TRENDING:
+    case POSTS_DISCOVER:
       return {
         ...state,
-        trendingPosts: action.trendingPosts,
+        discoverPosts: action.discoverPosts,
       };
-      case USER_FOLLOWING_STATE_CHANGE:
-        console.log("enter")
-        return {
-          ...state,
-          following: action.following,
-        };
+    case USER_FOLLOWING_STATE_CHANGE:
+      return {
+        ...state,
+        following: action.following,
+      };
+    case USERS_STATE_CHANGE:
+      return {
+        ...state,
+        users: [...state.users, action.user],
+      };
     default:
       return state;
   }

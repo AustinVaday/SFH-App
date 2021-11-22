@@ -1,44 +1,19 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  Platform,
-  StyleSheet,
-} from "react-native";
+import { Platform } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import styled from "styled-components/native";
 
 import { NotificationCard } from "../components/notification-card.components";
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
 import dataNotifications from "../../../utils/mock/dataNotifications";
 
-const ActivityBackground = styled.View`
-  flex: 1;
-  background-color: ${colors.bg.primary};
-`;
+import {
+  SwipeDeleteButton,
+  RowHiddenContainer,
+  ActivityBackground,
+} from "../styles/activity.styles";
 
-const RowBack = styled.View`
-  flex: 1;
-  background-color: ${colors.bg.secondary};
-`;
-
-const styles = StyleSheet.create({
-  backRightBtn: {
-    alignItems: "center",
-    bottom: 0,
-    justifyContent: "center",
-    position: "absolute",
-    top: 0,
-    width: 75,
-  },
-  backRightBtnRight: {
-    backgroundColor: colors.text.error,
-    right: 0,
-  },
-});
-
-export const ActivityScreen = ({ navigation }) => {
+export const ActivityScreen = () => {
   const [listData, setListData] = useState(dataNotifications);
 
   const closeRow = (rowMap, rowKey) => {
@@ -57,17 +32,21 @@ export const ActivityScreen = ({ navigation }) => {
 
   const renderHiddenItem = (data, rowMap) => {
     return (
-      <RowBack>
-        <TouchableOpacity
-          style={[styles.backRightBtn, styles.backRightBtnRight]}
-          activeOpacity={0.9}
-          onPress={() => deleteRow(rowMap, data.item.id)}
-        >
-          <Text variant="body" style={{ color: colors.bg.primary }}>
-            Delete
-          </Text>
-        </TouchableOpacity>
-      </RowBack>
+      <RowHiddenContainer>
+        <SwipeDeleteButton onPress={() => deleteRow(rowMap, data.item.id)}>
+          <Text variant="swipe_delete">Delete</Text>
+        </SwipeDeleteButton>
+      </RowHiddenContainer>
+    );
+  };
+
+  const renderItem = (data, rowMap) => {
+    return (
+      <NotificationCard
+        user={data.item}
+        onDeleteRow={deleteRow}
+        rowMap={rowMap}
+      />
     );
   };
 
@@ -75,16 +54,7 @@ export const ActivityScreen = ({ navigation }) => {
     <ActivityBackground>
       <SwipeListView
         data={listData}
-        renderItem={(data, rowMap) => {
-          return (
-            <NotificationCard
-              user={data.item}
-              onNavigate={navigation.navigate}
-              onDeleteRow={deleteRow}
-              rowMap={rowMap}
-            />
-          );
-        }}
+        renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
         disableRightSwipe={true}
         disableLeftSwipe={Platform.OS === "android" ? true : false}

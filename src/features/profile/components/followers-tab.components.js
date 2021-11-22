@@ -1,66 +1,49 @@
 import React from "react";
-import { FlatList } from "react-native";
-import styled from "styled-components/native";
-import { Avatar, Button, List } from "react-native-paper";
+import { ListItem } from "react-native-elements";
 
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
-const FollowersList = styled(FlatList)`
-  background-color: ${(props) => props.theme.colors.bg.primary};
-`;
-
-const ListItem = styled(List.Item)`
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[3]};
-`;
+import {
+  ListEmptyBackground,
+  FollowersList,
+  FollowButton,
+  UserImage,
+} from "../styles/followers-tab.styles";
 
 export const FollowersTab = ({ route, navigation }) => {
   const { newitem } = route.params;
 
+  const listEmptyComponent = () => {
+    return (
+      <ListEmptyBackground>
+        <Text variant="list_empty_title">No Followers</Text>
+        <Text variant="list_empty_message">
+          Someone follows you that will appear here
+        </Text>
+      </ListEmptyBackground>
+    );
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+      <ListItem onPress={() => navigation.navigate("ViewProfile")}>
+        <UserImage source={{ uri: item.profilePhoto }} />
+        <ListItem.Content>
+          <Text variant="followers_username">{item.username}</Text>
+        </ListItem.Content>
+        <FollowButton
+          title={<Text variant="follow_textbutton">Follow</Text>}
+          onPress={() => console.log("click unfollow")}
+        />
+      </ListItem>
+    );
+  };
+
   return (
     <FollowersList
-      data={newitem.followers}
-      renderItem={({ item }) => {
-        return (
-          <ListItem
-            onPress={() => navigation.navigate("ViewProfile")}
-            title={<Text variant="follow_name">{item.name}</Text>}
-            left={() => (
-              <Avatar.Image size={50} source={{ uri: item.avatar }} />
-            )}
-            right={() => {
-              return item.followed ? (
-                <Button
-                  mode="outlined"
-                  style={{ alignSelf: "center", width: 90 }}
-                  color={colors.bg.primary}
-                  labelStyle={{ color: colors.text.brand }}
-                  uppercase={false}
-                  onPress={() => {}}
-                >
-                  <Text
-                    variant="text_button"
-                    style={{ color: colors.text.brand }}
-                  >
-                    Remove
-                  </Text>
-                </Button>
-              ) : (
-                <Button
-                  mode="contained"
-                  style={{ alignSelf: "center", width: 90 }}
-                  color={colors.brand.primary}
-                  uppercase={false}
-                  onPress={() => {}}
-                >
-                  <Text variant="contained_button">Follow</Text>
-                </Button>
-              );
-            }}
-          />
-        );
-      }}
+      data={newitem}
+      ListEmptyComponent={listEmptyComponent}
+      renderItem={renderItem}
       keyExtractor={(item) => item.id}
       listKey={(item) => item.id}
     />

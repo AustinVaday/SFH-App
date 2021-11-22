@@ -17,8 +17,8 @@ export const FollowTabs = ({ newitem, pickedTab }) => {
     <Tab.Navigator
       initialRouteName={activeTab}
       tabBarOptions={{
-        activeTintColor: colors.icon.brand,
-        inactiveTintColor: colors.icon.secondary,
+        activeTintColor: colors.icon.primary,
+        inactiveTintColor: colors.icon.lightgray,
         showLabel: true,
         labelStyle: {
           textTransform: "none",

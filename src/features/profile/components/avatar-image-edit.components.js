@@ -1,14 +1,10 @@
 import React from "react";
-import { View, Alert, TouchableWithoutFeedback } from "react-native";
-import { Avatar, Surface } from "react-native-paper";
+import { Alert } from "react-native";
+import { Avatar } from "react-native-elements";
 import { openURL } from "expo-linking";
-import styled from "styled-components";
-
-import { colors } from "../../../infrastructure/theme/colors";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 import { saveUserProfileImage } from "../../../services/user";
-
-import { useActionSheet } from "@expo/react-native-action-sheet";
 
 import {
   requestCameraPermissionsAsync,
@@ -18,13 +14,10 @@ import {
   MediaTypeOptions,
 } from "expo-image-picker";
 
-const CameraEditIcon = styled(Avatar.Icon).attrs({
-  theme: { colors: { primary: colors.brand.primary } },
-  size: 30,
-})`
-  position: absolute;
-  align-self: flex-end;
-`;
+import {
+  AvatarImageEditBackground,
+  AvatarEditIcon,
+} from "../styles/avatar-image-edit.styles";
 
 export const AvatarImageEdit = ({ userImage }) => {
   const { showActionSheetWithOptions } = useActionSheet();
@@ -100,18 +93,17 @@ export const AvatarImageEdit = ({ userImage }) => {
     );
 
   return (
-    <View style={{ alignItems: "center", padding: 20 }}>
-      <TouchableWithoutFeedback onPress={onPhotoActions}>
-        <Surface style={{ borderRadius: 60, elevation: 1 }}>
-          <Avatar.Image
-            size={120}
-            source={{
-              uri: userImage,
-            }}
-          />
-          <CameraEditIcon icon="camera" />
-        </Surface>
-      </TouchableWithoutFeedback>
-    </View>
+    <AvatarImageEditBackground>
+      <Avatar
+        rounded={true}
+        size="xlarge"
+        source={{
+          uri: userImage,
+        }}
+        onPress={onPhotoActions}
+      >
+        <AvatarEditIcon />
+      </Avatar>
+    </AvatarImageEditBackground>
   );
 };

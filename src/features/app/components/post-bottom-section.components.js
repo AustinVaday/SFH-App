@@ -5,30 +5,34 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { Share, View, Platform, Keyboard } from "react-native";
-import { IconButton } from "react-native-paper";
-import { Button } from "react-native-elements";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Share, Platform, Keyboard } from "react-native";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { throttle } from "throttle-debounce";
 
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 import { CommentsSection } from "./comments-section.components";
 
+import { getVoteById, updateVote } from "../../../services/user";
 import { useSelector } from "react-redux";
 
 import {
-  BottomCard,
+  PostBottomContainer,
   IconsSection,
   LeftIconsSection,
   RightIconsSection,
-  LikeButton,
+  VoteButtonContainer,
+  CommentButtonContainer,
+  TitleAndDescriptionSection,
+  UpvoteButton,
+  DownvoteButton,
   CommentButton,
-  TitleAndCaptionSection,
-} from "../styles";
-import { getVoteById, updateVote } from "../../../services/user";
+  ShareButton,
+  SaveButton,
+  CancelButton,
+  CancelButtonContainer,
+  HandleTitleContainer,
+  CommentModalHandleContainer,
+} from "../styles/post-bottom-section.styles";
 
 export const PostBottomSection = ({ post }) => {
   const [saved, setSaved] = useState(false);
@@ -153,22 +157,6 @@ export const PostBottomSection = ({ post }) => {
     }
   };
 
-  const likeButtonStyle = () => {
-    if (currentVoteState.upvoted) {
-      return {
-        backgroundColor: colors.brand.primary,
-      };
-    } else if (currentVoteState.downvoted) {
-      return {
-        backgroundColor: colors.ui.error,
-      };
-    } else {
-      return {
-        backgroundColor: "rgba(192, 192, 192, 0.5)",
-      };
-    }
-  };
-
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop
@@ -184,94 +172,61 @@ export const PostBottomSection = ({ post }) => {
 
   const renderHandle = useCallback(
     () => (
-      <View style={{ margin: 10, flexDirection: "row" }}>
-        <View style={{ flex: 1, alignItems: "center" }}>
+      <CommentModalHandleContainer>
+        <HandleTitleContainer>
           <Text variant="comment_header">{post.commentsCount} Comments</Text>
-        </View>
+        </HandleTitleContainer>
 
-        <View style={{ position: "absolute", right: 0, top: -10 }}>
-          <Button
-            icon={<Ionicons name="close" size={24} color="black" />}
-            type="clear"
-            onPress={() => commentSheetRef.current?.close()}
-          />
-        </View>
-      </View>
+        <CancelButtonContainer>
+          <CancelButton onPress={() => commentSheetRef.current?.close()} />
+        </CancelButtonContainer>
+      </CommentModalHandleContainer>
     ),
     []
   );
 
   return (
     <>
-      <BottomCard>
-        <TitleAndCaptionSection>
-          <Text variant="title">{post.title}</Text>
+      <PostBottomContainer>
+        <TitleAndDescriptionSection>
+          <Text variant="post_title">{post.title}</Text>
           {post.description !== "" && (
-            <Text variant="caption">{post.description}</Text>
+            <Text variant="post_description">{post.description}</Text>
           )}
-        </TitleAndCaptionSection>
+        </TitleAndDescriptionSection>
 
         <IconsSection>
           <LeftIconsSection>
-            <LikeButton style={likeButtonStyle()}>
-              <IconButton
-                icon={"arrow-up-bold"}
-                color={colors.icon.primary}
-                underlayColor="transparent"
-                style={{ margin: 0 }}
-                size={25}
+            <VoteButtonContainer currentVoteState={currentVoteState}>
+              <UpvoteButton
+                upvoted={currentVoteState.upvoted}
                 onPress={() => handleVoteUpdate("upvote", currentVoteState)}
               />
-              <Text variant="numbers">{currentVoteState.counter}</Text>
-              <IconButton
-                icon={"arrow-down-bold"}
-                color={colors.icon.primary}
-                underlayColor="transparent"
-                style={{ paddingTop: 2, margin: 0 }}
-                size={25}
+              <Text variant="post_numbers">{currentVoteState.counter}</Text>
+              <DownvoteButton
+                downvoted={currentVoteState.downvoted}
                 onPress={() => handleVoteUpdate("downvote", currentVoteState)}
               />
-            </LikeButton>
-            <CommentButton>
-              <IconButton
-                icon="message"
-                color={colors.icon.primary}
-                underlayColor="transparent"
-                style={{ margin: 0 }}
-                size={25}
+            </VoteButtonContainer>
+            <CommentButtonContainer>
+              <CommentButton
                 onPress={() => commentSheetRef.current?.present()}
               />
-              <Text variant="numbers">{post.commentsCount}</Text>
-            </CommentButton>
-
-            <IconButton
-              icon="send"
-              color={colors.icon.primary}
-              underlayColor="transparent"
-              style={{ margin: 0 }}
-              size={25}
-              onPress={onShare}
-            />
+              <Text variant="post_numbers">{post.commentsCount}</Text>
+            </CommentButtonContainer>
+            <ShareButton onPress={onShare} />
           </LeftIconsSection>
 
           <RightIconsSection>
-            <IconButton
-              icon={saved ? "bookmark" : "bookmark-outline"}
-              color={saved ? colors.brand.primary : colors.icon.primary}
-              underlayColor="transparent"
-              style={{ margin: 0 }}
-              size={25}
-              onPress={clickSave}
-            />
+            <SaveButton saved={saved} onPress={clickSave} />
           </RightIconsSection>
         </IconsSection>
-      </BottomCard>
+      </PostBottomContainer>
 
       <BottomSheetModal
         ref={commentSheetRef}
         key="comments-sheet-modal"
         index={0}
-        // bottomInset={insets.bottom}
         snapPoints={snapPoints}
         enableContentPanningGesture={!isKeyboardOpen}
         enableHandlePanningGesture={!isKeyboardOpen}

@@ -5,7 +5,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
-import { Avatar, List } from "react-native-paper";
+import { Avatar, ListItem } from "react-native-elements";
 import { MaterialCommunityIcons as MCIcon } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
@@ -16,12 +16,7 @@ import dataFollowing from "../../../utils/mock/dataFollowing";
 
 const NewMessageBackground = styled.View`
   flex: 1;
-  background-color: ${colors.bg.primary};
-`;
-
-const ListItem = styled(List.Item)`
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[4]};
+  background-color: ${colors.bg.secondary};
 `;
 
 const ListEmptySection = styled.View`
@@ -42,7 +37,7 @@ export const NewMessageScreen = ({ navigation }) => {
               <MCIcon
                 name={"account-group"}
                 size={100}
-                color={colors.icon.secondary}
+                color={colors.icon.lightgray}
               />
               <Text
                 variant="list_empty_title"
@@ -61,7 +56,7 @@ export const NewMessageScreen = ({ navigation }) => {
         }}
         ListHeaderComponent={() => (
           <View style={{ padding: 10 }}>
-            <Text variant="label" style={{ color: colors.text.secondary }}>
+            <Text variant="label" style={{ color: colors.text.darkgray }}>
               Following
             </Text>
           </View>

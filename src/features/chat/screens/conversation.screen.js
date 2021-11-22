@@ -7,7 +7,7 @@ import { colors } from "../../../infrastructure/theme/colors";
 
 const ConversationBackground = styled.View`
   flex: 1;
-  background-color: ${colors.bg.primary};
+  background-color: ${colors.bg.secondary};
 `;
 
 const SendButtonContainer = styled.View`
@@ -63,7 +63,7 @@ export const ConversationScreen = () => {
         alwaysShowSend={true}
         onInputTextChanged={(text) => onTypingHandler(text)}
         textInputStyle={{
-          backgroundColor: colors.bg.secondary,
+          backgroundColor: colors.bg.cultured,
           paddingTop: 10,
           paddingLeft: 5,
           borderRadius: 5,

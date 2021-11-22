@@ -1,16 +1,18 @@
 import React, { useState, useRef } from "react";
 import { Dimensions } from "react-native";
-import { Video } from "expo-av";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import { useIsFocused } from "@react-navigation/native";
 
 import { PostTopSection } from "../../app/components/post-top-section.components";
 import { PostBottomSection } from "../../app/components/post-bottom-section.components";
+import { colors } from "../../../infrastructure/theme/colors";
 import InViewport from "../../../components/utilities/inviewport.components";
+
+import { PostVideo } from "../styles/home-post-card.styles";
 
 const { height } = Dimensions.get("window");
 
-export const HomePostCard = ({ post, user, onNavigate }) => {
+export const HomePostCard = ({ post, user }) => {
   const [loading, setLoading] = useState(false);
   const [paused, setPaused] = useState(false);
 
@@ -46,18 +48,12 @@ export const HomePostCard = ({ post, user, onNavigate }) => {
 
   return (
     <>
-      <PostTopSection
-        isViewPost={false}
-        user={user}
-        post={post}
-      />
+      <PostTopSection isViewPost={false} user={user} post={post} />
 
       <InViewport onChange={handlePlaying}>
-        <Video
+        <PostVideo
           ref={videoRef}
-          style={{ height: height / 1.24 }}
           source={{ uri: post.videoURL }}
-          resizeMode="cover"
           shouldplay={isFocused}
           isLooping={true}
           onLoadStart={() => setLoading(true)}
@@ -70,7 +66,11 @@ export const HomePostCard = ({ post, user, onNavigate }) => {
       {loading && (
         <ContentLoader
           viewBox="-10 0 380 630"
-          style={{ position: "absolute", zIndex: 999, backgroundColor: "white" }}
+          style={{
+            position: "absolute",
+            zIndex: 999,
+            backgroundColor: colors.bg.secondary,
+          }}
         >
           <Circle cx="25" cy="30" r="20" />
           <Rect x="60" y="17" rx="4" ry="4" width="300" height="10" />

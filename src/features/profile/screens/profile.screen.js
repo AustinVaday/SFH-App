@@ -1,85 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity, FlatList, View } from "react-native";
-import { Button, Avatar } from "react-native-elements";
-import styled from "styled-components/native";
+import { FlatList } from "react-native";
+import { Avatar } from "react-native-elements";
 
 import { ProfileTabs } from "../navigators/profile-tabs.navigator";
-
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
 import { firebase } from "../../../utils/firebase";
 import { useSelector } from "react-redux";
 
-import { useNavigation } from "@react-navigation/native";
-
 import { followUser, unfollowUser } from "../../../services/user";
 
-const ProfileBackground = styled.View`
-  background-color: ${(props) => props.theme.colors.bg.primary};
-  flex-grow: 1;
-`;
+import {
+  ProfileBackground,
+  ProfileStats,
+  PostsStatContainer,
+  FollowingStatContainer,
+  FollowersStatContainer,
+  EditProfileButtonContainer,
+  ProfileHeaderBackground,
+  ProfileInfo,
+  NameAndIdentifyContainer,
+  UserAvatarContainer,
+  GuestUserButtonsSection,
+  FollowingButton,
+  FollowButton,
+  MessageButton,
+  EditProfileButton,
+  Navbar,
+} from "../styles/profile.styles";
 
-const StatsSection = styled.View`
-  padding: ${(props) => props.theme.space[2]};
-  flex-direction: row;
-  align-items: center;
-`;
-
-const PostsSection = styled.View`
-  padding-left: ${(props) => props.theme.space[4]};
-  flex: 1;
-`;
-
-const FollowingSection = styled.View`
-  flex: 1;
-`;
-
-const FollowersSection = styled.View`
-  padding-right: ${(props) => props.theme.space[4]};
-  flex: 1;
-`;
-
-const EditProfileButtonContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-  width: 70%;
-  align-self: center;
-`;
-
-const Profile = styled.View`
-  background-color: ${(props) => props.theme.colors.bg.primary};
-`;
-
-const ProfileInfoContainer = styled.View`
-  padding: ${(props) => props.theme.space[2]};
-`;
-
-const NameAndIdentify = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const AvatarImageContainer = styled.View`
-  padding: ${(props) => props.theme.space[2]};
-  align-items: center;
-`;
-
-const BioText = styled(Text)`
-  flex-wrap: wrap;
-  padding-top: ${(props) => props.theme.space[1]};
-`;
-
-export const ProfileScreen = ({ route }) => {
+export const ProfileScreen = ({ route, navigation }) => {
   const [user, setUser] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const { uid } = route.params;
-
-  const navigation = useNavigation();
+  const { uid, guestUser } = route.params;
 
   const { currentUser } = useSelector((state) => state.auth);
-  const { currentUserPosts, following } = useSelector((state) => state.posts);
+  const { currentUserPosts, following, users } = useSelector((state) => state.posts);
 
   useEffect(() => {
     console.log("updated");
@@ -124,169 +82,108 @@ export const ProfileScreen = ({ route }) => {
 
   const profileHeader = () => {
     return (
-      <Profile>
-        <AvatarImageContainer>
+      <ProfileHeaderBackground>
+        <UserAvatarContainer>
           <Avatar
-            size="xlarge"
+            size={120}
             rounded
             source={{
               uri: user.profilePhoto,
             }}
           />
-        </AvatarImageContainer>
+        </UserAvatarContainer>
 
-        <ProfileInfoContainer>
-          <NameAndIdentify>
+        <ProfileInfo>
+          <NameAndIdentifyContainer>
             <Text variant="profile_display_name">{user.displayName} </Text>
             {user.identify !== "none" && (
               <Text variant="profile_identify">• {user.identify}</Text>
             )}
-          </NameAndIdentify>
-          {user.bio !== "" && <BioText>{user.bio}</BioText>}
-        </ProfileInfoContainer>
+          </NameAndIdentifyContainer>
+          {user.bio !== "" && <Text variant="profile_bio">{user.bio}</Text>}
+        </ProfileInfo>
 
-        <StatsSection>
-          <PostsSection>
-            <TouchableOpacity
-              style={{ alignItems: "center" }}
-              activeOpacity={1}
-              onPress={() => {}}
-            >
-              <Text variant="profile_numbers">{userPosts.length}</Text>
-              <Text variant="profile_labels">Posts</Text>
-            </TouchableOpacity>
-          </PostsSection>
+        <ProfileStats>
+          <PostsStatContainer onPress={() => console.log("click posts")}>
+            <Text variant="profile_numbers">{userPosts.length}</Text>
+            <Text variant="profile_labels">Posts</Text>
+          </PostsStatContainer>
           <Text> | </Text>
-          <FollowingSection>
-            <TouchableOpacity
-              style={{ alignItems: "center" }}
-              activeOpacity={1}
-              onPress={() => {
-                navigation.navigate("FollowList", {
-                  following,
-                  tab: "Following",
-                });
-              }}
-            >
-              <Text variant="profile_numbers">{user.followingCount}</Text>
-              <Text variant="profile_labels">Following</Text>
-            </TouchableOpacity>
-          </FollowingSection>
-          <Text> | </Text>
-          <FollowersSection>
-            <TouchableOpacity
-              style={{ alignItems: "center" }}
-              activeOpacity={1}
-              onPress={() => {
-                navigation.navigate("FollowList", {
-                  following,
-                  tab: "Followers",
-                });
-              }}
-            >
-              <Text variant="profile_numbers">{user.followersCount}</Text>
-              <Text variant="profile_labels">Followers</Text>
-            </TouchableOpacity>
-          </FollowersSection>
-        </StatsSection>
-
-        {uid !== firebase.auth().currentUser.uid ? (
-          <View
-            style={{
-              flexDirection: "row",
-              alignSelf: "center",
-              padding: 10,
+          <FollowingStatContainer
+            onPress={() => {
+              navigation.navigate("FollowList", {
+                username: user.username,
+                users,
+                tab: "Following",
+              });
             }}
           >
+            <Text variant="profile_numbers">{user.followingCount}</Text>
+            <Text variant="profile_labels">Following</Text>
+          </FollowingStatContainer>
+          <Text> | </Text>
+          <FollowersStatContainer
+            onPress={() => {
+              navigation.navigate("FollowList", {
+                username: user.username,
+                users,
+                tab: "Followers",
+              });
+            }}
+          >
+            <Text variant="profile_numbers">{user.followersCount}</Text>
+            <Text variant="profile_labels">Followers</Text>
+          </FollowersStatContainer>
+        </ProfileStats>
+
+        {guestUser ? (
+          <GuestUserButtonsSection>
             {isFollowing ? (
-              <Button
+              <FollowingButton
                 onPress={() => {
                   unfollowUser(uid);
                 }}
-                type="outline"
-                buttonStyle={{
-                  height: 50,
-                  width: 150,
-                  borderColor: colors.brand.primary,
-                }}
-                containerStyle={{ paddingRight: 5 }}
                 title={
-                  <Text
-                    variant="text_button"
-                    style={{ color: colors.text.brand }}
-                  >
-                    Following
-                  </Text>
+                  <Text variant="profile_following_button">Following</Text>
                 }
               />
             ) : (
-              <Button
+              <FollowButton
                 onPress={() => {
                   followUser(uid);
                 }}
-                type="solid"
-                buttonStyle={{
-                  height: 50,
-                  width: 150,
-                  backgroundColor: colors.brand.primary,
-                }}
-                containerStyle={{ paddingRight: 5 }}
-                title={
-                  <Text
-                    variant="text_button"
-                    style={{ color: colors.text.white }}
-                  >
-                    Follow
-                  </Text>
-                }
+                title={<Text variant="profile_follow_button">Follow</Text>}
               />
             )}
-            <Button
+            <MessageButton
               onPress={() => console.log("message")}
-              type="outline"
-              buttonStyle={{
-                height: 50,
-                width: 150,
-                borderColor: colors.brand.primary,
-              }}
-              containerStyle={{ paddingLeft: 5 }}
-              title={
-                <Text
-                  variant="text_button"
-                  style={{ color: colors.text.brand }}
-                >
-                  Message
-                </Text>
-              }
+              title={<Text variant="profile_message_button">Message</Text>}
             />
-          </View>
+          </GuestUserButtonsSection>
         ) : (
           <EditProfileButtonContainer>
-            <Button
+            <EditProfileButton
               onPress={() => {
                 navigation.navigate("EditProfile", { currentUser: user });
               }}
-              type="outline"
-              buttonStyle={{ height: 50 }}
               title={
-                <Text
-                  variant="text_button"
-                  style={{ color: colors.text.brand }}
-                >
-                  Edit Profile
-                </Text>
+                <Text variant="profile_editprofile_button">Edit Profile</Text>
               }
-              color={colors.ui.quaternary}
             />
           </EditProfileButtonContainer>
         )}
         <ProfileTabs uid={uid} />
-      </Profile>
+      </ProfileHeaderBackground>
     );
   };
 
   return (
     <ProfileBackground>
+      <Navbar
+        guestUser={guestUser}
+        navigation={navigation}
+        centerComponent={<Text variant="navbar_title">{user.username}</Text>}
+      />
       <FlatList
         data={[{ key: "tabbed" }]}
         ListHeaderComponent={profileHeader()}

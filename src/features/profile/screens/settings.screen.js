@@ -1,55 +1,26 @@
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
-import { Button, Dialog, Portal, List } from "react-native-paper";
+import { ListItem } from "react-native-elements";
 import { openURL } from "expo-linking";
-import styled from "styled-components";
 
 import { firebase } from "../../../utils/firebase";
 
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
-const SettingsBackground = styled.View`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.bg.primary};
-`;
+import {
+  SettingsBackground,
+  VersionSection,
+  DialogButton,
+  Dialog,
+  DialogButtonsContainer,
+  ListItemHeader,
+  ListItemIcon,
+} from "../styles/settings.styles";
 
-const DialogHeader = styled.View`
-  align-items: center;
-`;
-
-const VersionSection = styled.View`
-  align-items: center;
-`;
-
-const DialogButton = styled(Button).attrs({
-  contentStyle: {
-    padding: 8,
-    backgroundColor: colors.bg.primary,
-    borderWidth: 0.2,
-    borderColor: "lightgray",
-  },
-  uppercase: false,
-})`
-  flex: 1;
-`;
-
-const DialogButtonsContainer = styled(Dialog.Actions)`
-  flex-direction: row;
-  justify-content: space-evenly;
-  padding: 0;
-`;
-
-const ListItem = styled(List.Item)`
-  padding: 0;
-`;
-
-export const SettingsScreen = ({ navigation }) => {
+export const SettingsScreen = () => {
   const [visible, setVisible] = useState(false);
 
-  const showLogoutDialog = () => setVisible(true);
-
-  const hideLogoutDialog = () => setVisible(false);
+  const cancelDialog = () => setVisible(false);
 
   const handleNotifications = () => {
     openURL("app-settings:");
@@ -59,132 +30,89 @@ export const SettingsScreen = ({ navigation }) => {
     firebase.auth().signOut();
   };
 
+  const toggleDialog = () => {
+    setVisible(!visible);
+  };
+
   return (
     <SettingsBackground>
       <ScrollView>
-        <List.Section>
-          <List.Subheader style={{ paddingVertical: 6 }}>
-            <Text variant="setting_title">Account</Text>
-          </List.Subheader>
-          <ListItem
-            onPress={() => {}}
-            title={<Text variant="setting_button">Change Email</Text>}
-            left={() => (
-              <List.Icon icon="email-outline" color={colors.text.secondary} />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-          />
-          <ListItem
-            onPress={() => {}}
-            title={<Text variant="setting_button">Change Password</Text>}
-            left={() => (
-              <List.Icon color={colors.text.secondary} icon="lock-outline" />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-          />
+        {/* ACCOUNT */}
+        <ListItemHeader>
+          <Text variant="setting_title">Account</Text>
+        </ListItemHeader>
+        <ListItem onPress={() => console.log("change email")}>
+          <ListItemIcon name="email-outline" />
+          <ListItem.Content>
+            <Text variant="setting_button">Change Email</Text>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
+        <ListItem onPress={() => console.log("change password")}>
+          <ListItemIcon name="lock-outline" />
+          <ListItem.Content>
+            <Text variant="setting_button">Change Password</Text>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
 
-          <List.Subheader style={{ paddingVertical: 6 }}>
-            <Text variant="setting_title">Notifications</Text>
-          </List.Subheader>
-          <ListItem
-            onPress={handleNotifications}
-            title={<Text variant="setting_button">Push Notifications</Text>}
-            left={() => (
-              <List.Icon icon="bell-outline" color={colors.text.secondary} />
-            )}
-            right={() => (
-              <>
-                <Text
-                  variant="setting_button"
-                  style={{ alignSelf: "center", color: colors.text.secondary }}
-                >
-                  Off
-                </Text>
-                <List.Icon icon="chevron-right" color={colors.text.secondary} />
-              </>
-            )}
-          />
+        {/* NOTIFICATIONS */}
+        <ListItemHeader>
+          <Text variant="setting_title">Notifications</Text>
+        </ListItemHeader>
+        <ListItem onPress={handleNotifications}>
+          <ListItemIcon name="bell-outline" />
+          <ListItem.Content>
+            <Text variant="setting_button">Push Notifications</Text>
+          </ListItem.Content>
+          <Text variant="setting_button">Off</Text>
+          <ListItem.Chevron />
+        </ListItem>
 
-          <List.Subheader style={{ paddingVertical: 6 }}>
-            <Text variant="setting_title">About</Text>
-          </List.Subheader>
-          <ListItem
-            onPress={() => {}}
-            title={<Text variant="setting_button">Terms of Service</Text>}
-            left={() => (
-              <List.Icon
-                icon="book-open-outline"
-                color={colors.text.secondary}
-              />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-          />
+        {/* ABOUT */}
+        <ListItemHeader>
+          <Text variant="setting_title">About</Text>
+        </ListItemHeader>
+        <ListItem onPress={() => console.log("open terms of service")}>
+          <ListItemIcon name="book-open-outline" />
+          <ListItem.Content>
+            <Text variant="setting_button">Terms of Service</Text>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
 
-          <List.Subheader style={{ paddingVertical: 6 }}>
-            <Text variant="setting_title">Login</Text>
-          </List.Subheader>
-          <ListItem
-            onPress={showLogoutDialog}
-            title={<Text variant="setting_button">Log out</Text>}
-            left={() => (
-              <List.Icon icon="logout" color={colors.text.secondary} />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-          />
-          <Portal>
-            <Dialog
-              visible={visible}
-              dismissable={false}
-              onDismiss={hideLogoutDialog}
-            >
-              <DialogHeader>
-                <Dialog.Title>
-                  <Text variant="setting_title">Are you sure to log out?</Text>
-                </Dialog.Title>
-                <Dialog.Content>
-                  <Text>Shane Wilson</Text>
-                </Dialog.Content>
-              </DialogHeader>
-              <DialogButtonsContainer>
-                <DialogButton
-                  labelStyle={{
-                    color: colors.brand.primary,
-                  }}
-                  onPress={hideLogoutDialog}
-                >
-                  Cancel
-                </DialogButton>
-                <DialogButton
-                  labelStyle={{
-                    color: colors.brand.primary,
-                    fontFamily: "OpenSans_800ExtraBold",
-                  }}
-                  onPress={() => {
-                    onLogout();
-                  }}
-                >
-                  Confirm
-                </DialogButton>
-              </DialogButtonsContainer>
-            </Dialog>
-          </Portal>
-        </List.Section>
+        {/* LOGIN */}
+        <ListItemHeader>
+          <Text variant="setting_title">Login</Text>
+        </ListItemHeader>
+        <ListItem onPress={toggleDialog}>
+          <ListItemIcon name="logout" />
+          <ListItem.Content>
+            <Text variant="setting_button">Log out</Text>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
 
+        {/* Dialog from logout */}
+        <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+          <Text variant="settings_dialog_title">Log out as shane90?</Text>
+          <DialogButtonsContainer>
+            <DialogButton
+              title={<Text variant="settings_dialog_cancel">Cancel</Text>}
+              onPress={cancelDialog}
+            />
+            <DialogButton
+              title={<Text variant="settings_dialog_logout">Logout</Text>}
+              onPress={() => {
+                onLogout();
+              }}
+            />
+          </DialogButtonsContainer>
+        </Dialog>
+
+        {/* Versions Label */}
         <VersionSection>
-          <Text
-            style={{ color: colors.text.secondary }}
-            variant="setting_button"
-          >
-            Version 1.0.0
-          </Text>
+          <Text variant="settings_version">Version 1.0.0</Text>
         </VersionSection>
       </ScrollView>
     </SettingsBackground>

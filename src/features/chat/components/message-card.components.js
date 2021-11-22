@@ -1,25 +1,21 @@
-import React, { useRef } from "react";
-import { Platform, Alert, TouchableWithoutFeedback } from "react-native";
-import { Avatar, List } from "react-native-paper";
-import RBSheet from "react-native-raw-bottom-sheet";
-import styled from "styled-components/native";
+import React, { useRef, useCallback, useMemo } from "react";
+import { Platform, Alert } from "react-native";
+import { ListItem, Avatar } from "react-native-elements";
+import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
-const ListItem = styled(List.Item).attrs({
-  underlayColor: colors.bg.secondary,
-})`
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[4]};
-  background-color: ${colors.bg.primary};
-`;
+import { useNavigation } from "@react-navigation/native";
 
-export const MessageCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
-  const refRBSheet = useRef();
+export const MessageCard = ({ user, onDeleteRow, rowMap }) => {
+  const androidBottomSheetRef = useRef();
+
+  const navigation = useNavigation();
+
+  const snapPoints = useMemo(() => ["20%"], []);
 
   const alertDeleteConversation = () => {
-    refRBSheet.current.close();
+    androidBottomSheetRef.current?.close();
     Alert.alert(
       "Permanently delete this conversation?",
       "All the messages will be removed from this conversation.",
@@ -37,49 +33,70 @@ export const MessageCard = ({ user, onNavigate, onDeleteRow, rowMap }) => {
     );
   };
 
+  const renderPostSettings = useCallback(
+    () => (
+      <>
+        <ListItem onPress={alertDeleteConversation}>
+          <ListItem.Content>
+            <Text variant="android_bottomsheet_delete">Delete</Text>
+          </ListItem.Content>
+        </ListItem>
+        <ListItem onPress={() => androidBottomSheetRef.current?.close()}>
+          <ListItem.Content>
+            <Text variant="android_bottomsheet_cancel">Cancel</Text>
+          </ListItem.Content>
+        </ListItem>
+      </>
+    ),
+    []
+  );
+
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.3}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
   return (
     <>
       <ListItem
-        onPress={() => onNavigate("Conversation", { user: user.name })}
+        onPress={() => navigation.navigate("Conversation", { user: user.name })}
         onLongPress={
-          Platform.OS === "android" ? () => refRBSheet.current.open() : null
+          Platform.OS === "android"
+            ? () => androidBottomSheetRef.current?.present()
+            : null
         }
-        title={<Text variant="message_name">{user.name}</Text>}
-        left={() => (
-          <TouchableWithoutFeedback onPress={() => onNavigate("ViewProfile")}>
-            <Avatar.Image size={60} source={{ uri: user.avatar }} />
-          </TouchableWithoutFeedback>
-        )}
-        right={() => (
-          <Text style={{ alignSelf: "center" }} variant="date">
-            {user.timestamp}
-          </Text>
-        )}
-      />
-      <RBSheet
-        ref={refRBSheet}
-        closeOnDragDown={true}
-        minClosingHeight={130}
-        height={130}
-        customStyles={{
-          container: {
-            borderTopRightRadius: 10,
-            borderTopLeftRadius: 10,
-          },
-          draggableIcon: { margin: 0, backgroundColor: colors.bg.primary },
-        }}
       >
-        <List.Item
-          onPress={alertDeleteConversation}
-          titleStyle={{ textAlign: "center" }}
-          title={<Text style={{ color: colors.text.error }}>Delete</Text>}
+        <Avatar
+          rounded
+          size="medium"
+          onPress={() => navigation.navigate("ViewProfile")}
+          source={{ uri: user.avatar }}
         />
-        <List.Item
-          onPress={() => refRBSheet.current.close()}
-          titleStyle={{ textAlign: "center" }}
-          title={<Text>Cancel</Text>}
-        />
-      </RBSheet>
+        <ListItem.Content>
+          <Text variant="messages_username">{user.name}</Text>
+        </ListItem.Content>
+        <Text variant="messages_date">{user.timestamp}</Text>
+      </ListItem>
+
+      <BottomSheetModal
+        ref={androidBottomSheetRef}
+        key="android-bottom-sheet-modal"
+        index={0}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={Platform.OS === "ios" ? "extend" : "interactive"}
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        children={renderPostSettings}
+      />
     </>
   );
 };

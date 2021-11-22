@@ -1,76 +1,115 @@
 import React from "react";
-import { Button } from "react-native-paper";
-
-import styled from "styled-components/native";
+import { Formik } from "formik";
+import * as yup from "yup";
 
 import { colors } from "../../../infrastructure/theme/colors";
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
-import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.components";
-import { FormForgotPassword } from "../components/form-forgot-password.components";
 
-const TopTextSection = styled.View`
-  padding: ${(props) => props.theme.space[4]};
-  align-items: center;
-`;
+import { useDispatch } from "react-redux";
+import { passwordReset } from "../../../services/redux/actions/auth.actions";
 
-const HorizontalLine = styled.View`
-  flex: 1;
-  height: 1px;
-  background-color: ${(props) => props.theme.colors.text.secondary};
-`;
+import {
+  ForgotPasswordBackground,
+  FormSection,
+  SendButton,
+  EmailInput,
+  SendText,
+} from "../styles/forgot-password.styles";
 
-const OrSection = styled.View`
-  flex-direction: row;
-  align-items: center;
-  padding-left: ${(props) => props.theme.space[4]};
-  padding-right: ${(props) => props.theme.space[4]};
-`;
-
-const OrText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.body_600};
-  font-size: ${(props) => props.theme.fontSizes.medium};
-  color: ${(props) => props.theme.colors.text.secondary};
-  text-align: center;
-  width: 50px;
-`;
-
-const WhiteSpaceSection = styled.View`
-  flex-grow: 1;
-`;
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .label("Email")
+    .email("Enter a valid email")
+    .required("Please enter your email"),
+});
 
 export const ForgotPasswordScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values, errors) => {
+    if (!(values.email !== "" && errors.email === undefined)) {
+      return;
+    }
+
+    // handlePasswordReset(values);
+  };
+
+  const handlePasswordReset = async (values) => {
+    const { email } = values;
+
+    try {
+      dispatch(passwordReset(email));
+      navigation.navigate("Login");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+        topOffset: 45,
+      });
+    }
+  };
+
   return (
-    <SafeArea>
-      <TopTextSection>
-        <Text variant="forgot_password_title">Trouble logging in?</Text>
-        <Spacer position="top" size="large" />
-        <Text variant="forgot_password_message">
-          Enter your email and we will send you a link to get back into your
-          account.
-        </Text>
-      </TopTextSection>
-      <FormForgotPassword onNavigate={navigation.navigate} />
-      <OrSection>
-        <HorizontalLine />
-        <OrText>OR</OrText>
-        <HorizontalLine />
-      </OrSection>
-      <Spacer size="medium" />
-      <FacebookAndGoogleButtons />
-      <WhiteSpaceSection />
-      <Button
-        onPress={() => {
-          navigation.goBack();
-        }}
-        color={colors.ui.tertiary}
-        uppercase={false}
-      >
-        <Text variant="text_button" style={{ color: colors.text.brand }}>
-          Back to Login
-        </Text>
-      </Button>
-    </SafeArea>
+    <ForgotPasswordBackground>
+      <Formik initialValues={{ email: "" }} validationSchema={validationSchema}>
+        {({ handleChange, values, errors, setFieldValue, handleBlur }) => (
+          <FormSection>
+            <Text variant="forgot_password_title">Forgot Password</Text>
+            <Spacer position="top" size="medium" />
+            <Text variant="forgot_password_message">
+              Enter your email and we will send you a link to get back into your
+              account.
+            </Text>
+
+            <Spacer size="huge" />
+
+            <EmailInput
+              label="Email"
+              placeholder="abc123@gmail.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoFocus={true}
+              blurOnSubmit={false}
+              value={values.email}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
+              onSubmitEditing={() => {
+                handleSubmit(values, errors);
+              }}
+              rightIcon={
+                values.email !== "" && {
+                  type: "material-community",
+                  name: "close-circle",
+                  size: 20,
+                  color: colors.icon.gray,
+                  onPress: () => setFieldValue("email", ""),
+                }
+              }
+            />
+
+            <Spacer size="large" />
+
+            <SendButton
+              enableButton={values.email !== "" && errors.email === undefined}
+              title={
+                <SendText
+                  enableButton={
+                    values.email !== "" && errors.email === undefined
+                  }
+                >
+                  Send
+                </SendText>
+              }
+              onPress={() => {
+                handleSubmit(values, errors);
+              }}
+            />
+          </FormSection>
+        )}
+      </Formik>
+    </ForgotPasswordBackground>
   );
 };
