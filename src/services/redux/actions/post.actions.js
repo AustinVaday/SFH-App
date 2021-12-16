@@ -7,7 +7,8 @@ import {
   CURRENT_USER_POSTS_UPDATE,
   POSTS_DISCOVER,
   USER_FOLLOWING_STATE_CHANGE,
-  USERS_STATE_CHANGE
+  USERS_STATE_CHANGE,
+  USER_CHATS_STATE_CHANGE,
 } from "../constants";
 
 import uuid from "uuid-random";
@@ -110,19 +111,21 @@ export const fetchUserFollowing = () => (dispatch) =>
       .onSnapshot((snapshot) => {
         let following = snapshot.docs.map((doc) => {
           const id = doc.id;
-          return id;
+          return { id };
         });
+
         dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
+
         for (let i = 0; i < following.length; i++) {
-          dispatch(fetchUsersData(following[i]));
+          dispatch(fetchUsersData(following[i].id));
         }
       });
   });
 
-export function fetchUsersData(uid) {
-  return (dispatch, getState) => {
-    // const found = getState().usersState.users.some((el) => el.uid === uid);
-    // if (!found) {
+export const fetchUsersData = (uid) => (dispatch, getState) => {
+  new Promise((resolve, reject) => {
+    const found = getState().posts.users.some((el) => el.id === uid);
+    if (!found) {
       firebase
         .firestore()
         .collection("users")
@@ -131,11 +134,46 @@ export function fetchUsersData(uid) {
         .then((snapshot) => {
           if (snapshot.exists) {
             let user = snapshot.data();
-            user.uid = snapshot.id;
+            // user.uid = snapshot.id;
 
             dispatch({ type: USERS_STATE_CHANGE, user });
           }
         });
-    // }
-  };
-}
+    }
+  });
+};
+
+export const fetchUserChats = () => (dispatch, getState) => {
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .where("users", "array-contains", firebase.auth().currentUser.uid)
+      .orderBy("lastMessageTimestamp", "desc")
+      .onSnapshot((snapshot) => {
+        let chats = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+
+        for (let i = 0; i < chats.length; i++) {
+          console.log("chats loop");
+          let otherUserId;
+          if (chats[i].users[0] === firebase.auth().currentUser.uid) {
+            otherUserId = chats[i].users[1];
+          } else {
+            otherUserId = chats[i].users[0];
+          }
+          const found = getState().posts.users.some(
+            (el) => el.id === otherUserId
+          );
+          if (!found) {
+            dispatch(fetchUsersData(otherUserId));
+          }
+        }
+
+        dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
+      });
+  });
+};

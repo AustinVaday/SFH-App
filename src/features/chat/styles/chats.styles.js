@@ -21,7 +21,7 @@ export const SwipeDeleteButton = styled(Pressable)`
   ${backRightBtnRight}
 `;
 
-export const MessagesBackground = styled.View`
+export const ChatsBackground = styled.View`
   flex: 1;
   background-color: ${props => props.theme.colors.bg.secondary};
 `;
@@ -42,7 +42,7 @@ export const NavBar = styled(Header).attrs((props) => ({
     icon: "plus",
     type: "material-community",
     color: props.theme.colors.icon.black,
-    onPress: () => props.nav.navigate("NewMessage"),
+    onPress: () => props.nav.navigate("NewConversation"),
   },
   containerStyle: {
     backgroundColor: props.theme.colors.bg.secondary,

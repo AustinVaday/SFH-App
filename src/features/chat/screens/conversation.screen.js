@@ -1,89 +1,154 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { GiftedChat, Send } from "react-native-gifted-chat";
-import styled from "styled-components/native";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
+import { FlatList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { colors } from "../../../infrastructure/theme/colors";
+import { SenderMessage } from "../components/sender-message.components";
+import { ReceiverMessage } from "../components/receiver-message.components";
 
-const ConversationBackground = styled.View`
-  flex: 1;
-  background-color: ${colors.bg.secondary};
-`;
+import { firebase } from "../../../utils/firebase";
+import { fetchUserChats } from "../../../services/redux/actions/post.actions";
+import { useSelector, useDispatch } from "react-redux";
 
-const SendButtonContainer = styled.View`
-  margin-right: 10px;
-  margin-bottom: 7px;
-  margin-left: 10px;
-`;
+import {
+  ConversationBackground,
+  MessageInputSection,
+  MessageInput,
+  SendButton,
+  ViewKeyboardAvoiding,
+} from "../styles/conversation.styles";
 
-export const ConversationScreen = () => {
+export const ConversationScreen = ({ route }) => {
+  const { user } = route.params;
+  const { currentUser } = useSelector((state) => state.auth);
+  const { chats } = useSelector((state) => state.posts);
+
   const [messages, setMessages] = useState([]);
-  const [isReadySend, setIsReadySend] = useState(false);
+  const [chat, setChat] = useState(null);
+  const [input, setInput] = useState("");
+  const [initialFetch, setInitialFetch] = useState(false);
+
+  const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
-  }, []);
+    // if (initialFetch) {
+    //   return;
+    // }
 
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
+    const chat = chats.find((el) => el.users.includes(user.id));
+    setChat(chat);
 
-  const onTypingHandler = (text) => {
-    if (text === "") {
-      setIsReadySend(false);
+    if (chat !== undefined) {
+      firebase
+        .firestore()
+        .collection("chats")
+        .doc(chat.id)
+        .collection("messages")
+        .orderBy("creation", "desc")
+        .onSnapshot((snapshot) => {
+          let messages = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+            return { id, ...data };
+          });
+
+          setMessages(messages);
+        });
+
+      firebase
+        .firestore()
+        .collection("chats")
+        .doc(chat.id)
+        .update({
+          [currentUser.id]: true,
+        });
+
+      // setInitialFetch(true);
     } else {
-      setIsReadySend(true);
+      createChat();
     }
+  }, [user, chats]);
+
+  const createChat = () => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .add({
+        users: [currentUser.id, user.id],
+        lastMessage: "Send the first message",
+        lastMessageTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => {
+        dispatch(fetchUserChats());
+      });
+  };
+
+  const sendMessage = () => {
+    const textToSend = input;
+
+    if (input.length === 0) {
+      return;
+    }
+
+    setInput("");
+
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(chat.id)
+      .collection("messages")
+      .add({
+        creator: currentUser.id,
+        text: textToSend,
+        creation: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(chat.id)
+      .update({
+        lastMessage: textToSend,
+        lastMessageTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        [currentUser.id]: true,
+        [user.id]: false,
+      });
   };
 
   return (
-    <ConversationBackground>
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-        listViewProps={{
-          contentContainerStyle: { flexGrow: 1, justifyContent: "flex-end" },
-        }}
-        alwaysShowSend={true}
-        onInputTextChanged={(text) => onTypingHandler(text)}
-        textInputStyle={{
-          backgroundColor: colors.bg.cultured,
-          paddingTop: 10,
-          paddingLeft: 5,
-          borderRadius: 5,
-        }}
-        renderSend={(props) => {
-          return (
-            <Send {...props} disabled={!isReadySend}>
-              <SendButtonContainer>
-                <Icon
-                  name="send"
-                  color={
-                    !isReadySend ? colors.brand.muted : colors.brand.primary
-                  }
-                  size={30}
-                />
-              </SendButtonContainer>
-            </Send>
-          );
-        }}
-      />
+    <ConversationBackground style={{ paddingBottom: insets.bottom }}>
+      <ViewKeyboardAvoiding keyboardVerticalOffset={65 + insets.bottom}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item: message }) =>
+            message.creator === currentUser.id ? (
+              <SenderMessage key={message.id} message={message} />
+            ) : (
+              <ReceiverMessage
+                key={message.id}
+                message={message}
+                otherUser={user}
+              />
+            )
+          }
+          inverted={-1}
+        />
+
+        <MessageInputSection>
+          <MessageInput
+            placeholder="Send a message..."
+            onChangeText={setInput}
+            value={input}
+            onSubmitEditing={sendMessage}
+          />
+          <SendButton
+            input={input}
+            disabled={input === "" ? true : false}
+            onPress={sendMessage}
+          />
+        </MessageInputSection>
+      </ViewKeyboardAvoiding>
     </ConversationBackground>
   );
 };

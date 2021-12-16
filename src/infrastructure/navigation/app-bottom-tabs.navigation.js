@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { ProfileScreen } from "../../features/profile/screens/profile.screen";
-import { MessagesScreen } from "../../features/chat/screens/messages.screen";
+import { ChatsScreen } from "../../features/chat/screens/chats.screen";
 import { HomeScreen } from "../../features/home/screens/home.screen";
 import { DiscoverScreen } from "../../features/discover/screens/discover.screen";
 
@@ -66,7 +66,7 @@ export const AppTabsNavigator = (props) => {
       />
       <AppTab.Screen
         name="Chat"
-        component={MessagesScreen}
+        component={ChatsScreen}
         navigation={props.navigation}
       />
       <AppTab.Screen

@@ -9,7 +9,7 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 
-import { NewMessageScreen } from "../../features/chat/screens/new-message.screen";
+import { NewConversationScreen } from "../../features/chat/screens/new-conversation.screen";
 import { ConversationScreen } from "../../features/chat/screens/conversation.screen";
 import { ViewPostScreen } from "../../features/app/screens/view-post.screen";
 import { SettingsScreen } from "../../features/profile/screens/settings.screen";
@@ -71,13 +71,13 @@ export const AppNavigator = (props) => {
         options={{ headerShown: false }}
       />
       <AppStack.Screen
-        name="NewMessage"
-        component={NewMessageScreen}
+        name="NewConversation"
+        component={NewConversationScreen}
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
           headerBackTitleVisible: false,
-          headerTitle: () => <Text variant="navbar_title">New Message</Text>,
+          headerTitle: () => <Text variant="navbar_title">New Chat</Text>,
           headerTintColor: colors.text.black,
         })}
       />
@@ -89,7 +89,7 @@ export const AppNavigator = (props) => {
           headerShown: true,
           headerBackTitleVisible: false,
           headerTitle: () => (
-            <Text variant="navbar_title">{route.params.user}</Text>
+            <Text variant="navbar_title">{route.params.user.username}</Text>
           ),
           headerTintColor: colors.text.black,
           headerRight: () => (

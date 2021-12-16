@@ -1,13 +1,15 @@
 import React, { useRef, useCallback, useMemo } from "react";
-import { Platform, Alert } from "react-native";
+import { Platform, Alert, ActivityIndicator } from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { Text } from "../../../components/typography/text.components";
+import { timeDifference } from "../../../components/utilities/time-difference.components";
+import { colors } from "../../../infrastructure/theme/colors";
 
 import { useNavigation } from "@react-navigation/native";
 
-export const MessageCard = ({ user, onDeleteRow, rowMap }) => {
+export const ChatRow = ({ user, onDeleteRow, rowMap }) => {
   const androidBottomSheetRef = useRef();
 
   const navigation = useNavigation();
@@ -67,7 +69,9 @@ export const MessageCard = ({ user, onDeleteRow, rowMap }) => {
   return (
     <>
       <ListItem
-        onPress={() => navigation.navigate("Conversation", { user: user.name })}
+        onPress={() =>
+          navigation.navigate("Conversation", { user: user.otherUser })
+        }
         onLongPress={
           Platform.OS === "android"
             ? () => androidBottomSheetRef.current?.present()
@@ -77,13 +81,22 @@ export const MessageCard = ({ user, onDeleteRow, rowMap }) => {
         <Avatar
           rounded
           size="medium"
-          onPress={() => navigation.navigate("ViewProfile")}
-          source={{ uri: user.avatar }}
+          onPress={() =>
+            navigation.navigate("GuestProfile", {
+              uid: user.otherUser.id,
+              guestUser: true,
+            })
+          }
+          source={{ uri: user.otherUser?.profilePhoto }}
+          renderPlaceholderContent={<ActivityIndicator color={colors.icon.secondary} />}
         />
         <ListItem.Content>
-          <Text variant="messages_username">{user.name}</Text>
+          <Text variant="chats_name">{user.otherUser?.displayName}</Text>
+          <Text variant="chats_lastmessage">{user.lastMessage}</Text>
         </ListItem.Content>
-        <Text variant="messages_date">{user.timestamp}</Text>
+        <Text variant="chats_date">
+          {timeDifference(new Date(), user.lastMessageTimestamp?.toDate())}
+        </Text>
       </ListItem>
 
       <BottomSheetModal

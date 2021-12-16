@@ -33,7 +33,7 @@ const validationSchema = yup.object().shape({
     .string()
     .label("Password")
     .required("Please enter your password")
-    .min(8, "Password should be at least 5 characters"),
+    .min(6, "Password should be at least 5 characters"),
 });
 
 export const LoginScreen = ({ navigation }) => {

@@ -5,7 +5,7 @@ require("firebase/firebase-auth");
 require("firebase/firestore");
 
 import { USER_STATE_CHANGE, LOADING } from "../constants";
-import { getPostsByUser, getPostsForDiscover, fetchUserFollowing } from "./post.actions";
+import { getPostsByUser, getPostsForDiscover, fetchUserFollowing, fetchUserChats } from "./post.actions";
 
 export const userAuthStateListener = () => (dispatch) => {
   dispatch({ type: LOADING, loading: true });
@@ -16,6 +16,7 @@ export const userAuthStateListener = () => (dispatch) => {
       dispatch(getPostsByUser(user.uid));
       dispatch(getPostsForDiscover());
       dispatch(fetchUserFollowing());
+      dispatch(fetchUserChats());
     } else {
       dispatch({ type: USER_STATE_CHANGE, currentUser: null, loaded: true });
     }

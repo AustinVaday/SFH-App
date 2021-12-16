@@ -156,7 +156,7 @@ export const ProfileScreen = ({ route, navigation }) => {
               />
             )}
             <MessageButton
-              onPress={() => console.log("message")}
+              onPress={() => navigation.navigate("Conversation", { user })}
               title={<Text variant="profile_message_button">Message</Text>}
             />
           </GuestUserButtonsSection>

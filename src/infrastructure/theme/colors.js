@@ -14,6 +14,7 @@ export const colors = {
     disabled: "#DEDEDE",
     error: "#D0421B",
     success: "#138000",
+    cultured: "#F1F1F1",
   },
   bg: {
     primary: "#0095FF",
@@ -38,6 +39,7 @@ export const colors = {
   icon: {
     primary: "#0095FF",
     secondary: "#FFFFFF",
+    muted: "rgba(0, 149, 255, 0.2)",
     facebook: "#4267B2",
     google: "#DB4437",
     gray: "#9EA0A4",

@@ -30,8 +30,8 @@ export const AvatarImageEdit = ({ userImage }) => {
       let result = await launchCameraAsync({
         mediaTypes: MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        aspect: [1, 1],
+        quality: 0,
       });
 
       if (!result.cancelled) {
@@ -49,7 +49,7 @@ export const AvatarImageEdit = ({ userImage }) => {
         mediaTypes: MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
+        quality: 0,
       });
 
       if (!result.cancelled) {

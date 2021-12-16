@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 
 const defaultTextStyles = (theme) => `
   font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.medium};
   color: ${theme.colors.text.black};
   flex-wrap: wrap;
   margin-top: 0px;
@@ -66,14 +67,21 @@ const swipe_delete = (theme) => `
   color: ${theme.colors.text.secondary};
 `;
 
-const messages_date = (theme) => `
+const chats_date = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.xsmall};
+  color: ${theme.colors.text.darkgray};
 `;
 
-const messages_username = (theme) => `
+const chats_name = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.medium};
+`;
+
+const chats_lastmessage = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.small};
+  color: ${theme.colors.text.darkgray};
 `;
 
 const android_bottomsheet_delete = (theme) => `
@@ -303,8 +311,17 @@ const signup_info = (theme) => `
   padding-top: 10px;
 `;
 
-const body = (theme) => `
-  font-size: ${theme.fontSizes.large};
+const newconversation_label = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.small};
+  color: ${theme.colors.text.darkgray};
+`;
+
+const sender_message = (theme) => `
+  color: ${theme.colors.text.secondary};
+`;
+
+const body = () => `
 `;
 
 const hint = (theme) => `
@@ -409,7 +426,7 @@ const activity_textbutton = (theme) => `
     color: ${theme.colors.text.secondary};
 `;
 
-const message_name = (theme) => `
+const newconversation_name = (theme) => `
     font-size: ${theme.fontSizes.medium};
     font-family: ${theme.fonts.body_600};
 `;
@@ -511,8 +528,8 @@ const variants = {
   date,
   setting_button,
   setting_title,
-  message_name,
-  messages_date,
+  newconversation_name,
+  chats_date,
   text_button,
   contained_button,
   account_title,
@@ -539,7 +556,7 @@ const variants = {
   comment_header,
   navbar_title,
   swipe_delete,
-  messages_username,
+  chats_name,
   android_bottomsheet_delete,
   android_bottomsheet_cancel,
   editprofile_label,
@@ -566,7 +583,10 @@ const variants = {
   pw_requirement_title,
   pw_requirement_item,
   signup_invalid,
-  signup_info
+  signup_info,
+  newconversation_label,
+  sender_message,
+  chats_lastmessage
 };
 
 export const Text = styled.Text`
