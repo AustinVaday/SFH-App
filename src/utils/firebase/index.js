@@ -26,6 +26,7 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
+  firebase.firestore().settings({ experimentalForceLongPolling: true });
 }
 
 export { firebase };

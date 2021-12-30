@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import * as Notifications from "expo-notifications";
+import Toast from "react-native-toast-message";
 import { Icon } from "react-native-elements";
 
 import { AppTabsNavigator } from "./app-bottom-tabs.navigation";
@@ -32,19 +34,40 @@ import { Text } from "../../components/typography/text.components";
 
 const AppStack = createStackNavigator();
 
-const config = {
-  animation: "spring",
-  config: {
-    stiffness: 1000,
-    damping: 500,
-    mass: 3,
-    overshootClamping: true,
-    restDisplacementThreshold: 0.01,
-    restSpeedThreshold: 0.01,
-  },
-};
-
 export const AppNavigator = (props) => {
+  const notificationListener = useRef();
+
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        const { user, message, type } =
+          notification?.request?.content?.data ?? {};
+
+        if (type === "New Message") {
+          Toast.show({
+            type: "newMessage",
+            onPress: () =>
+              props.navigation.navigate("Conversation", { user: user }),
+            props: {
+              avatar: user.profilePhoto,
+              name: user.displayName,
+              message: message,
+            },
+            topOffset: 45,
+          });
+        }
+
+        return;
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, []);
+
   return (
     <AppStack.Navigator>
       <AppStack.Screen
@@ -224,7 +247,7 @@ export const AppNavigator = (props) => {
         name="UploadPost"
         component={UploadPostScreen}
         navigation={props.navigation}
-        options={{ headerShown: false}}
+        options={{ headerShown: false }}
       />
     </AppStack.Navigator>
   );

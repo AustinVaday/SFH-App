@@ -1,52 +1,44 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useRef, useMemo, useCallback } from "react";
 import { Platform } from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
-import { getThumbnailAsync } from "expo-video-thumbnails";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { Text } from "../../../components/typography/text.components";
+import { timeDifference } from "../../../components/utilities/time-difference.components";
+
+import { useUser } from "../../../services/hooks/useUser";
+import { usePost } from "../../../services/hooks/usePost";
 
 import { PostImage, FollowButton } from "../styles/notification-card.styles";
 
-export const NotificationCard = ({ user, navigation, onDeleteRow, rowMap }) => {
-  const [image, setImage] = useState(null);
+export const NotificationCard = ({
+  notification,
+  navigation,
+  onDeleteRow,
+  rowMap,
+}) => {
+  const user = useUser(notification.sender).data;
 
   const androidBottomSheetRef = useRef();
 
   const snapPoints = useMemo(() => ["20%"], []);
 
-  useEffect(() => {
-    async function fetchVideo() {
-      try {
-        const { uri } = await getThumbnailAsync(
-          "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"
-        );
-        setImage(uri);
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-    fetchVideo();
-  }, []);
-
   const typeOfNotification = (type) => {
     if (type === "comment") {
+      const post = usePost(notification.postId).data;
+
       return (
         <PostImage
-          source={{ uri: image }}
+          source={{ uri: post?.videoThumbnail }}
           onPress={() => console.log("click view post")}
         />
       );
     } else if (type === "upvote") {
+      const post = usePost(notification.postId).data;
+
       return (
         <PostImage
-          source={{ uri: image }}
+          source={{ uri: post?.videoThumbnail }}
           onPress={() => console.log("click view post")}
         />
       );
@@ -60,10 +52,20 @@ export const NotificationCard = ({ user, navigation, onDeleteRow, rowMap }) => {
     }
   };
 
+  const notificationMessage = (type) => {
+    if (type === "comment") {
+      return <Text variant="activity_message">commented on your post.</Text>;
+    } else if (type === "upvote") {
+      return <Text variant="activity_message">upvoted on your post.</Text>;
+    } else if (type === "follow") {
+      return <Text variant="activity_message">followed you.</Text>;
+    }
+  };
+
   const renderPostSettings = useCallback(
     () => (
       <>
-        <ListItem onPress={() => onDeleteRow(rowMap, user.id)}>
+        <ListItem onPress={() => onDeleteRow(rowMap, notification.id)}>
           <ListItem.Content>
             <Text variant="android_bottomsheet_delete">Delete</Text>
           </ListItem.Content>
@@ -105,14 +107,18 @@ export const NotificationCard = ({ user, navigation, onDeleteRow, rowMap }) => {
           rounded
           size="medium"
           onPress={() => navigation.navigate("ViewProfile")}
-          source={{ uri: user.avatar }}
+          source={{ uri: user?.profilePhoto }}
         />
         <ListItem.Content>
-          <Text variant="activity_username">{user.name}</Text>
-          <Text variant="activity_message">{user.message}</Text>
-          <Text variant="activity_date">{user.timestamp}</Text>
+          <Text variant="activity_username">{user?.username}</Text>
+          {notificationMessage(notification.type)}
+          <Text variant="activity_date">
+            {notification.timestamp === null
+              ? "now"
+              : timeDifference(new Date(), notification.timestamp.toDate())}
+          </Text>
         </ListItem.Content>
-        {typeOfNotification(user.type)}
+        {typeOfNotification(notification.type)}
       </ListItem>
 
       <BottomSheetModal

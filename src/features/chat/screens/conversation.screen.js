@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FlatList } from "react-native";
+import * as Notifications from "expo-notifications";
+import Toast from "react-native-toast-message";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SenderMessage } from "../components/sender-message.components";
@@ -8,6 +10,7 @@ import { ReceiverMessage } from "../components/receiver-message.components";
 import { firebase } from "../../../utils/firebase";
 import { fetchUserChats } from "../../../services/redux/actions/post.actions";
 import { useSelector, useDispatch } from "react-redux";
+import { sendNotification } from "../../../services/user";
 
 import {
   ConversationBackground,
@@ -26,6 +29,7 @@ export const ConversationScreen = ({ route }) => {
   const [chat, setChat] = useState(null);
   const [input, setInput] = useState("");
   const [initialFetch, setInitialFetch] = useState(false);
+  const notificationListener = useRef();
 
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
@@ -68,6 +72,20 @@ export const ConversationScreen = ({ route }) => {
       createChat();
     }
   }, [user, chats]);
+
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        Toast.hide();
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, []);
 
   const createChat = () => {
     firebase
@@ -112,6 +130,12 @@ export const ConversationScreen = ({ route }) => {
         lastMessageTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
         [currentUser.id]: true,
         [user.id]: false,
+      });
+
+      sendNotification(user, null, "New Message", textToSend, {
+        type: "chat",
+        user: currentUser,
+        message: textToSend,
       });
   };
 

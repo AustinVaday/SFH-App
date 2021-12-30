@@ -27,11 +27,12 @@ export const DiscoverScreen = ({ navigation }) => {
   const [textInput, setTextInput] = useState("");
 
   const discoverPosts = useSelector((state) => state.posts.discoverPosts);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   useEffect(() => {
     setLoading(true);
     makeRemoteRequest();
-  }, []);
+  }, [discoverPosts]);
 
   useEffect(() => {
     queryUsersByUsername(textInput).then(setSearchUsers);
@@ -73,7 +74,7 @@ export const DiscoverScreen = ({ navigation }) => {
         onPress={() =>
           navigation.navigate("GuestProfile", {
             uid: item.id,
-            guestUser: true,
+            guestUser: currentUser.id !== item.id,
           })
         }
       >

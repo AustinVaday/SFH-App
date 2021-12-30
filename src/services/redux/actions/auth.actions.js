@@ -1,3 +1,6 @@
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
 import Toast from "react-native-toast-message";
 
 import { firebase } from "../../../utils/firebase";
@@ -5,7 +8,7 @@ require("firebase/firebase-auth");
 require("firebase/firestore");
 
 import { USER_STATE_CHANGE, LOADING } from "../constants";
-import { getPostsByUser, getPostsForDiscover, fetchUserFollowing, fetchUserChats } from "./post.actions";
+import { getPostsByUser, getPostsForDiscover, fetchUserFollowing, fetchUserChats, getUserNotifications } from "./post.actions";
 
 export const userAuthStateListener = () => (dispatch) => {
   dispatch({ type: LOADING, loading: true });
@@ -14,6 +17,7 @@ export const userAuthStateListener = () => (dispatch) => {
     if (user) {
       dispatch(getCurrentUserData(user.uid));
       dispatch(getPostsByUser(user.uid));
+      dispatch(getUserNotifications(user.uid));
       dispatch(getPostsForDiscover());
       dispatch(fetchUserFollowing());
       dispatch(fetchUserChats());
@@ -30,15 +34,61 @@ export const getCurrentUserData = (uid) => (dispatch) => {
     .firestore()
     .collection("users")
     .doc(uid)
-    .onSnapshot((res) => {
-      if (res.exists) {
-        return dispatch({
+    .onSnapshot((user) => {
+      if (user.exists) {
+        dispatch({
           type: USER_STATE_CHANGE,
-          currentUser: res.data(),
+          currentUser: user.data(),
           loaded: true,
         });
+
+        dispatch(setNotificationService(user.data().id, user.data().notificationToken));
       }
     });
+};
+
+export const setNotificationService = (uid, userToken) => async (dispatch) => {
+  console.log("checking token")
+  let token;
+
+  if (Constants.isDevice) {
+    const existingStatus = await Notifications.getPermissionsAsync();
+
+    let finalStatus = existingStatus;
+
+    if (existingStatus.status !== "granted") {
+      const status = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus.status !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = await Notifications.getExpoPushTokenAsync();
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+  
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (token.data !== userToken) {
+    console.log("getting token")
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update({
+        notificationToken: token.data,
+      });
+  }
 };
 
 export const login = (email, password) => (dispatch) => {

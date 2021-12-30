@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { View } from 'react-native';
 
 import { PostBottomSection } from "../../app/components/post-bottom-section.components";
 import { PostTopSection } from "../../app/components/post-top-section.components";
@@ -13,12 +14,18 @@ export const ViewPostScreen = ({ route }) => {
 
   const { post } = route.params;
 
-  const user = useUser(post.creator).data;
+  const { isLoading, data } = useUser(post.creator);
+  console.log("loading... " + isLoading)
 
+  if (isLoading) {
+    console.log("success")
+    return <View />;
+ }
+  console.log("viewpost " + data?.notificationToken)
   return (
     <SafeArea>
       <PostContainer>
-        <PostTopSection isViewPost={true} user={user} post={post} />
+        <PostTopSection isViewPost={true} user={data} post={post} />
         <PostVideo
           ref={videoRef}
           source={{ uri: post.videoURL }}
@@ -27,7 +34,7 @@ export const ViewPostScreen = ({ route }) => {
           usePoster={true}
           posterSource={{ uri: post.videoThumbnail }}
         />
-        <PostBottomSection post={post} />
+        <PostBottomSection post={post} user={data} />
       </PostContainer>
     </SafeArea>
   );

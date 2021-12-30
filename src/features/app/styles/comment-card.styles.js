@@ -1,11 +1,15 @@
 import styled from "styled-components/native";
+import { Pressable } from "react-native";
 import { Card } from "react-native-elements";
 import { Icon } from "react-native-elements";
 
-export const CommentCardContainer = styled.View`
+export const CommentCardContainer = styled(Pressable).attrs((props) => ({
+  unstable_pressDelay: 250,
+}))`
   flex-direction: row;
   padding-right: ${(props) => props.theme.space[3]};
   padding-left: ${(props) => props.theme.space[3]};
+  padding-top: ${(props) => props.theme.space[2]};
 `;
 
 export const RightSideCommentCardContainer = styled.View`
@@ -13,13 +17,13 @@ export const RightSideCommentCardContainer = styled.View`
   padding-left: ${(props) => props.theme.space[2]};
 `;
 
-export const UsernameAndCommentContainer = styled(Card).attrs(props => ({
+export const UsernameAndCommentContainer = styled(Card).attrs((props) => ({
   containerStyle: {
     backgroundColor: props.theme.colors.bg.cultured,
     padding: 8,
     margin: 0,
     borderRadius: 5,
-  }
+  },
 }))``;
 
 export const BelowCommentCardContainer = styled.View`

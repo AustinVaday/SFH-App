@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../../../components/typography/text.components";
 import { CommentCard } from "./comment-card.components";
 
+import { useSelector } from "react-redux";
 import { firebase } from "../../../utils/firebase";
+import { sendNotification } from "../../../services/user";
 
 import {
   ListEmptySection,
@@ -18,25 +20,28 @@ import {
   CommentSendButton,
 } from "../styles/comments-section.styles";
 
-export const CommentsSection = ({ postID }) => {
+export const CommentsSection = ({ postData, user }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
+  const { currentUser } = useSelector((state) => state.auth);
+
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getComments();
-  }, [postID, refresh]);
+  }, [postData.id, refresh]);
 
   const getComments = () => {
-    if (postID !== postId || refresh) {
+    if (postData.id !== postId || refresh) {
+
       firebase
         .firestore()
         .collection("posts")
-        .doc(postID)
+        .doc(postData.id)
         .collection("comments")
         .orderBy("creation", "desc")
         .get()
@@ -50,28 +55,46 @@ export const CommentsSection = ({ postID }) => {
           setComments(comments);
           setRefresh(false);
         });
-      setPostId(postID);
+      setPostId(postData.id);
     }
   };
 
-  const onCommentSend = () => {
+  const onCommentSend = async () => {
     const textToSend = comment;
 
     setComment("");
 
-    firebase
+    let commentId = firebase
       .firestore()
       .collection("posts")
-      .doc(postID)
+      .doc(postData.id)
       .collection("comments")
       .add({
-        creator: firebase.auth().currentUser.uid,
+        creator: currentUser.id,
         text: textToSend,
         creation: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      .then(() => {
-        setRefresh(true);
       });
+
+    try {
+      const commentIdAdded = await commentId;
+
+      sendNotification(
+        user,
+        "Signs of Humanity",
+        `${currentUser.username}` + " just commented on your post",
+        {
+          type: "comment",
+          user: currentUser,
+          postId: postData.id,
+          commentId: commentIdAdded.id,
+          comment: textToSend,
+        }
+      );
+
+      setRefresh(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const listEmptyComponent = useCallback(() => {
@@ -85,14 +108,14 @@ export const CommentsSection = ({ postID }) => {
             paddingTop: 20,
           }}
         >
-          No Comments
+          Be the first to comment!
         </Text>
       </ListEmptySection>
     );
   }, []);
 
   const renderItem = useCallback(({ item }) => {
-    return <CommentCard item={item} />;
+    return <CommentCard item={item} postData={postData} />;
   }, []);
 
   return (
@@ -112,7 +135,7 @@ export const CommentsSection = ({ postID }) => {
             size="small"
             rounded
             source={{
-              uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+              uri: currentUser.profilePhoto,
             }}
           />
         </AvatarContainer>

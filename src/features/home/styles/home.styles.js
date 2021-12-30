@@ -27,6 +27,7 @@ export const Navbar = styled(Header).attrs((props) => ({
     backgroundColor: props.theme.colors.bg.secondary,
     paddingVertical: 2,
   },
+  backgroundColor: props.theme.colors.bg.secondary
 }))``;
 
 export const SFHLogoImage = styled(Image)`

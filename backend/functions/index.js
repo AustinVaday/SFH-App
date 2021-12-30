@@ -54,6 +54,17 @@ exports.addComment = functions.firestore
           });
     });
 
+exports.deleteComment = functions.firestore
+    .document("/posts/{postId}/comments/{userId}")
+    .onDelete((snap, context) => {
+      return db
+          .collection("posts")
+          .doc(context.params.postId)
+          .update({
+            commentsCount: admin.firestore.FieldValue.increment(-1),
+          });
+    });
+
 exports.addVote = functions.firestore
     .document("/posts/{postId}/votes/{uid}")
     .onCreate((snap, context) => {

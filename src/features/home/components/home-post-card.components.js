@@ -61,7 +61,7 @@ export const HomePostCard = ({ post, user }) => {
         />
       </InViewport>
 
-      <PostBottomSection post={post} />
+      <PostBottomSection post={post} user={user} />
 
       {loading && (
         <ContentLoader

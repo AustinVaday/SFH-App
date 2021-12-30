@@ -3,7 +3,8 @@ import {
   POSTS_DISCOVER,
   USER_FOLLOWING_STATE_CHANGE,
   USERS_STATE_CHANGE,
-  USER_CHATS_STATE_CHANGE
+  USER_CHATS_STATE_CHANGE,
+  CURRENT_USER_NOTIFICATIONS,
 } from "../constants";
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   following: [],
   users: [],
   chats: [],
+  notifications: [],
 };
 
 export const posts = (state = initialState, action) => {
@@ -25,6 +27,11 @@ export const posts = (state = initialState, action) => {
       return {
         ...state,
         discoverPosts: action.discoverPosts,
+      };
+    case CURRENT_USER_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.notifications,
       };
     case USER_FOLLOWING_STATE_CHANGE:
       return {

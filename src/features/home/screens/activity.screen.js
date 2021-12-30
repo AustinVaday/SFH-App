@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Platform } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import { NotificationCard } from "../components/notification-card.components";
 import { Text } from "../../../components/typography/text.components";
 
-import dataNotifications from "../../../utils/mock/dataNotifications";
+import { deleteNotification } from "../../../services/user";
+import { useSelector } from "react-redux";
 
 import {
   SwipeDeleteButton,
@@ -14,7 +15,8 @@ import {
 } from "../styles/activity.styles";
 
 export const ActivityScreen = () => {
-  const [listData, setListData] = useState(dataNotifications);
+  const notifications = useSelector((state) => state.posts.notifications);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -24,10 +26,13 @@ export const ActivityScreen = () => {
 
   const deleteRow = (rowMap, rowKey) => {
     closeRow(rowMap, rowKey);
-    const newData = [...listData];
-    const prevIndex = listData.findIndex((item) => item.id === rowKey);
-    newData.splice(prevIndex, 1);
-    setListData(newData);
+    deleteNotification(rowKey, currentUser.id);
+
+    // KEEP THIS CODE LINES. I MIGHT NEED THIS
+    // const newData = [...listData];
+    // const prevIndex = listData.findIndex((item) => item.id === rowKey);
+    // newData.splice(prevIndex, 1);
+    // setListData(newData);
   };
 
   const renderHiddenItem = (data, rowMap) => {
@@ -43,7 +48,7 @@ export const ActivityScreen = () => {
   const renderItem = (data, rowMap) => {
     return (
       <NotificationCard
-        user={data.item}
+        notification={data.item}
         onDeleteRow={deleteRow}
         rowMap={rowMap}
       />
@@ -53,7 +58,7 @@ export const ActivityScreen = () => {
   return (
     <ActivityBackground>
       <SwipeListView
-        data={listData}
+        data={notifications}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
         disableRightSwipe={true}

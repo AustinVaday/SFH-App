@@ -12,7 +12,12 @@ import { throttle } from "throttle-debounce";
 import { Text } from "../../../components/typography/text.components";
 import { CommentsSection } from "./comments-section.components";
 
-import { getVoteById, updateVote } from "../../../services/user";
+import {
+  getVoteById,
+  updateVote,
+  sendNotification,
+  removeUpvoteNotification,
+} from "../../../services/user";
 import { useSelector } from "react-redux";
 
 import {
@@ -34,7 +39,7 @@ import {
   CommentModalHandleContainer,
 } from "../styles/post-bottom-section.styles";
 
-export const PostBottomSection = ({ post }) => {
+export const PostBottomSection = ({ post, user }) => {
   const [saved, setSaved] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [currentVoteState, setCurrentVoteState] = useState({
@@ -89,6 +94,16 @@ export const PostBottomSection = ({ post }) => {
               !currentVoteStateInst.upvoted,
               !currentVoteStateInst.downvoted
             );
+            sendNotification(
+              user,
+              "Signs of Humanity",
+              `${currentUser.username}` + " just upvoted on your post",
+              {
+                type: "upvote",
+                user: currentUser,
+                postId: post.id,
+              }
+            );
           } else {
             setCurrentVoteState({
               upvoted: !currentVoteStateInst.upvoted,
@@ -103,6 +118,21 @@ export const PostBottomSection = ({ post }) => {
               !currentVoteStateInst.upvoted,
               currentVoteStateInst.downvoted
             );
+
+            if (!currentVoteStateInst.upvoted) {
+              sendNotification(
+                user,
+                "Signs of Humanity",
+                `${currentUser.username}` + " just upvoted on your post",
+                {
+                  type: "upvote",
+                  user: currentUser,
+                  postId: post.id,
+                }
+              );
+            } else {
+              removeUpvoteNotification(user.id, currentUser.id, post.id);
+            }
           }
         } else {
           if (currentVoteStateInst.upvoted) {
@@ -117,6 +147,7 @@ export const PostBottomSection = ({ post }) => {
               !currentVoteStateInst.upvoted,
               !currentVoteStateInst.downvoted
             );
+            removeUpvoteNotification(user.id, currentUser.id, post.id);
           } else {
             setCurrentVoteState({
               upvoted: currentVoteStateInst.upvoted,
@@ -236,7 +267,7 @@ export const PostBottomSection = ({ post }) => {
         keyboardBlurBehavior="restore"
         android_keyboardInputMode="adjustResize"
       >
-        <CommentsSection postID={post.id} />
+        <CommentsSection postData={post} user={user} />
       </BottomSheetModal>
     </>
   );

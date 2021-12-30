@@ -7,6 +7,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icons/icon.png",
+    "notification": {
+      "icon": "./src/assets/icons/iconNotification.png"
+    },
     "splash": {
       "image": "./src/assets/splash/splash.png",
       "resizeMode": "contain",
@@ -24,6 +27,19 @@
         "foregroundImage": "./src/assets/icons/adaptive-icon.png",
         "backgroundColor": "#FFF"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/icons/icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./local/assets/notification-sound.wav",
+            "./local/assets/notification-sound-other.wav"
+          ]
+        }
+      ]
+    ]
   }
 }

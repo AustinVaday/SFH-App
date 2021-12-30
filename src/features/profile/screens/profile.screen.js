@@ -40,7 +40,7 @@ export const ProfileScreen = ({ route, navigation }) => {
   const { currentUserPosts, following, users } = useSelector((state) => state.posts);
 
   useEffect(() => {
-    console.log("updated");
+    console.log(following);
 
     if (uid === firebase.auth().currentUser.uid) {
       setUser(currentUser);
@@ -73,7 +73,7 @@ export const ProfileScreen = ({ route, navigation }) => {
         });
     }
 
-    if (following.indexOf(uid) > -1) {
+    if (following.findIndex(followed => followed.id === uid) > -1) {
       setIsFollowing(true);
     } else {
       setIsFollowing(false);
@@ -141,7 +141,7 @@ export const ProfileScreen = ({ route, navigation }) => {
             {isFollowing ? (
               <FollowingButton
                 onPress={() => {
-                  unfollowUser(uid);
+                  unfollowUser(user, currentUser);
                 }}
                 title={
                   <Text variant="profile_following_button">Following</Text>
@@ -150,7 +150,7 @@ export const ProfileScreen = ({ route, navigation }) => {
             ) : (
               <FollowButton
                 onPress={() => {
-                  followUser(uid);
+                  followUser(user, currentUser);
                 }}
                 title={<Text variant="profile_follow_button">Follow</Text>}
               />

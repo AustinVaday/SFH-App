@@ -9,6 +9,8 @@ import { timeDifference } from "../../../components/utilities/time-difference.co
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
 
+import { useSelector } from "react-redux";
+
 import {
   TopPostContainer,
   UsernameAndDateContainer,
@@ -20,6 +22,8 @@ import {
 } from "../styles/post-top-section.styles";
 
 export const PostTopSection = ({ isViewPost, post, user }) => {
+  const { currentUser } = useSelector((state) => state.auth);
+
   const navigation = useNavigation();
 
   const postSettingsSheetRef = useRef();
@@ -75,7 +79,10 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
         name="chevron-left"
         type="ionicons"
         color={colors.icon.secondary}
-        onPress={() => console.log("clicked avatar")}
+        onPress={() => navigation.navigate("GuestProfile", {
+          uid: user.id,
+          guestUser: currentUser.id !== user.id,
+        })}
         source={{ uri: user?.profilePhoto }}
       />
       <UsernameAndDateContainer>
