@@ -132,7 +132,7 @@ export const ConversationScreen = ({ route }) => {
         [user.id]: false,
       });
 
-      sendNotification(user, null, "New Message", textToSend, {
+      sendNotification(user, "New Message", textToSend, {
         type: "chat",
         user: currentUser,
         message: textToSend,

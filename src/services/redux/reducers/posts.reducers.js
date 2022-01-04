@@ -5,6 +5,7 @@ import {
   USERS_STATE_CHANGE,
   USER_CHATS_STATE_CHANGE,
   CURRENT_USER_NOTIFICATIONS,
+  CURRENT_USER_SAVES,
 } from "../constants";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   users: [],
   chats: [],
   notifications: [],
+  saves: [],
 };
 
 export const posts = (state = initialState, action) => {
@@ -32,6 +34,11 @@ export const posts = (state = initialState, action) => {
       return {
         ...state,
         notifications: action.notifications,
+      };
+    case CURRENT_USER_SAVES:
+      return {
+        ...state,
+        saves: action.saves,
       };
     case USER_FOLLOWING_STATE_CHANGE:
       return {

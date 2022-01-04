@@ -1,12 +1,10 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Image } from "react-native-elements";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import { Navigation } from "./src/infrastructure/navigation";
 import { ThemeProvider } from "styled-components/native";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { Provider } from "react-redux";
@@ -15,7 +13,13 @@ import thunk from "redux-thunk";
 import rootReducer from "./src/services/redux/reducers";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import { colors } from "./src/infrastructure/theme/colors";
+import {
+  SuccessMessageToast,
+  ErrorMessageToast,
+  NewMessageToast,
+  InfoToast,
+  InfoErrorToast
+} from "./src/components/utilities/toast-message-type.components";
 
 import {
   useFonts,
@@ -29,59 +33,11 @@ import {
 import { theme } from "./src/infrastructure/theme";
 
 const toastConfig = {
-  success: (props) => (
-    <SuccessToast
-      {...props}
-      contentContainerStyle={{ backgroundColor: colors.bg.success }}
-      leadingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-      leadingIconStyle={{ tintColor: colors.icon.secondary }}
-      trailingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-      trailingIconStyle={{ tintColor: colors.icon.secondary }}
-      text1Style={{
-        fontSize: 15,
-        color: colors.text.secondary,
-      }}
-      text2Style={{
-        fontSize: 15,
-        color: colors.text.secondary,
-      }}
-    />
-  ),
-
-  error: (props) => (
-    <ErrorToast
-      {...props}
-      contentContainerStyle={{ backgroundColor: colors.bg.error }}
-      leadingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-      leadingIconStyle={{ tintColor: colors.icon.secondary }}
-      trailingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-      trailingIconStyle={{ tintColor: colors.icon.secondary }}
-      text1Style={{
-        fontSize: 15,
-        color: colors.text.secondary,
-      }}
-      text2Style={{
-        fontSize: 15,
-        color: colors.text.secondary,
-      }}
-    />
-  ),
-
-  newMessage: ({ props, onPress }) => (
-    <Pressable onPress={onPress} style={styles.pressableContainer}>
-      <Image
-        source={{
-          uri: props.avatar,
-        }}
-        style={styles.avatar}
-      />
-
-      <View style={styles.messagesContainer}>
-        <Text>{props.name}</Text>
-        <Text>{props.message}</Text>
-      </View>
-    </Pressable>
-  ),
+  success: (props) => SuccessMessageToast(props),
+  error: (props) => ErrorMessageToast(props),
+  newMessage: ({ props, onPress }) => NewMessageToast(props, onPress),
+  infoMessage: ({ props }) => InfoToast(props),
+  infoErrorMessage: ({ props }) => InfoErrorToast(props),
 };
 
 // for Redux debugging purposes
@@ -131,31 +87,3 @@ export default function App() {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  pressableContainer: {
-    flexDirection: "row",
-    height: 60,
-    width: "90%",
-    borderRadius: 6,
-    backgroundColor: "white",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    marginLeft: 15,
-    borderRadius: 25,
-  },
-  messagesContainer: {
-    paddingHorizontal: 15,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "flex-start",
-  },
-});

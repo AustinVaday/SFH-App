@@ -15,19 +15,24 @@ import {
 } from "../styles/posts-tab.styles";
 
 export const PostsTab = ({ route }) => {
-  const { uid } = route.params;
+  const { user } = route.params;
+
   const [userPosts, setUserPosts] = useState([]);
 
+  const currentUser = useSelector((state) => state.auth.currentUser);
   const currentUserPosts = useSelector((state) => state.posts.currentUserPosts);
 
+  console.log("poststab before useeffect")
   useEffect(() => {
-    if (uid === firebase.auth().currentUser.uid) {
+    console.log("rerun posts")
+    if (user.id === currentUser.id) {
       setUserPosts(currentUserPosts);
     } else {
+      console.log("call firebase posts")
       firebase
         .firestore()
         .collection("posts")
-        .where("creator", "==", uid)
+        .where("creator", "==", user.id)
         .orderBy("creation", "desc")
         .get()
         .then((snapshot) => {
@@ -39,7 +44,9 @@ export const PostsTab = ({ route }) => {
           setUserPosts(posts);
         });
     }
-  }, [uid]);
+  }, []);
+
+  console.log("poststab after useeffect")
 
   const listEmptyComponent = () => {
     return (

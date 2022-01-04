@@ -1,6 +1,6 @@
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
+import { Platform } from "react-native";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
 import Toast from "react-native-toast-message";
 
 import { firebase } from "../../../utils/firebase";
@@ -8,7 +8,14 @@ require("firebase/firebase-auth");
 require("firebase/firestore");
 
 import { USER_STATE_CHANGE, LOADING } from "../constants";
-import { getPostsByUser, getPostsForDiscover, fetchUserFollowing, fetchUserChats, getUserNotifications } from "./post.actions";
+import {
+  getPostsByUser,
+  getPostsForDiscover,
+  fetchUserFollowing,
+  fetchUserChats,
+  getUserNotifications,
+  fetchUserSaves,
+} from "./post.actions";
 
 export const userAuthStateListener = () => (dispatch) => {
   dispatch({ type: LOADING, loading: true });
@@ -18,6 +25,7 @@ export const userAuthStateListener = () => (dispatch) => {
       dispatch(getCurrentUserData(user.uid));
       dispatch(getPostsByUser(user.uid));
       dispatch(getUserNotifications(user.uid));
+      dispatch(fetchUserSaves(user.uid));
       dispatch(getPostsForDiscover());
       dispatch(fetchUserFollowing());
       dispatch(fetchUserChats());
@@ -42,13 +50,15 @@ export const getCurrentUserData = (uid) => (dispatch) => {
           loaded: true,
         });
 
-        dispatch(setNotificationService(user.data().id, user.data().notificationToken));
+        dispatch(
+          setNotificationService(user.data().id, user.data().notificationToken)
+        );
       }
     });
 };
 
 export const setNotificationService = (uid, userToken) => async (dispatch) => {
-  console.log("checking token")
+  console.log("checking token");
   let token;
 
   if (Constants.isDevice) {
@@ -69,7 +79,7 @@ export const setNotificationService = (uid, userToken) => async (dispatch) => {
   } else {
     alert("Must use physical device for Push Notifications");
   }
-  
+
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -80,14 +90,10 @@ export const setNotificationService = (uid, userToken) => async (dispatch) => {
   }
 
   if (token.data !== userToken) {
-    console.log("getting token")
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .update({
-        notificationToken: token.data,
-      });
+    console.log("getting token");
+    firebase.firestore().collection("users").doc(uid).update({
+      notificationToken: token.data,
+    });
   }
 };
 
@@ -130,6 +136,8 @@ export const register =
             displayName,
             followingCount: 0,
             followersCount: 0,
+            postsCount: 0,
+            savesPrivate: true,
             bio: "",
             identify: "none",
             id: firebase.auth().currentUser.uid,

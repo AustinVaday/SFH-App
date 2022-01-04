@@ -10,6 +10,7 @@ import {
   USERS_STATE_CHANGE,
   USER_CHATS_STATE_CHANGE,
   CURRENT_USER_NOTIFICATIONS,
+  CURRENT_USER_SAVES,
 } from "../constants";
 
 import uuid from "uuid-random";
@@ -124,6 +125,28 @@ export const getUserNotifications = (uid) => (dispatch) =>
       });
   });
 
+export const fetchUserSaves = (uid) => (dispatch) =>
+  new Promise((resolve, reject) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .collection("saves")
+      .orderBy("creation", "desc")
+      .onSnapshot((snapshot) => {
+        let saves = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+
+        dispatch({
+          type: CURRENT_USER_SAVES,
+          saves,
+        });
+      });
+  });
+
 export const fetchUserFollowing = () => (dispatch) =>
   new Promise((resolve, reject) => {
     firebase
@@ -136,7 +159,7 @@ export const fetchUserFollowing = () => (dispatch) =>
           const id = doc.id;
           return { id };
         });
-        console.log("following updated");
+        console.log("following updateddddddd");
         dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
 
         for (let i = 0; i < following.length; i++) {

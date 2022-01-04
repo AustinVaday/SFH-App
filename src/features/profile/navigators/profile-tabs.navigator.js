@@ -11,9 +11,10 @@ const { width } = Dimensions.get("window");
 
 const Tab = createMaterialTopTabNavigator();
 
-export const ProfileTabs = ({ uid }) => {
+export const ProfileTabs = ({ user }) => {
   return (
     <Tab.Navigator
+      lazy={true}
       tabBarOptions={{
         activeTintColor: colors.icon.primary,
         inactiveTintColor: colors.icon.lightgray,
@@ -25,10 +26,11 @@ export const ProfileTabs = ({ uid }) => {
       <Tab.Screen
         name="Posts"
         component={PostsTab}
-        initialParams={{ uid: uid }}
+        initialParams={{ user: user }}
         listeners={({ navigation }) => ({
-          tabPress: (event) => {
-            event.preventDefault();
+          //tabPress:
+          focus: (event) => {
+            // event.preventDefault();
             navigation.navigate("Posts");
           },
         })}
@@ -42,10 +44,11 @@ export const ProfileTabs = ({ uid }) => {
       <Tab.Screen
         name="Saves"
         component={SavesTab}
-        initialParams={{ uid: uid }}
+        initialParams={{ user: user }}
         listeners={({ navigation }) => ({
-          tabPress: (event) => {
-            event.preventDefault();
+          //tabPress:
+          focus: (event) => {
+            // event.preventDefault();
             navigation.navigate("Saves");
           },
         })}

@@ -17,6 +17,8 @@ import {
   updateVote,
   sendNotification,
   removeUpvoteNotification,
+  saveVideo,
+  deleteSaveVideo,
 } from "../../../services/user";
 import { useSelector } from "react-redux";
 
@@ -40,8 +42,14 @@ import {
 } from "../styles/post-bottom-section.styles";
 
 export const PostBottomSection = ({ post, user }) => {
-  const [saved, setSaved] = useState(false);
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const saves = useSelector((state) => state.posts.saves);
+
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [saveState, setSaveState] = useState({
+    saved: false,
+    saveId: null,
+  });
   const [currentVoteState, setCurrentVoteState] = useState({
     upvoted: false,
     downvoted: false,
@@ -49,8 +57,6 @@ export const PostBottomSection = ({ post, user }) => {
   });
 
   const commentSheetRef = useRef();
-
-  const currentUser = useSelector((state) => state.auth.currentUser);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -76,6 +82,12 @@ export const PostBottomSection = ({ post, user }) => {
         });
       }
     });
+
+    const saveIndex = saves.findIndex((el) => el.postId === post.id);
+
+    if (saveIndex > -1) {
+      setSaveState({ saved: true, saveId: saves[saveIndex].id });
+    }
   }, []);
 
   const handleVoteUpdate = useMemo(
@@ -170,11 +182,15 @@ export const PostBottomSection = ({ post, user }) => {
 
   const snapPoints = useMemo(() => ["75%"], []);
 
-  const clickSave = () => {
-    if (saved) {
-      setSaved(false);
+  const onSave = () => {
+    if (saveState.saved) {
+      deleteSaveVideo(saveState.saveId, currentUser.id).then((isRemoveSaved) =>
+        setSaveState({ saved: isRemoveSaved, saveId: null })
+      );
     } else {
-      setSaved(true);
+      saveVideo(post.id, currentUser.id).then((saveData) =>
+        setSaveState({ saved: saveData.isSaved, saveId: saveData.saveId })
+      );
     }
   };
 
@@ -249,7 +265,7 @@ export const PostBottomSection = ({ post, user }) => {
           </LeftIconsSection>
 
           <RightIconsSection>
-            <SaveButton saved={saved} onPress={clickSave} />
+            <SaveButton saved={saveState.saved} onPress={onSave} />
           </RightIconsSection>
         </IconsSection>
       </PostBottomContainer>

@@ -15,13 +15,11 @@ export const ViewPostScreen = ({ route }) => {
   const { post } = route.params;
 
   const { isLoading, data } = useUser(post.creator);
-  console.log("loading... " + isLoading)
 
   if (isLoading) {
-    console.log("success")
     return <View />;
  }
-  console.log("viewpost " + data?.notificationToken)
+
   return (
     <SafeArea>
       <PostContainer>

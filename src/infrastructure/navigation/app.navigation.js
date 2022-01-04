@@ -44,7 +44,7 @@ export const AppNavigator = (props) => {
         const { user, message, type } =
           notification?.request?.content?.data ?? {};
 
-        if (type === "New Message") {
+        if (type === "chat") {
           Toast.show({
             type: "newMessage",
             onPress: () =>

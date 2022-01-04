@@ -191,6 +191,12 @@ const settings_version = (theme) => `
   color: ${theme.colors.text.darkgray};
 `;
 
+const info_message = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.secondary};
+`;
+
 const following_textbutton = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.small};
@@ -586,7 +592,8 @@ const variants = {
   signup_info,
   newconversation_label,
   sender_message,
-  chats_lastmessage
+  chats_lastmessage,
+  info_message
 };
 
 export const Text = styled.Text`

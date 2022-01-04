@@ -21,6 +21,7 @@ export const colors = {
     secondary: "#FFFFFF",
     cultured: "#F1F1F1",
     tertiary: "#C1C2C1",
+    darkgray: "#757575",
     error: "#D0421B",
     success: "#138000",
   },
@@ -66,12 +67,4 @@ export const colors = {
     cultured: "#F1F1F1",
     lightergray: "#E5E4E9",
   }
-};
-
-export const shadowTextStyle = () => {
-  return {
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.1,
-  };
 };
