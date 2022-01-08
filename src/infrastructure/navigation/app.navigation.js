@@ -74,7 +74,22 @@ export const AppNavigator = (props) => {
         name="Home"
         component={AppTabsNavigator}
         navigation={props.navigation}
-        options={{ headerShown: false }}
+        options={({ route, navigation }) => ({
+          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerRightContainerStyle: { paddingRight: 8 },
+          headerShown: true,
+          headerBackTitleVisible: false,
+          headerTintColor: colors.text.black,
+          headerTitle: () => <Text variant="navbar_title">Explore</Text>,
+          headerRight: () => (
+            <Icon
+              name="bell-outline"
+              type="material-community"
+              onPress={() => {}}
+            />
+          ),
+          headerLeft: () => <Text variant="navbar_title">SFH</Text>,
+        })}
       />
       <AppStack.Screen
         name="Activity"

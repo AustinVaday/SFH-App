@@ -1,65 +1,105 @@
-import React, { useState, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { Dimensions } from "react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
-import { useIsFocused } from "@react-navigation/native";
 
 import { PostTopSection } from "../../app/components/post-top-section.components";
 import { PostBottomSection } from "../../app/components/post-bottom-section.components";
 import { colors } from "../../../infrastructure/theme/colors";
-import InViewport from "../../../components/utilities/inviewport.components";
 
 import { PostVideo } from "../styles/home-post-card.styles";
 
 const { height } = Dimensions.get("window");
 
-export const HomePostCard = ({ post, user }) => {
+export const HomePostCard = forwardRef(({ post, user }, parentRef) => {
   const [loading, setLoading] = useState(false);
-  const [paused, setPaused] = useState(false);
 
-  const videoRef = useRef();
+  const videoRef = useRef(null);
 
-  const isFocused = useIsFocused();
+  useImperativeHandle(parentRef, () => ({
+    play,
+    unload,
+    stop,
+  }));
 
-  const stopVideo = () => {
-    if (videoRef.current) {
-      videoRef.current.stopAsync();
+  useEffect(() => {
+    return () => unload();
+  }, []);
+
+  const play = async () => {
+    if (videoRef.current == null) {
+      return;
+    }
+
+    // if video is already playing return
+    const status = await videoRef.current.getStatusAsync();
+    if (status?.isPlaying) {
+      return;
+    }
+    try {
+      await videoRef.current.playAsync();
+    } catch (e) {
+      console.log(e);
     }
   };
 
-  const playVideo = () => {
-    if (videoRef.current) {
-      videoRef.current.playAsync();
+  const stop = async () => {
+    if (videoRef.current == null) {
+      return;
+    }
+
+    // if video is already stopped return
+    const status = await videoRef.current.getStatusAsync();
+    if (!status?.isPlaying) {
+      return;
+    }
+    try {
+      await videoRef.current.stopAsync();
+    } catch (e) {
+      console.log(e);
     }
   };
 
-  const handlePlaying = (isVisible) => {
-    isVisible && isFocused ? playVideo() : stopVideo();
-  };
+  const unload = async () => {
+    if (videoRef.current == null) {
+      return;
+    }
 
-  const onPlayPausePress = () => {
-    if (!paused) {
-      videoRef.current.pauseAsync();
-      setPaused(!paused);
-    } else {
-      videoRef.current.playAsync();
-      setPaused(!paused);
+    // if video is already stopped return
+    try {
+      await videoRef.current.unloadAsync();
+    } catch (e) {
+      console.log(e);
     }
   };
+
+  // const onPlayPausePress = () => {
+  //   if (!paused) {
+  //     videoRef.current.pauseAsync();
+  //     setPaused(!paused);
+  //   } else {
+  //     videoRef.current.playAsync();
+  //     setPaused(!paused);
+  //   }
+  // };
 
   return (
     <>
       <PostTopSection isViewPost={false} user={user} post={post} />
 
-      <InViewport onChange={handlePlaying}>
-        <PostVideo
-          ref={videoRef}
-          source={{ uri: post.videoURL }}
-          shouldplay={isFocused}
-          isLooping={true}
-          onLoadStart={() => setLoading(true)}
-          onLoad={() => setLoading(false)}
-        />
-      </InViewport>
+      <PostVideo
+        ref={videoRef}
+        source={{ uri: post.videoURL }}
+        shouldplay={false}
+        isLooping={true}
+        onLoadStart={() => setLoading(true)}
+        onLoad={() => setLoading(false)}
+      />
 
       <PostBottomSection post={post} user={user} />
 
@@ -82,4 +122,4 @@ export const HomePostCard = ({ post, user }) => {
       )}
     </>
   );
-};
+});

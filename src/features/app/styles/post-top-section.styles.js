@@ -42,7 +42,7 @@ export const PostSettingsButton = styled(Icon).attrs({
 })``;
 
 export const ReportIcon = styled(Ionicons).attrs({
-  name: "flag",
+  name: "flag-outline",
   size: 24,
   color: colors.icon.black
 })``;

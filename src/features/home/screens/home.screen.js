@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
-import { FlatList, Dimensions } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { FlatList, Dimensions, View } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useHeaderHeight } from "@react-navigation/stack";
 
 import { HomePostCard } from "../components/home-post-card.components";
 import { Text } from "../../../components/typography/text.components";
@@ -9,8 +11,7 @@ import { useSelector } from "react-redux";
 import {
   HomeBackground,
   ListEmptyBackground,
-  Navbar,
-  SFHLogoImage,
+  PostsEmptyImage
 } from "../styles/home.styles";
 
 const { height } = Dimensions.get("window");
@@ -18,58 +19,79 @@ const { height } = Dimensions.get("window");
 export const HomeScreen = ({ navigation }) => {
   const posts = useSelector((state) => state.posts.currentUserPosts);
 
-  const renderItem = useCallback(({ item, index }) => {
-    return <HomePostCard post={item} user={item.user} />;
-  }, []);
+  const mediaRefs = useRef([])
 
-  const keyExtractor = useCallback(
-    (item, index) => `${item.id.toString()}`,
-    []
-  );
+  const tabBarHeight = useBottomTabBarHeight();
+  const headerHeight = useHeaderHeight();
+
+  const keyExtractor = useCallback((item, index) => `${item.id}`, []);
 
   const getItemLayout = useCallback((data, index) => {
-    return { length: height, offset: height * index, index };
+    return {
+      length: height - (tabBarHeight + headerHeight),
+      offset: (height - (tabBarHeight + headerHeight)) * index,
+      index,
+    };
   }, []);
 
-  const listEmptyComponent = useCallback(() => {
+  const onViewableItemsChanged = useRef(({ changed }) => {
+    changed.forEach((element) => {
+      const cell = mediaRefs.current[element.key];
+      if (cell) {
+        if (element.isViewable) {
+          cell.play();
+        } else {
+          cell.stop();
+        }
+      }
+    });
+  });
+
+  const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
-        <Text variant="list_empty_title">No Posts Here</Text>
-        <Text variant="list_empty_message">
-          Follow someone to see their latest posts here.
-        </Text>
+        <PostsEmptyImage source={require('../../../assets/svg/empty-posts.png')} />
+        <Text variant="list_empty_title">Posts Are Empty</Text>
       </ListEmptyBackground>
     );
-  }, []);
+  };
+
+  const renderItem = ({ item, index }) => {
+    return (
+      <View style={{ flex: 1, height: height - (tabBarHeight + headerHeight) }}>
+        <HomePostCard post={item} user={item.user} ref={PostSingleRef => (mediaRefs.current[item.id] = PostSingleRef)} />
+      </View>
+    );
+  };
 
   return (
     <HomeBackground>
-      <Navbar
-        navigation={navigation}
-        leftComponent={
-          <SFHLogoImage
-            source={require("../../../assets/icons/sfh-logo-nobg.png")}
-          />
-        }
-        centerComponent={<Text variant="navbar_title">Explore</Text>}
-      />
       <FlatList
         data={posts}
         renderItem={renderItem}
         getItemLayout={getItemLayout}
         ListEmptyComponent={listEmptyComponent}
-        // itemHeight={height / 1.26}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
-        snapToInterval={height / 1.24}
+        snapToInterval={height - (tabBarHeight + headerHeight)}
         snapToAlignment={"center"}
         decelerationRate={"fast"}
         disableIntervalMomentum
-        initialNumToRender={10}
-        windowSize={5}
+        initialNumToRender={0}
+        windowSize={4}
         maxToRenderPerBatch={5}
-        updateCellsBatchingPeriod={50}
+        // initialNumToRender={10}
+        // windowSize={5}
+        // maxToRenderPerBatch={2}
+        onScrollToIndexFailed={() => alert("no such index")}
+        // updateCellsBatchingPeriod={50}
         removeClippedSubviews={false}
+        pagingEnabled={true}
+        bounces={false}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50,
+        }}
+        onViewableItemsChanged={onViewableItemsChanged.current}
       />
     </HomeBackground>
   );

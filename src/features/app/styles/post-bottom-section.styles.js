@@ -19,29 +19,42 @@ export const IconsSection = styled.View`
 export const LeftIconsSection = styled.View`
   flex: 1;
   flex-direction: row;
+  justify-content: flex-start;
 `;
 
 export const RightIconsSection = styled.View`
   justify-content: flex-end;
 `;
 
+export const VotesContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const VotesNumberTextContainer = styled.View`
+  padding-left: ${(props) => props.theme.space[1]};
+`;
+
 export const VoteButtonContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  border-radius: 25px;
+  justify-content: space-between;
+  border-radius: 10px;
+  height: 90%;
+  width: 80px;
   background-color: ${(props) =>
     props.currentVoteState.upvoted
-      ? colors.button.primary
+      ? colors.button.lighterblue
       : props.currentVoteState.downvoted
-      ? colors.button.error
+      ? colors.button.lightred
       : colors.button.foggedglass};
 `;
 
 export const CommentButtonContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  padding-left: ${(props) => props.theme.space[3]};
-  padding-right: ${(props) => props.theme.space[3]};
+  padding-left: ${(props) => props.theme.space[1]};
+  padding-right: ${(props) => props.theme.space[2]};
 `;
 
 export const CommentButton = styled(Icon).attrs({
@@ -49,31 +62,28 @@ export const CommentButton = styled(Icon).attrs({
   name: "comment",
   type: "material-community",
   color: colors.icon.secondary,
-})`
-  margin: ${(props) => props.theme.space[2]};
-`;
+  iconStyle: { padding: 8 },
+})``;
 
 export const ShareButton = styled(Icon).attrs({
   size: 30,
   name: "share",
   type: "material-community",
   color: colors.icon.secondary,
-})`
-  margin: ${(props) => props.theme.space[1]};
-`;
+  iconStyle: { padding: 8 },
+})``;
 
 export const SaveButton = styled(Icon).attrs((props) => ({
   size: 30,
   type: "material-community",
   name: props.saved ? "bookmark" : "bookmark-plus-outline",
-  color: props.saved ? colors.icon.primary : colors.icon.secondary,
-}))`
-  margin: ${(props) => props.theme.space[1]};
-`;
+  color: props.saved ? colors.icon.lighterblue : colors.icon.secondary,
+  iconStyle: { padding: 8 },
+}))``;
 
 export const TitleAndDescriptionSection = styled.View`
   padding-left: ${(props) => props.theme.space[3]};
-  padding-bottom: ${(props) => props.theme.space[3]};
+  padding-bottom: ${(props) => props.theme.space[2]};
 `;
 
 export const UpvoteButton = styled(Icon).attrs((props) => ({
@@ -81,18 +91,16 @@ export const UpvoteButton = styled(Icon).attrs((props) => ({
   type: "material-community",
   color: colors.icon.secondary,
   name: props.upvoted ? "arrow-up-bold" : "arrow-up-bold-outline",
-}))`
-  margin: ${(props) => props.theme.space[2]};
-`;
+  iconStyle: { paddingLeft: 8 },
+}))``;
 
 export const DownvoteButton = styled(Icon).attrs((props) => ({
   size: 25,
   type: "material-community",
   color: colors.icon.secondary,
   name: props.downvoted ? "arrow-down-bold" : "arrow-down-bold-outline",
-}))`
-  margin: ${(props) => props.theme.space[2]};
-`;
+  iconStyle: { paddingRight: 8 },
+}))``;
 
 export const CancelButton = styled(Icon).attrs({
   size: 24,

@@ -7,7 +7,7 @@ import { ChatsScreen } from "../../features/chat/screens/chats.screen";
 import { HomeScreen } from "../../features/home/screens/home.screen";
 import { DiscoverScreen } from "../../features/discover/screens/discover.screen";
 
-import { MaterialCommunityIcons as MCIcon } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../theme/colors";
 
 import { useSelector } from "react-redux";
@@ -15,31 +15,51 @@ import { useSelector } from "react-redux";
 const AppTab = createBottomTabNavigator();
 
 const TAB_ICON = {
-  Home: "home",
-  Discover: "magnify",
-  Add: "plus-box",
-  Chat: "forum",
-  Profile: "account",
+  Home: "ios-home",
+  Discover: "ios-search",
+  Add: "add-circle",
+  Chat: "chatbox-ellipses",
+  Profile: "person-circle-sharp",
+};
+
+const UNFOCUSED_TAB_ICON = {
+  Home: "ios-home-outline",
+  Discover: "ios-search-outline",
+  Add: "add-circle",
+  Chat: "chatbox-ellipses-outline",
+  Profile: "person-circle-outline",
+};
+
+const TAB_ICON_SIZE = {
+  Home: 30,
+  Discover: 30,
+  Add: 50,
+  Chat: 30,
+  Profile: 30,
 };
 
 const createScreenOptions = ({ route }) => {
   const iconName = TAB_ICON[route.name];
+  const unfocusedIconName = UNFOCUSED_TAB_ICON[route.name];
+  const iconSize = TAB_ICON_SIZE[route.name];
+
   return {
-    tabBarIcon: ({ size, color }) => (
-      <MCIcon name={iconName} size={size} color={color} />
+    tabBarIcon: ({ focused, color }) => (
+      <Ionicons name={focused ? iconName : unfocusedIconName} size={iconSize} color={color} />
     ),
   };
 };
 
 export const AppTabsNavigator = (props) => {
   const currentUser = useSelector((state) => state.auth.currentUser);
+
   return (
     <AppTab.Navigator
       initialRouteName="Home"
       screenOptions={createScreenOptions}
       tabBarOptions={{
         activeTintColor: colors.icon.primary,
-        inactiveTintColor: colors.icon.lightgray,
+        inactiveTintColor: colors.icon.lightergray,
         showLabel: false,
       }}
     >

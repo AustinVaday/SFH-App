@@ -5,9 +5,10 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { Share, Platform, Keyboard } from "react-native";
+import { Share, Platform, Keyboard, View } from "react-native";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { throttle } from "throttle-debounce";
+import numeral from "numeral";
 
 import { Text } from "../../../components/typography/text.components";
 import { CommentsSection } from "./comments-section.components";
@@ -39,6 +40,8 @@ import {
   CancelButtonContainer,
   HandleTitleContainer,
   CommentModalHandleContainer,
+  VotesContainer,
+  VotesNumberTextContainer,
 } from "../styles/post-bottom-section.styles";
 
 export const PostBottomSection = ({ post, user }) => {
@@ -244,17 +247,23 @@ export const PostBottomSection = ({ post, user }) => {
 
         <IconsSection>
           <LeftIconsSection>
-            <VoteButtonContainer currentVoteState={currentVoteState}>
-              <UpvoteButton
-                upvoted={currentVoteState.upvoted}
-                onPress={() => handleVoteUpdate("upvote", currentVoteState)}
-              />
-              <Text variant="post_numbers">{currentVoteState.counter}</Text>
-              <DownvoteButton
-                downvoted={currentVoteState.downvoted}
-                onPress={() => handleVoteUpdate("downvote", currentVoteState)}
-              />
-            </VoteButtonContainer>
+            <VotesContainer>
+              <VoteButtonContainer currentVoteState={currentVoteState}>
+                <UpvoteButton
+                  upvoted={currentVoteState.upvoted}
+                  onPress={() => handleVoteUpdate("upvote", currentVoteState)}
+                />
+                <Text variant="slash">|</Text>
+                <DownvoteButton
+                  downvoted={currentVoteState.downvoted}
+                  onPress={() => handleVoteUpdate("downvote", currentVoteState)}
+                />
+              </VoteButtonContainer>
+              <VotesNumberTextContainer>
+                <Text variant="post_numbers">100.0k</Text>
+              </VotesNumberTextContainer>
+            </VotesContainer>
+
             <CommentButtonContainer>
               <CommentButton
                 onPress={() => commentSheetRef.current?.present()}

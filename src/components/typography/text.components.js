@@ -33,6 +33,14 @@ const post_numbers = (theme) => `
   text-shadow-radius: 0.5px;
 `;
 
+const slash = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.secondary};
+  text-shadow-color: black;
+  text-shadow-radius: 0.5px;
+`;
+
 const post_username = (theme) => `
   font-size: ${theme.fontSizes.medium};
   font-family: ${theme.fonts.body_600};
@@ -96,10 +104,9 @@ const android_bottomsheet_cancel = (theme) => `
 `;
 
 const list_empty_title = (theme) => `
-  font-family: ${theme.fonts.body_600};
-  font-size: ${theme.fontSizes.large};
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.xlarge};
   text-align: center;
-  padding-bottom: 20px;
 `;
 
 const list_empty_message = (theme) => `
@@ -593,7 +600,8 @@ const variants = {
   newconversation_label,
   sender_message,
   chats_lastmessage,
-  info_message
+  info_message,
+  slash
 };
 
 export const Text = styled.Text`

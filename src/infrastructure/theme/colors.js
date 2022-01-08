@@ -45,8 +45,10 @@ export const colors = {
     google: "#DB4437",
     gray: "#9EA0A4",
     lightgray: "#CECECE",
+    lightergray: "#CDCDCD",
     success: "#138000",
     black: "#000000",
+    lighterblue: "#63BEFF",
   },
   button: {
     primary: "#0095FF",
@@ -60,6 +62,8 @@ export const colors = {
     lightergray: "#E5E4E9",
     error: "#D0421B",
     foggedglass: "rgba(192, 192, 192, 0.5)",
+    lighterblue: "#63BEFF",
+    lightred: "#D3684B"
   },
   input: {
     primary: "#0095FF",
