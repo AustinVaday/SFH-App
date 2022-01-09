@@ -7,9 +7,10 @@ import { AppTabsNavigator } from "./app-bottom-tabs.navigation";
 
 import {
   createStackNavigator,
-  HeaderBackButton,
   TransitionPresets,
 } from "@react-navigation/stack";
+
+import { HeaderBackButton } from "@react-navigation/elements";
 
 import { NewConversationScreen } from "../../features/chat/screens/new-conversation.screen";
 import { ConversationScreen } from "../../features/chat/screens/conversation.screen";
@@ -74,22 +75,7 @@ export const AppNavigator = (props) => {
         name="Home"
         component={AppTabsNavigator}
         navigation={props.navigation}
-        options={({ route, navigation }) => ({
-          headerLeftContainerStyle: { paddingLeft: 8 },
-          headerRightContainerStyle: { paddingRight: 8 },
-          headerShown: true,
-          headerBackTitleVisible: false,
-          headerTintColor: colors.text.black,
-          headerTitle: () => <Text variant="navbar_title">Explore</Text>,
-          headerRight: () => (
-            <Icon
-              name="bell-outline"
-              type="material-community"
-              onPress={() => {}}
-            />
-          ),
-          headerLeft: () => <Text variant="navbar_title">SFH</Text>,
-        })}
+        options={{ headerShown: false }}
       />
       <AppStack.Screen
         name="Activity"

@@ -14,7 +14,7 @@ const Tab = createMaterialTopTabNavigator();
 export const ProfileTabs = ({ user }) => {
   return (
     <Tab.Navigator
-      lazy={true}
+      initialRouteName="Posts"
       tabBarOptions={{
         activeTintColor: colors.icon.primary,
         inactiveTintColor: colors.icon.lightgray,
@@ -22,6 +22,7 @@ export const ProfileTabs = ({ user }) => {
         showLabel: false,
         indicatorStyle: { width: width / 4, left: width / 8 },
       }}
+      lazy={true}
     >
       <Tab.Screen
         name="Posts"

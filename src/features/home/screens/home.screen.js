@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { FlatList, Dimensions, View } from "react-native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useHeaderHeight } from "@react-navigation/stack";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 import { HomePostCard } from "../components/home-post-card.components";
 import { Text } from "../../../components/typography/text.components";
@@ -50,7 +50,7 @@ export const HomeScreen = ({ navigation }) => {
   const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
-        <PostsEmptyImage source={require('../../../assets/svg/empty-posts.png')} />
+        <PostsEmptyImage source={require('../../../assets/images/empty-posts.png')} />
         <Text variant="list_empty_title">Posts Are Empty</Text>
       </ListEmptyBackground>
     );
