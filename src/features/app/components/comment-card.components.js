@@ -7,7 +7,7 @@ import { colors } from "../../../infrastructure/theme/colors";
 import { timeDifference } from "../../../components/utilities/time-difference.components";
 
 import { useSelector } from "react-redux";
-import { deleteComment } from "../../../services/user";
+import { deleteComment } from "../../../services/firebase/posts";
 import { useUser } from "../../../services/hooks/useUser";
 
 import {
@@ -18,7 +18,7 @@ import {
   VoteButtonsContainer,
   CommentUpvoteButton,
   CommentDownvoteButton,
-} from "../styles/comment-card.styles";
+} from "./styles/comment-card.styles";
 
 export const CommentCard = ({ item, postData }) => {
   const [upvoted, setUpvoted] = useState(false);
@@ -26,7 +26,7 @@ export const CommentCard = ({ item, postData }) => {
 
   const user = useUser(item.creator).data;
 
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   const { showActionSheetWithOptions } = useActionSheet();
 

@@ -9,7 +9,7 @@ import { timeDifference } from "../../../components/utilities/time-difference.co
 import { useUser } from "../../../services/hooks/useUser";
 import { usePost } from "../../../services/hooks/usePost";
 
-import { PostImage, FollowButton } from "../styles/notification-card.styles";
+import { PostImage, FollowButton } from "./styles/notification-card.styles";
 
 export const NotificationCard = ({
   notification,

@@ -1,15 +1,21 @@
-import React, { useCallback, useRef, useMemo } from "react";
-import { Platform } from "react-native";
+import React, { useState, useCallback, useRef, useMemo } from "react";
+import { Platform, Pressable } from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import Toast from "react-native-toast-message";
+import moment from "moment";
 
 import { useNavigation } from "@react-navigation/native";
 
-import { timeDifference } from "../../../components/utilities/time-difference.components";
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
+import AlertDialog from "../../../components/dialog/alert-dialog.components";
 
 import { useSelector } from "react-redux";
+import {
+  followUser,
+  unfollowUser,
+} from "../../../services/firebase/follows";
+import { deletePost } from "../../../services/firebase/posts";
 
 import {
   TopPostContainer,
@@ -18,17 +24,78 @@ import {
   BackButton,
   PostSettingsButton,
   ReportIcon,
-  UnfollowIcon
-} from "../styles/post-top-section.styles";
+  UnfollowIcon,
+  FollowIcon,
+  DeleteIcon,
+  EditIcon,
+} from "./styles/post-top-section.styles";
 
 export const PostTopSection = ({ isViewPost, post, user }) => {
-  const { currentUser } = useSelector((state) => state.auth);
+  const { currentUser } = useSelector((state) => state.user);
+  const followings = useSelector((state) => state.followings.currentUserFollowings);
+
+  const [visible, setVisible] = useState(false);
 
   const navigation = useNavigation();
 
   const postSettingsSheetRef = useRef();
 
   const snapPoints = useMemo(() => ["20%"], []);
+
+  const onPressUser = () => {
+    navigation.navigate("GuestProfile", {
+      uid: user.id,
+      isGuest: true,
+      isOtherUser: currentUser.id !== user.id,
+    });
+  };
+
+  const onPressUnfollow = () => {
+    unfollowUser(user, currentUser);
+    postSettingsSheetRef.current?.close();
+    Toast.show({
+      type: "infoMessage",
+      props: {
+        message: "You have unfollowed this user.",
+      },
+      visibilityTime: 2000,
+      topOffset: 45,
+    });
+  };
+
+  const onPressFollow = () => {
+    followUser(user, currentUser);
+    postSettingsSheetRef.current?.close();
+    Toast.show({
+      type: "infoMessage",
+      props: {
+        message: "You have followed this user.",
+      },
+      visibilityTime: 2000,
+      topOffset: 45,
+    });
+  };
+
+  const onDeletePost = () => {
+    setVisible(false);
+    deletePost(post.id).then(() =>
+      Toast.show({
+        type: "infoMessage",
+        props: {
+          message: "You have deleted your post.",
+        },
+        visibilityTime: 2000,
+        topOffset: 45,
+      })
+    );
+  };
+
+  const toggleDialog = () => {
+    postSettingsSheetRef.current?.close();
+    setVisible(!visible);
+  };
+
+  const cancelDialog = () => setVisible(false);
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -43,25 +110,48 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
     []
   );
 
-  const renderPostSettings = useCallback(
-    () => (
+  const renderPostSettings = useCallback(() => {
+    return currentUser.id === user.id ? (
+      <>
+        <ListItem onPress={() => console.log("Edit")}>
+          <EditIcon />
+          <ListItem.Content>
+            <Text variant="bottomsheet_item">Edit</Text>
+          </ListItem.Content>
+        </ListItem>
+        <ListItem onPress={toggleDialog}>
+          <DeleteIcon />
+          <ListItem.Content>
+            <Text variant="bottomsheet_item_delete">Delete</Text>
+          </ListItem.Content>
+        </ListItem>
+      </>
+    ) : (
       <>
         <ListItem onPress={() => console.log("clicked report")}>
           <ReportIcon />
           <ListItem.Content>
-            <ListItem.Title>Report</ListItem.Title>
+            <Text variant="bottomsheet_item">Report</Text>
           </ListItem.Content>
         </ListItem>
-        <ListItem onPress={() => console.log("clicked unfollow")}>
-          <UnfollowIcon />
-          <ListItem.Content>
-            <ListItem.Title>Unfollow</ListItem.Title>
-          </ListItem.Content>
-        </ListItem>
+        {followings.findIndex((followed) => followed.id === user.id) > -1 ? (
+          <ListItem onPress={onPressUnfollow}>
+            <UnfollowIcon />
+            <ListItem.Content>
+              <Text variant="bottomsheet_item">Unfollow</Text>
+            </ListItem.Content>
+          </ListItem>
+        ) : (
+          <ListItem onPress={onPressFollow}>
+            <FollowIcon />
+            <ListItem.Content>
+              <Text variant="bottomsheet_item">Follow</Text>
+            </ListItem.Content>
+          </ListItem>
+        )}
       </>
-    ),
-    []
-  );
+    );
+  }, [followings, visible]);
 
   return (
     <TopPostContainer isViewPost={isViewPost}>
@@ -75,22 +165,15 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
       <Avatar
         rounded
         size="small"
-        activeOpacity={0.7}
-        name="chevron-left"
-        type="ionicons"
-        color={colors.icon.secondary}
-        onPress={() => navigation.navigate("GuestProfile", {
-          uid: user.id,
-          guestUser: currentUser.id !== user.id,
-        })}
+        onPress={onPressUser}
         source={{ uri: user?.profilePhoto }}
       />
       <UsernameAndDateContainer>
-        <Text variant="post_username">{user?.username}</Text>
+        <Pressable onPress={onPressUser}>
+          <Text variant="post_username">{user?.username}</Text>
+        </Pressable>
         <Text variant="post_date">
-          {post.creation === null
-            ? "now"
-            : timeDifference(new Date(), post.creation.toDate())}
+          {moment(post.creation.toDate()).fromNow()}
         </Text>
       </UsernameAndDateContainer>
       <PostSettingsButtonContainer>
@@ -109,6 +192,15 @@ export const PostTopSection = ({ isViewPost, post, user }) => {
         keyboardBlurBehavior="restore"
         android_keyboardInputMode="adjustResize"
         children={renderPostSettings}
+      />
+
+      <AlertDialog
+        displayAlert={visible}
+        title={"Are you sure you want to delete?"}
+        positiveButtonText={"Delete"}
+        negativeButtonText={"Cancel"}
+        onPressPositive={onDeletePost}
+        onPressNegative={cancelDialog}
       />
     </TopPostContainer>
   );

@@ -4,7 +4,8 @@ import { Avatar } from "react-native-elements";
 import { openURL } from "expo-linking";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
-import { saveUserProfileImage } from "../../../services/user";
+import { saveUserProfileImage } from "../../../services/firebase/users";
+import useLoader from "../../../services/hooks/loader/useLoader";
 
 import {
   requestCameraPermissionsAsync,
@@ -17,10 +18,12 @@ import {
 import {
   AvatarImageEditBackground,
   AvatarEditIcon,
-} from "../styles/avatar-image-edit.styles";
+} from "./styles/avatar-image-edit.styles";
 
 export const AvatarImageEdit = ({ userImage }) => {
   const { showActionSheetWithOptions } = useActionSheet();
+
+  const [loader, showLoader, hideLoader] = useLoader();
 
   const takePhoto = async () => {
     const { status } = await requestCameraPermissionsAsync();
@@ -35,7 +38,8 @@ export const AvatarImageEdit = ({ userImage }) => {
       });
 
       if (!result.cancelled) {
-        saveUserProfileImage(result.uri);
+        showLoader();
+        saveUserProfileImage(result.uri).then(() => hideLoader());
       }
     }
   };
@@ -53,7 +57,8 @@ export const AvatarImageEdit = ({ userImage }) => {
       });
 
       if (!result.cancelled) {
-        saveUserProfileImage(result.uri);
+        showLoader();
+        saveUserProfileImage(result.uri).then(() => hideLoader());
       }
     }
   };
@@ -91,9 +96,10 @@ export const AvatarImageEdit = ({ userImage }) => {
         }
       }
     );
-
+    
   return (
     <AvatarImageEditBackground>
+      {loader}
       <Avatar
         rounded={true}
         size="xlarge"

@@ -4,48 +4,56 @@ import { SwipeListView } from "react-native-swipe-list-view";
 
 import { ChatRow } from "../components/chat-row.components";
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsersData } from "../../../services/redux/actions/post.actions";
+import {
+  fetchChats,
+  fetchOtherUsers,
+} from "../../../services/redux/actions/chats.actions";
 
 import {
   ChatsBackground,
   ListEmptyBackground,
   RowHiddenContainer,
-  NavBar,
   SwipeDeleteButton,
-} from "../styles/chats.styles";
+  ListEmptyContainer,
+} from "./styles/chats.styles";
 
 export const ChatsScreen = ({ navigation }) => {
-  const { currentUser } = useSelector((state) => state.auth);
-  const { users, chats } = useSelector((state) => state.posts);
+  const { currentUser } = useSelector((state) => state.user);
+  const { otherUsers, currentUserChats } = useSelector((state) => state.chats);
 
   const [conversations, setConversations] = useState([]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    for (let i = 0; i < chats.length; i++) {
-      if (chats[i].hasOwnProperty("otherUser")) {
+    dispatch(fetchChats());
+  }, []);
+
+  useEffect(() => {
+    for (let i = 0; i < currentUserChats.length; i++) {
+      if (currentUserChats[i].hasOwnProperty("otherUser")) {
         continue;
       }
       let otherUserId;
 
-      if (chats[i].users[0] === currentUser.id) {
-        otherUserId = chats[i].users[1];
+      if (currentUserChats[i].users[0] === currentUser.id) {
+        otherUserId = currentUserChats[i].users[1];
       } else {
-        otherUserId = chats[i].users[0];
+        otherUserId = currentUserChats[i].users[0];
       }
 
-      const user = users.find((x) => x.id === otherUserId);
+      const user = otherUsers.find((x) => x.id === otherUserId);
       if (user === undefined) {
-        dispatch(fetchUsersData(otherUserId));
+        dispatch(fetchOtherUsers(otherUserId));
       } else {
-      chats[i].otherUser = user;
+        currentUserChats[i].otherUser = user;
       }
     }
-    setConversations(chats);
-  }, [chats, users]);
+    setConversations(currentUserChats);
+  }, [currentUserChats, otherUsers]);
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -94,10 +102,11 @@ export const ChatsScreen = ({ navigation }) => {
 
   const listEmptyComponent = () => {
     return (
-      <ListEmptyBackground>
-        <Text variant="list_empty_title">Message Your Friends</Text>
+      <>
+        <Text variant="list_empty_title">No Messages</Text>
+        <Spacer size="large" />
         <Text variant="list_empty_message">Start a conversation</Text>
-      </ListEmptyBackground>
+      </>
     );
   };
 
@@ -107,10 +116,6 @@ export const ChatsScreen = ({ navigation }) => {
 
   return (
     <ChatsBackground>
-      <NavBar
-        nav={navigation}
-        centerComponent={<Text variant="navbar_title">Chats</Text>}
-      />
       <SwipeListView
         data={conversations}
         ListEmptyComponent={listEmptyComponent}
@@ -119,8 +124,15 @@ export const ChatsScreen = ({ navigation }) => {
         disableRightSwipe={true}
         disableLeftSwipe={Platform.OS === "android" ? true : false}
         rightOpenValue={-75}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          conversations.length === 0 && {
+            justifyContent: "center",
+            alignItems: "center",
+            flexGrow: 1,
+          }
+        }
       />
     </ChatsBackground>
   );

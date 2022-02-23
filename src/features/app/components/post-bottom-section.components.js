@@ -5,22 +5,20 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { Share, Platform, Keyboard, View } from "react-native";
+import { Share, Platform, Keyboard } from "react-native";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { throttle } from "throttle-debounce";
-import numeral from "numeral";
 
 import { Text } from "../../../components/typography/text.components";
 import { CommentsSection } from "./comments-section.components";
+import { numberFormatter } from "../../../components/utilities/number-formatter.components";
 
+import { getVoteByUserId, updateVote } from "../../../services/firebase/posts";
 import {
-  getVoteById,
-  updateVote,
   sendNotification,
-  removeUpvoteNotification,
-  saveVideo,
-  deleteSaveVideo,
-} from "../../../services/user";
+  deleteUpvoteNotification,
+} from "../../../services/firebase/notifications";
+import { saveVideo, deleteSaveVideo } from "../../../services/firebase/saves";
 import { useSelector } from "react-redux";
 
 import {
@@ -42,11 +40,11 @@ import {
   CommentModalHandleContainer,
   VotesContainer,
   VotesNumberTextContainer,
-} from "../styles/post-bottom-section.styles";
+} from "./styles/post-bottom-section.styles";
 
 export const PostBottomSection = ({ post, user }) => {
-  const currentUser = useSelector((state) => state.auth.currentUser);
-  const saves = useSelector((state) => state.posts.saves);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const saves = useSelector((state) => state.saves.currentUserSaves);
 
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [saveState, setSaveState] = useState({
@@ -76,7 +74,7 @@ export const PostBottomSection = ({ post, user }) => {
   }, []);
 
   useEffect(() => {
-    getVoteById(post.id, currentUser.id).then((votesData) => {
+    getVoteByUserId(post.id, currentUser.id).then((votesData) => {
       if (votesData) {
         setCurrentVoteState({
           ...currentVoteState,
@@ -146,7 +144,7 @@ export const PostBottomSection = ({ post, user }) => {
                 }
               );
             } else {
-              removeUpvoteNotification(user.id, currentUser.id, post.id);
+              deleteUpvoteNotification(user.id, currentUser.id, post.id);
             }
           }
         } else {
@@ -162,7 +160,7 @@ export const PostBottomSection = ({ post, user }) => {
               !currentVoteStateInst.upvoted,
               !currentVoteStateInst.downvoted
             );
-            removeUpvoteNotification(user.id, currentUser.id, post.id);
+            deleteUpvoteNotification(user.id, currentUser.id, post.id);
           } else {
             setCurrentVoteState({
               upvoted: currentVoteStateInst.upvoted,
@@ -260,7 +258,9 @@ export const PostBottomSection = ({ post, user }) => {
                 />
               </VoteButtonContainer>
               <VotesNumberTextContainer>
-                <Text variant="post_numbers">100.0k</Text>
+                <Text variant="post_numbers">
+                  {numberFormatter(currentVoteState.counter)}
+                </Text>
               </VotesNumberTextContainer>
             </VotesContainer>
 

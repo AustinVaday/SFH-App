@@ -9,6 +9,40 @@ const defaultTextStyles = (theme) => `
   margin-bottom: 0px;
 `;
 
+const home_logo = (theme) => `
+  font-family: ${theme.fonts.home_logo};
+  font-size: ${theme.fontSizes.xlarge};
+  color: ${theme.colors.text.primary};
+`;
+
+const appintro_next = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.primary};
+  text-align: center;
+`;
+
+const appintro_done = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.secondary};
+  text-align: center;
+`;
+
+const appintro_title = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.xxlarge};
+  color: ${theme.colors.text.primary};
+  text-align: center;
+`;
+
+const appintro_description = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.gray};
+  text-align: center;
+`;
+
 const post_title = (theme) => `
   font-family: ${theme.fonts.body_800};
   font-size: ${theme.fontSizes.xlarge};
@@ -57,6 +91,17 @@ const post_date = (theme) => `
   text-shadow-radius: 0.5px;
 `;
 
+const bottomsheet_item = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.large};
+`;
+
+const bottomsheet_item_delete = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.error};
+`;
+
 const comment_list_empty_title = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.large};
@@ -66,6 +111,12 @@ const comment_list_empty_title = (theme) => `
 const comment_list_empty_message = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
+  text-align: center;
+`;
+
+const private_saves_message = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.large};
   text-align: center;
 `;
 
@@ -104,7 +155,7 @@ const android_bottomsheet_cancel = (theme) => `
 `;
 
 const list_empty_title = (theme) => `
-  font-family: ${theme.fonts.body_400};
+  font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.xlarge};
   text-align: center;
 `;
@@ -112,6 +163,7 @@ const list_empty_title = (theme) => `
 const list_empty_message = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.gray};
   text-align: center;
 `;
 
@@ -131,12 +183,13 @@ const discover_post_title = (theme) => `
 
 const profile_display_name = (theme) => `
   font-family: ${theme.fonts.body_800};
-  font-size: ${theme.fontSizes.large};
+  font-size: ${theme.fontSizes.xlarge};
 `;
 
 const profile_bio = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.medium};
+  text-align: center;
 `;
 
 const profile_following_button = (theme) => `
@@ -173,23 +226,42 @@ const editprofile_label = (theme) => `
   font-size: ${theme.fontSizes.medium};
 `;
 
-const settings_dialog_title = (theme) => `
+const dialog_title = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.large};
+  text-align: center;
   align-self: center;
-  padding: 30px;
 `;
 
-const settings_dialog_cancel = (theme) => `
+const dialog_message = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.medium};
+  text-align: center;
+  align-self: center;
+  padding-top: 10px;
+`;
+
+const dialog_negative = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.large};
-  color: ${theme.colors.text.primary};
+  color: ${theme.colors.text.darkgray};
 `;
 
-const settings_dialog_logout = (theme) => `
+const dialog_positive = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.large};
   color: ${theme.colors.text.error};
+`;
+
+const dialog_buttonText = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.large};
+  color: ${theme.colors.text.darkgray};
+`;
+
+const dialog_cancel = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.large};
 `;
 
 const settings_version = (theme) => `
@@ -234,6 +306,12 @@ const profile_tab_post_title = (theme) => `
   text-shadow-radius: 0.5px;
 `;
 
+const video_duration = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.secondary};
+`;
+
 const permissions_title = (theme) => `
   font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.xlarge};
@@ -245,11 +323,16 @@ const permissions_message = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.large};
   text-align: center;
-  padding-bottom: 100px;
+`;
+
+const discover_list_title = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.xxlarge};
+  padding: 5px;
 `;
 
 const uploadpost_post_button = (theme) => `
-  font-family: ${theme.fonts.body_600};
+  font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.large};
   color: ${theme.colors.text.secondary}
 `;
@@ -300,6 +383,12 @@ const forgot_password_button = (theme) => `
   font-size: ${theme.fontSizes.small};
 `;
 
+const emailSent_button = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.secondary};
+`;
+
 const pw_requirement_title = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.medium};
@@ -310,7 +399,7 @@ const pw_requirement_item = (theme) => `
   font-size: ${theme.fontSizes.medium};
 `;
 
-const signup_invalid = (theme) => `
+const input_invalid = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
   color: ${theme.colors.text.error};
@@ -499,6 +588,20 @@ const forgot_password_message = (theme) => `
     color: ${theme.colors.text.darkgray};
 `;
 
+const emailSent_title = (theme) => `
+    font-family: ${theme.fonts.body_800};
+    font-size: ${theme.fontSizes.xxxlarge};
+    color: ${theme.colors.text.black};
+    text-align: center;
+`;
+
+const emailSent_message = (theme) => `
+    font-family: ${theme.fonts.body_400};
+    font-size: ${theme.fontSizes.large};
+    color: ${theme.colors.text.darkgray};
+    text-align: center;
+`;
+
 const profile_numbers = (theme) => `
     font-family: ${theme.fonts.body_700};
     font-size: ${theme.fontSizes.large};
@@ -509,18 +612,52 @@ const profile_labels = (theme) => `
     font-size: ${theme.fontSizes.medium};
 `;
 
-const profile_identify = (theme) => `
-    font-family: ${theme.fonts.body_700};
+const profile_info = (theme) => `
+    font-family: ${theme.fonts.body_400};
     font-size: ${theme.fontSizes.medium};
-    color: ${theme.colors.text.darkgray};
+    color: ${theme.colors.text.black};
+`;
+
+const code_title = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.xlarge};
+  padding-bottom: 10px;
+`;
+
+const code_message = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.gray};
+`;
+
+const code_resend_button = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.medium};
+`;
+
+const code_timer = (theme) => `
+  font-family: ${theme.fonts.body_600};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.darkgray};
 `;
 
 const variants = {
+  home_logo,
+  appintro_next,
+  appintro_done,
+  appintro_title,
+  appintro_description,
+  emailSent_button,
+  emailSent_title,
+  emailSent_message,
+  video_duration,
   post_title,
   post_description,
   post_numbers,
   post_username,
   post_date,
+  bottomsheet_item,
+  bottomsheet_item_delete,
   comment_list_empty_title,
   comment_list_empty_message,
   list_empty_title,
@@ -554,7 +691,7 @@ const variants = {
   comment_name,
   profile_numbers,
   profile_labels,
-  profile_identify,
+  profile_info,
   discover_post_title,
   profile_display_name,
   profile_bio,
@@ -573,9 +710,12 @@ const variants = {
   android_bottomsheet_delete,
   android_bottomsheet_cancel,
   editprofile_label,
-  settings_dialog_title,
-  settings_dialog_cancel,
-  settings_dialog_logout,
+  dialog_title,
+  dialog_message,
+  dialog_negative,
+  dialog_positive,
+  dialog_buttonText,
+  dialog_cancel,
   settings_version,
   following_textbutton,
   following_username,
@@ -595,13 +735,19 @@ const variants = {
   login_button,
   pw_requirement_title,
   pw_requirement_item,
-  signup_invalid,
+  input_invalid,
   signup_info,
   newconversation_label,
   sender_message,
   chats_lastmessage,
   info_message,
-  slash
+  slash,
+  discover_list_title,
+  private_saves_message,
+  code_title,
+  code_message,
+  code_resend_button,
+  code_timer,
 };
 
 export const Text = styled.Text`

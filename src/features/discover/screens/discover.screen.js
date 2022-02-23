@@ -1,42 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { FlatList } from "react-native";
-import { queryUsersByUsername } from "../../../services/user";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BigList from "react-native-big-list";
 
-import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
-import { SmallPostCard } from "../components/small-post-card.components";
+import { SmallPost } from "../components/small-post.components";
+import { DiscoverListLoader } from "../components/discover-list-loader.components";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDiscoverPosts } from "../../../services/redux/actions/posts.actions";
+import { queryUsersAndKeywords } from "../../../services/firebase/users";
 
 import {
   DiscoverBackground,
-  SearchScreen,
-  UserRowCard,
+  ModalScreen,
+  UserRow,
+  PostTitleRow,
+  SearchIcon,
+  ArrowForwardIcon,
   UserImage,
-  VideoContainer,
   Searchbar,
-} from "../styles/discover.styles";
+} from "./styles/discover.styles";
 
 export const DiscoverScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [data, setData] = useState([]);
   const [videoLength, setVideoLength] = useState(10);
   const [refreshing, setRefreshing] = useState(false);
   const [textInputFocussed, setTextInputFocussed] = useState(false);
-  const [searchUsers, setSearchUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [textInput, setTextInput] = useState("");
+  const [searchTimer, setSearchTimer] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const insets = useSafeAreaInsets();
+
+  const dispatch = useDispatch();
 
   const discoverPosts = useSelector((state) => state.posts.discoverPosts);
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
-    setLoading(true);
+    dispatch(fetchDiscoverPosts(setLoading));
+  }, []);
+
+  useEffect(() => {
+    setFetching(true);
     makeRemoteRequest();
   }, [discoverPosts]);
-
-  useEffect(() => {
-    queryUsersByUsername(textInput).then(setSearchUsers);
-  }, [textInput]);
 
   const makeRemoteRequest = () => {
     const newData = discoverPosts;
@@ -46,16 +57,16 @@ export const DiscoverScreen = ({ navigation }) => {
           ? newData.slice(0, videoLength)
           : [...data, ...newData.slice(videoLength - 10, videoLength)]
       );
-      setLoading(false);
+      setFetching(false);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
-      setLoading(false);
+      setFetching(false);
     }
   };
 
   const handleOnEndReached = () => {
-    if (textInput.length === 0 && !loading) {
+    if (textInput.length === 0 && !fetching) {
       const increaseLength = videoLength + 10;
       setVideoLength(increaseLength);
       makeRemoteRequest();
@@ -68,50 +79,67 @@ export const DiscoverScreen = ({ navigation }) => {
     makeRemoteRequest();
   };
 
-  const renderSearchUserItem = ({ item }) => {
-    return (
-      <UserRowCard
+  const listHeaderComponent = () => {
+    return <Text variant="discover_list_title">Recent Videos</Text>;
+  };
+
+  const renderSearchResultItem = ({ item }) => {
+    return item.type === "user" ? (
+      <UserRow
         onPress={() =>
           navigation.navigate("GuestProfile", {
             uid: item.id,
-            guestUser: currentUser.id !== item.id,
+            isGuest: true,
+            isOtherUser: currentUser.id !== item.id,
           })
         }
       >
         <Text variant="search_username">{item.username}</Text>
         <UserImage source={{ uri: item.profilePhoto }} />
-      </UserRowCard>
+      </UserRow>
+    ) : (
+      <PostTitleRow
+        onPress={() =>
+          navigation.navigate("ResultsSearch", {
+            keyword: item.title,
+          })
+        }
+      >
+        <Text variant="search_username">{item.title}</Text>
+        <SearchIcon />
+        <ArrowForwardIcon />
+      </PostTitleRow>
     );
   };
 
   const renderVideoThumbnailItem = ({ item }) => {
-    return (
-      <VideoContainer>
-        <SmallPostCard post={item} />
-      </VideoContainer>
-    );
+    return <SmallPost post={item} />;
   };
 
   return (
-    <SafeArea>
-      <DiscoverBackground>
-        <Searchbar
-          value={textInput}
-          onChangeText={setTextInput}
-          onFocus={() => setTextInputFocussed(true)}
-          platform="ios"
-          onCancel={() => setTextInputFocussed(false)}
-          showCancel={textInputFocussed}
-        />
-        {textInputFocussed && (
-          <SearchScreen>
-            <FlatList
-              data={searchUsers}
-              renderItem={renderSearchUserItem}
-              keyExtractor={(item) => item.id.toString()}
-            />
-          </SearchScreen>
-        )}
+    <DiscoverBackground style={{ paddingTop: insets.top }}>
+      <Searchbar
+        value={textInput}
+        onChangeText={(text) => {
+          if (searchTimer) {
+            clearTimeout(searchTimer);
+          }
+          setTextInput(text);
+          setSearchTimer(
+            setTimeout(() => {
+              queryUsersAndKeywords(text).then(setSearchResults);
+            }, 500)
+          );
+        }}
+        onFocus={() => setTextInputFocussed(true)}
+        platform="ios"
+        onCancel={() => setTextInputFocussed(false)}
+        showCancel={textInputFocussed}
+      />
+
+      {loading ? (
+        <DiscoverListLoader />
+      ) : (
         <FlatList
           data={data}
           renderItem={renderVideoThumbnailItem}
@@ -121,13 +149,25 @@ export const DiscoverScreen = ({ navigation }) => {
           onEndReached={handleOnEndReached}
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          // I comment this out because in case if there is lag while scrolling
-          // uncomment this to fix it for control initial number
-          // of items to render and max render per batch
-          // initialNumToRender={10}
-          // maxToRenderPerBatch={10}
+          ListHeaderComponent={listHeaderComponent}
         />
-      </DiscoverBackground>
-    </SafeArea>
+      )}
+
+      <ModalScreen
+        isVisible={textInputFocussed}
+        hasBackdrop={false}
+        coverScreen={false}
+        animationInTiming={1}
+        animationOutTiming={1}
+        style={{ marginTop: insets.top + 55 }}
+      >
+        <BigList
+          data={searchResults}
+          renderItem={renderSearchResultItem}
+          keyExtractor={(item) => item.id}
+          itemHeight={60}
+        />
+      </ModalScreen>
+    </DiscoverBackground>
   );
 };

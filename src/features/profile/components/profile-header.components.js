@@ -1,105 +1,135 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Avatar } from "react-native-elements";
 
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
 import { useSelector } from "react-redux";
-import { followUser, unfollowUser } from "../../../services/user";
+import { followUser, unfollowUser } from "../../../services/firebase/follows";
 
 import {
-  ProfileStats,
+  StatsContainer,
   PostsStatContainer,
   FollowingStatContainer,
   FollowersStatContainer,
   EditProfileButtonContainer,
   ProfileHeaderBackground,
-  ProfileInfo,
-  NameAndIdentifyContainer,
+  BioContainer,
+  ProfileStatsContainer,
   UserAvatarContainer,
   GuestUserButtonsSection,
   FollowingButton,
   FollowButton,
   MessageButton,
   EditProfileButton,
-} from "../styles/profile-header.styles";
+  TopInfoContainer,
+  IdentifyContainer,
+  EarIcon,
+  LanguagesContainer,
+  LanguageIcon,
+  InfoContainer,
+} from "./styles/profile-header.styles";
 
-export const ProfileHeader = ({ user, guestUser, navigation }) => {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [countFollowing, setCountFollowing] = useState(user.followersCount);
+export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const followings = useSelector((state) => state.followings.currentUserFollowings);
 
-  const { currentUser } = useSelector((state) => state.auth);
-  const { following, users } = useSelector((state) => state.posts);
-
-  useEffect(() => {
-    if (following.findIndex((followed) => followed.id === user.id) > -1) {
-      setIsFollowing(true);
-    } else {
-      setIsFollowing(false);
-    }
-  }, [following]);
+  const [followingState, setFollowingState] = useState({
+    isFollowing:
+      followings.findIndex((followed) => followed.id === user.id) > -1,
+    followingsCount: user.followersCount,
+  });
 
   return (
-    <ProfileHeaderBackground>
-      <UserAvatarContainer>
-        <Avatar
-          size={120}
-          rounded
-          source={{
-            uri: user.profilePhoto,
-          }}
-        />
-      </UserAvatarContainer>
+    <ProfileHeaderBackground pointerEvents="box-none">
+      <TopInfoContainer pointerEvents="box-none">
+        <UserAvatarContainer pointerEvents="none">
+          <Avatar
+            size={120}
+            rounded
+            source={{
+              uri: user.profilePhoto,
+            }}
+          />
+        </UserAvatarContainer>
 
-      <ProfileInfo>
-        <NameAndIdentifyContainer>
-          <Text variant="profile_display_name">{user.displayName} </Text>
-          {user.identify !== "none" && (
-            <Text variant="profile_identify">• {user.identify}</Text>
+        <ProfileStatsContainer pointerEvents="box-none">
+          <Text variant="profile_display_name" numberOfLines={1}>
+            {user.displayName}
+          </Text>
+          <StatsContainer>
+            <PostsStatContainer onPress={() => console.log("click posts")}>
+              <Text variant="profile_numbers">{user.postsCount}</Text>
+              <Text variant="profile_labels">Posts</Text>
+            </PostsStatContainer>
+            <Text> | </Text>
+            <FollowingStatContainer
+              onPress={() => {
+                navigation.navigate("FollowList", {
+                  username: user.username,
+                  uid: user.id,
+                  isOtherUser,
+                  tab: "Following",
+                });
+              }}
+            >
+              <Text variant="profile_numbers">{user.followingCount}</Text>
+              <Text variant="profile_labels">Following</Text>
+            </FollowingStatContainer>
+            <Text> | </Text>
+            <FollowersStatContainer
+              onPress={() => {
+                navigation.navigate("FollowList", {
+                  username: user.username,
+                  uid: user.id,
+                  isOtherUser,
+                  tab: "Followers",
+                });
+              }}
+            >
+              <Text variant="profile_numbers">
+                {followingState.followingsCount}
+              </Text>
+              <Text variant="profile_labels">Followers</Text>
+            </FollowersStatContainer>
+          </StatsContainer>
+        </ProfileStatsContainer>
+      </TopInfoContainer>
+
+      {(user.identify !== "" || user.languages.length !== 0) && (
+        <InfoContainer pointerEvents="none">
+          {user.identify !== "" && (
+            <IdentifyContainer>
+              <EarIcon />
+              <Text variant="profile_info">{user.identify}</Text>
+            </IdentifyContainer>
           )}
-        </NameAndIdentifyContainer>
+          {user.identify !== "" && user.languages.length !== 0 && (
+            <Spacer size="large" position={"left"} />
+          )}
+          {user.languages.length !== 0 && (
+            <LanguagesContainer>
+              <LanguageIcon />
+              <Text variant="profile_info">{user.languages}</Text>
+            </LanguagesContainer>
+          )}
+        </InfoContainer>
+      )}
+
+      <BioContainer pointerEvents="none">
         {user.bio !== "" && <Text variant="profile_bio">{user.bio}</Text>}
-      </ProfileInfo>
+      </BioContainer>
 
-      <ProfileStats>
-        <PostsStatContainer onPress={() => console.log("click posts")}>
-          <Text variant="profile_numbers">{user.postsCount}</Text>
-          <Text variant="profile_labels">Posts</Text>
-        </PostsStatContainer>
-        <Text> | </Text>
-        <FollowingStatContainer
-          onPress={() => {
-            navigation.navigate("FollowList", {
-              username: user.username,
-              users,
-              tab: "Following",
-            });
-          }}
-        >
-          <Text variant="profile_numbers">{user.followingCount}</Text>
-          <Text variant="profile_labels">Following</Text>
-        </FollowingStatContainer>
-        <Text> | </Text>
-        <FollowersStatContainer
-          onPress={() => {
-            navigation.navigate("FollowList", {
-              username: user.username,
-              users,
-              tab: "Followers",
-            });
-          }}
-        >
-          <Text variant="profile_numbers">{countFollowing}</Text>
-          <Text variant="profile_labels">Followers</Text>
-        </FollowersStatContainer>
-      </ProfileStats>
-
-      {guestUser ? (
+      {isOtherUser ? (
         <GuestUserButtonsSection>
-          {isFollowing ? (
+          {followingState.isFollowing ? (
             <FollowingButton
               onPress={() => {
                 unfollowUser(user, currentUser);
-                setCountFollowing(user.followersCount);
+                setFollowingState({
+                  isFollowing: false,
+                  followingsCount: followingState.followingsCount - 1,
+                });
               }}
               title={<Text variant="profile_following_button">Following</Text>}
             />
@@ -107,7 +137,10 @@ export const ProfileHeader = ({ user, guestUser, navigation }) => {
             <FollowButton
               onPress={() => {
                 followUser(user, currentUser);
-                setCountFollowing(user.followersCount + 1);
+                setFollowingState({
+                  isFollowing: true,
+                  followingsCount: followingState.followingsCount + 1,
+                });
               }}
               title={<Text variant="profile_follow_button">Follow</Text>}
             />
@@ -121,9 +154,7 @@ export const ProfileHeader = ({ user, guestUser, navigation }) => {
         <EditProfileButtonContainer>
           <EditProfileButton
             onPress={() => {
-              navigation.navigate("EditProfile", {
-                currentUser: user,
-              });
+              navigation.navigate("EditProfile");
             }}
             title={
               <Text variant="profile_editprofile_button">Edit Profile</Text>
@@ -131,7 +162,6 @@ export const ProfileHeader = ({ user, guestUser, navigation }) => {
           />
         </EditProfileButtonContainer>
       )}
-      {/* <ProfileTabs uid={uid} /> */}
     </ProfileHeaderBackground>
   );
 };

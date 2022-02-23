@@ -1,5 +1,5 @@
 import { useQueries } from "react-query";
-import { getPostById } from "../user/index";
+import { getPostByUserId } from "../firebase/posts";
 import { POST_KEY } from "./queryKeys";
 
 export const usePosts = (posts) => {
@@ -7,7 +7,7 @@ export const usePosts = (posts) => {
     posts.map((post) => {
       return {
         queryKey: [POST_KEY, post.postId],
-        queryFn: () => getPostById(post.postId),
+        queryFn: () => getPostByUserId(post.postId),
       };
     })
   );

@@ -84,7 +84,8 @@ export const ChatRow = ({ user, onDeleteRow, rowMap }) => {
           onPress={() =>
             navigation.navigate("GuestProfile", {
               uid: user.otherUser.id,
-              guestUser: true,
+              isGuest: true,
+              isOtherUser: true,
             })
           }
           source={{ uri: user.otherUser?.profilePhoto }}

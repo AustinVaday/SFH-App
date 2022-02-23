@@ -1,11 +1,5 @@
 import React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { Navigation } from "./src/infrastructure/navigation";
-import { ThemeProvider } from "styled-components/native";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore, compose } from "redux";
@@ -13,12 +7,18 @@ import thunk from "redux-thunk";
 import rootReducer from "./src/services/redux/reducers";
 import { QueryClient, QueryClientProvider } from "react-query";
 
+import { Navigation } from "./src/infrastructure/navigation";
+import { ThemeProvider } from "styled-components/native";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+
 import {
-  SuccessMessageToast,
-  ErrorMessageToast,
   NewMessageToast,
   InfoToast,
-  InfoErrorToast
+  InfoErrorToast,
+  InfoSuccessToast,
 } from "./src/components/utilities/toast-message-type.components";
 
 import {
@@ -30,14 +30,15 @@ import {
   OpenSans_800ExtraBold,
 } from "@expo-google-fonts/open-sans";
 
+import { AlfaSlabOne_400Regular } from "@expo-google-fonts/alfa-slab-one";
+
 import { theme } from "./src/infrastructure/theme";
 
 const toastConfig = {
-  success: (props) => SuccessMessageToast(props),
-  error: (props) => ErrorMessageToast(props),
   newMessage: ({ props, onPress }) => NewMessageToast(props, onPress),
   infoMessage: ({ props }) => InfoToast(props),
-  infoErrorMessage: ({ props }) => InfoErrorToast(props),
+  infoError: ({ props }) => InfoErrorToast(props),
+  infoSuccess: ({ props }) => InfoSuccessToast(props),
 };
 
 // for Redux debugging purposes
@@ -60,6 +61,7 @@ export default function App() {
     OpenSans_600SemiBold,
     OpenSans_700Bold,
     OpenSans_800ExtraBold,
+    AlfaSlabOne_400Regular,
   });
 
   if (!openSansLoaded) {

@@ -1,13 +1,14 @@
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 
-import { colors } from "../../../infrastructure/theme/colors";
 import { Text } from "../../../components/typography/text.components";
 
 import {
   NavBar,
   PreviewBackground,
   VideoPreview,
-} from "../styles/preview.styles";
+  NextButton
+} from "./styles/preview.styles";
 
 export const PreviewScreen = ({ navigation, route }) => {
   const { source, sourceThumb } = route.params;
@@ -20,16 +21,16 @@ export const PreviewScreen = ({ navigation, route }) => {
     <PreviewBackground>
       <NavBar
         nav={navigation}
-        rightComponent={{
-          size: 35,
-          icon: "checkbox-marked",
-          type: "material-community",
-          color: colors.icon.primary,
-          onPress: approveVideo,
-        }}
+        rightComponent={
+          <NextButton
+            title="Next"
+            onPress={approveVideo}
+          />
+        }
         centerComponent={<Text variant="navbar_title">Preview</Text>}
       />
-      <VideoPreview source={{ uri: source }} isLooping useNativeControls />
+      <VideoPreview source={{ uri: source }} shouldPlay isLooping useNativeControls />
+      <StatusBar style="auto" />
     </PreviewBackground>
   );
 };

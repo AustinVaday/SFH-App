@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getUserById } from "../user/index";
+import { getUserById } from "../firebase/users/index";
 import { USER_KEY } from "./queryKeys";
 
 export const useUser = (userId, options = {}) => {

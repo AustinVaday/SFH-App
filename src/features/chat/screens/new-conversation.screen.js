@@ -3,59 +3,63 @@ import { FlatList } from "react-native";
 import { Avatar, ListItem } from "react-native-elements";
 
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
-import { fetchUsersData } from "../../../services/redux/actions/post.actions";
+import { fetchOtherUsers } from "../../../services/redux/actions/chats.actions";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
-  ListEmptyBackground,
   FollowingIcon,
   NewConversationBackground,
   FollowingListSection,
   UserRow,
-} from "../styles/new-conversation.styles";
+} from "./styles/new-conversation.styles";
 
 export const NewConversationScreen = ({ navigation }) => {
-  const { following, users } = useSelector((state) => state.posts);
+  // const { otherUsers } = useSelector((state) => state.chats);
+  const followings = useSelector(
+    (state) => state.followings.currentUserFollowings
+  );
 
-  const [followings, setFollowings] = useState([]);
+  const [followingsState, setFollowingsState] = useState([]);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   useEffect(() => {
-    for (let i = 0; i < following.length; i++) {
-      if (following[i].hasOwnProperty("otherUser")) {
-        continue;
-      }
+    // for (let i = 0; i < followings.length; i++) {
+    //   if (followings[i].hasOwnProperty("otherUser")) {
+    //     continue;
+    //   }
 
-      let otherUserId = following[i].id;
+    //   let otherUserId = followings[i].id;
 
-      const user = users.find((x) => x.id === otherUserId);
+    //   const user = otherUsers.find((x) => x.id === otherUserId);
 
-      if (user === undefined) {
-        dispatch(fetchUsersData(otherUserId));
-      } else {
-        following[i].otherUser = user;
-      }
-    }
-    setFollowings(following);
-  }, [following, users]);
+    //   if (user === undefined) {
+    //     dispatch(fetchOtherUsers(otherUserId));
+    //   } else {
+    //     followings[i].otherUser = user;
+    //   }
+    // }
+    setFollowingsState(followings);
+  }, [followings]);
 
   const listEmptyComponent = () => {
     return (
-      <ListEmptyBackground>
+      <>
         <FollowingIcon />
         <Text variant="list_empty_title">No Following</Text>
+        <Spacer size="large" />
         <Text variant="list_empty_message">
           When you follow people, you will see them here
         </Text>
-      </ListEmptyBackground>
+      </>
     );
   };
 
   const listHeaderComponent = () => {
     return (
-      users.length !== 0 && (
+      followings.length !== 0 && (
         <FollowingListSection>
           <Text variant="newconversation_label">Following</Text>
         </FollowingListSection>
@@ -64,22 +68,17 @@ export const NewConversationScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item: user }) => {
+    console.log(user);
     return (
-      <UserRow
-        onPress={() =>
-          navigation.navigate("Conversation", { user: user.otherUser })
-        }
-      >
+      <UserRow onPress={() => navigation.navigate("Conversation", { user })}>
         <Avatar
           rounded
           size="medium"
-          source={{ uri: user.otherUser?.profilePhoto }}
+          source={{ uri: user.profilePhoto }}
           onPress={() => navigation.navigate("ViewProfile")}
         />
         <ListItem.Content>
-          <Text variant="newconversation_name">
-            {user.otherUser?.displayName}
-          </Text>
+          <Text variant="newconversation_name">{user.username}</Text>
         </ListItem.Content>
       </UserRow>
     );
@@ -88,12 +87,20 @@ export const NewConversationScreen = ({ navigation }) => {
   return (
     <NewConversationBackground>
       <FlatList
-        data={followings}
+        data={followingsState}
         ListEmptyComponent={listEmptyComponent}
         ListHeaderComponent={listHeaderComponent}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          followingsState.length === 0 && {
+            justifyContent: "center",
+            alignItems: "center",
+            flexGrow: 1,
+            bottom: 50,
+          }
+        }
       />
     </NewConversationBackground>
   );

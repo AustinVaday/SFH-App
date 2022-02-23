@@ -15,6 +15,7 @@ export const colors = {
     error: "#D0421B",
     success: "#138000",
     cultured: "#F1F1F1",
+    lightergray: "#CDCDCD",
   },
   bg: {
     primary: "#0095FF",
@@ -24,6 +25,7 @@ export const colors = {
     darkgray: "#757575",
     error: "#D0421B",
     success: "#138000",
+    black: "#000000",
   },
   text: {
     primary: "#0095FF",
@@ -32,6 +34,8 @@ export const colors = {
     black: "#000000",
     cultured: "#F1F1F1",
     lightgray: "#CECECE",
+    lightergray: "#CDCDCD",
+    lightestgray: "#E3E3E3",
     gray: "#9EA0A4",
     error: "#D0421B",
     darkgray: "#757575",
@@ -46,9 +50,13 @@ export const colors = {
     gray: "#9EA0A4",
     lightgray: "#CECECE",
     lightergray: "#CDCDCD",
+    lightestgray: "#E3E3E3",
     success: "#138000",
+    error: "#D0421B",
     black: "#000000",
     lighterblue: "#63BEFF",
+    foggedglass: "rgba(192, 192, 192, 0.5)",
+    lightgreen: "#77F14C",
   },
   button: {
     primary: "#0095FF",

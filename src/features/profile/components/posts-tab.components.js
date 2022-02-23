@@ -1,34 +1,44 @@
 import React, { useState, useEffect } from "react";
+import { Tabs } from "react-native-collapsible-tab-view";
 
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
+import { PostsListLoader } from "./posts-list-loader.components";
 
 import { firebase } from "../../../utils/firebase";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentUserPosts } from "../../../services/redux/actions/posts.actions";
 
 import {
   ListEmptyBackground,
-  PostsList,
   PostThumbnail,
   PostContainer,
   BottomSection,
   PostBackground,
-} from "../styles/posts-tab.styles";
+} from "./styles/posts-tab.styles";
 
-export const PostsTab = ({ route }) => {
-  const { user } = route.params;
-
+export const PostsTab = ({ user, isOtherUser, navigation }) => {
   const [userPosts, setUserPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const currentUser = useSelector((state) => state.auth.currentUser);
   const currentUserPosts = useSelector((state) => state.posts.currentUserPosts);
+  const fetched = useSelector((state) => state.posts.isCurrentUserPostsFetched);
 
-  console.log("poststab before useeffect")
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    console.log("rerun posts")
-    if (user.id === currentUser.id) {
-      setUserPosts(currentUserPosts);
-    } else {
-      console.log("call firebase posts")
+    if (!isOtherUser && !fetched) {
+      dispatch(fetchCurrentUserPosts(setLoading));
+    } else if (!isOtherUser) {
+      setLoading(false);
+    }
+  }, []);
+
+  console.log("poststab before useeffect");
+  useEffect(() => {
+    console.log("rerun posts");
+    if (isOtherUser) {
+      console.log("call firebase posts");
       firebase
         .firestore()
         .collection("posts")
@@ -42,33 +52,41 @@ export const PostsTab = ({ route }) => {
             return { id, ...data };
           });
           setUserPosts(posts);
+          setLoading(false);
         });
     }
   }, []);
 
-  console.log("poststab after useeffect")
+  console.log("poststab after useeffect");
 
   const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
-        <Text variant="list_empty_title">Post your first video</Text>
-        <Text variant="list_empty_message">
-          Record or upload a video. Your videos will appear here.
-        </Text>
+        <Text variant="list_empty_title">No Posts</Text>
+        <Spacer size="large" />
+        {isOtherUser ? (
+          <Text variant="list_empty_message">
+            When they post, the videos will appear here.
+          </Text>
+        ) : (
+          <Text variant="list_empty_message">
+            Record or upload a video. Your videos will appear here.
+          </Text>
+        )}
       </ListEmptyBackground>
     );
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item: post }) => {
     return (
       <PostBackground>
         <PostContainer>
           <PostThumbnail
-            source={{ uri: item.videoThumbnail }}
-            onPress={() => console.log("click post")}
+            source={{ uri: post.videoThumbnail }}
+            onPress={() => navigation.navigate("ViewPost", { post })}
           />
           <BottomSection>
-            <Text variant="profile_tab_post_title">{item.title}</Text>
+            <Text variant="profile_tab_post_title">{post.title}</Text>
           </BottomSection>
         </PostContainer>
       </PostBackground>
@@ -76,13 +94,20 @@ export const PostsTab = ({ route }) => {
   };
 
   return (
-    <PostsList
-      data={userPosts}
-      ListEmptyComponent={listEmptyComponent}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
-      listKey={(item) => item.id.toString()}
-      numColumns={3}
-    />
+    <>
+      {loading ? (
+        <PostsListLoader />
+      ) : (
+        <Tabs.FlatList
+          data={isOtherUser ? userPosts : currentUserPosts}
+          ListEmptyComponent={listEmptyComponent}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+    </>
   );
 };

@@ -1,16 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  useLayoutEffect,
+} from "react";
 import { FlatList } from "react-native";
+import { ListItem } from "react-native-elements";
 import * as Notifications from "expo-notifications";
 import Toast from "react-native-toast-message";
+import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Text } from "../../../components/typography/text.components";
 import { SenderMessage } from "../components/sender-message.components";
 import { ReceiverMessage } from "../components/receiver-message.components";
 
 import { firebase } from "../../../utils/firebase";
-import { fetchUserChats } from "../../../services/redux/actions/post.actions";
+import { fetchChats } from "../../../services/redux/actions/chats.actions";
 import { useSelector, useDispatch } from "react-redux";
-import { sendNotification } from "../../../services/user";
+import { sendNotification } from "../../../services/firebase/notifications";
 
 import {
   ConversationBackground,
@@ -18,28 +28,43 @@ import {
   MessageInput,
   SendButton,
   ViewKeyboardAvoiding,
-} from "../styles/conversation.styles";
+  Navbar,
+  ReportIcon,
+  BlockIcon,
+  ConversationSettingsIcon,
+} from "./styles/conversation.styles";
 
-export const ConversationScreen = ({ route }) => {
+export const ConversationScreen = ({ route, navigation }) => {
   const { user } = route.params;
-  const { currentUser } = useSelector((state) => state.auth);
-  const { chats } = useSelector((state) => state.posts);
+
+  const { currentUser } = useSelector((state) => state.user);
+  const { currentUserChats } = useSelector((state) => state.chats);
 
   const [messages, setMessages] = useState([]);
   const [chat, setChat] = useState(null);
   const [input, setInput] = useState("");
-  const [initialFetch, setInitialFetch] = useState(false);
-  const notificationListener = useRef();
 
-  const insets = useSafeAreaInsets();
+  const notificationListener = useRef();
+  const conversationSettingsSheetRef = useRef();
+
+  const snapPoints = useMemo(() => ["20%"], []);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // if (initialFetch) {
-    //   return;
-    // }
+  const insets = useSafeAreaInsets();
 
-    const chat = chats.find((el) => el.users.includes(user.id));
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <ConversationSettingsIcon
+          onPress={() => conversationSettingsSheetRef.current?.present()}
+        />
+      ),
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    const chat = currentUserChats.find((el) => el.users.includes(user.id));
     setChat(chat);
 
     if (chat !== undefined) {
@@ -66,12 +91,10 @@ export const ConversationScreen = ({ route }) => {
         .update({
           [currentUser.id]: true,
         });
-
-      // setInitialFetch(true);
     } else {
       createChat();
     }
-  }, [user, chats]);
+  }, [user, currentUserChats]);
 
   useEffect(() => {
     // This listener is fired whenever a notification is received while the app is foregrounded
@@ -97,7 +120,7 @@ export const ConversationScreen = ({ route }) => {
         lastMessageTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
-        dispatch(fetchUserChats());
+        dispatch(fetchChats());
       });
   };
 
@@ -132,16 +155,48 @@ export const ConversationScreen = ({ route }) => {
         [user.id]: false,
       });
 
-      sendNotification(user, "New Message", textToSend, {
-        type: "chat",
-        user: currentUser,
-        message: textToSend,
-      });
+    sendNotification(user, "New Message", textToSend, {
+      type: "chat",
+      user: currentUser,
+      message: textToSend,
+    });
   };
+
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.3}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
+  const renderConversationSettings = useCallback(() => {
+    return (
+      <>
+        <ListItem onPress={() => console.log("Report")}>
+          <ReportIcon />
+          <ListItem.Content>
+            <Text variant="bottomsheet_item">Report</Text>
+          </ListItem.Content>
+        </ListItem>
+        <ListItem onPress={() => console.log("Block")}>
+          <BlockIcon />
+          <ListItem.Content>
+            <Text variant="bottomsheet_item">Block</Text>
+          </ListItem.Content>
+        </ListItem>
+      </>
+    );
+  }, []);
 
   return (
     <ConversationBackground style={{ paddingBottom: insets.bottom }}>
-      <ViewKeyboardAvoiding keyboardVerticalOffset={65 + insets.bottom}>
+      <ViewKeyboardAvoiding keyboardVerticalOffset={85}>
         <FlatList
           data={messages}
           keyExtractor={(item) => item.id}
@@ -153,6 +208,7 @@ export const ConversationScreen = ({ route }) => {
                 key={message.id}
                 message={message}
                 otherUser={user}
+                navigation={navigation}
               />
             )
           }
@@ -173,6 +229,18 @@ export const ConversationScreen = ({ route }) => {
           />
         </MessageInputSection>
       </ViewKeyboardAvoiding>
+
+      <BottomSheetModal
+        ref={conversationSettingsSheetRef}
+        key="conversation-settings-sheet-modal"
+        index={0}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={Platform.OS === "ios" ? "extend" : "interactive"}
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        children={renderConversationSettings}
+      />
     </ConversationBackground>
   );
 };

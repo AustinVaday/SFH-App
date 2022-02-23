@@ -1,107 +1,70 @@
 import React, { useState, useEffect } from "react";
-import ContentLoader, { Rect } from "react-content-loader/native";
+import { Tabs } from "react-native-collapsible-tab-view";
+import { PostsListLoader } from "./posts-list-loader.components";
 
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
-import { firebase } from "../../../utils/firebase";
-import { useSelector } from "react-redux";
-import { getPostById } from "../../../services/user";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSaves } from "../../../services/redux/actions/saves.actions";
 
 import {
   ListEmptyBackground,
-  SavesList,
+  PrivateSavesBackground,
   PostThumbnail,
   PostContainer,
   BottomSection,
   PostBackground,
-} from "../styles/saves-tab.styles";
+} from "./styles/saves-tab.styles";
 
-export const SavesTab = ({ route }) => {
-  const { user } = route.params;
+export const SavesTab = ({ isOtherUser, navigation }) => {
+  const [loading, setLoading] = useState(true);
 
-  const [userSaves, setUserSaves] = useState({ saves: [], loading: true });
+  const saves = useSelector((state) => state.saves.currentUserSaves);
+  const fetched = useSelector((state) => state.saves.isCurrentUserSavesFetched);
 
-  const currentUser = useSelector((state) => state.auth.currentUser);
-  const saves = useSelector((state) => state.posts.saves);
+  const dispatch = useDispatch();
 
+  console.log("savesTab");
   useEffect(() => {
-    if (user.id === currentUser.id) {
-      let posts = saves.map((save) => {
-        let post = getPostById(save.postId);
-        return post;
-      });
-      Promise.all(posts).then((postsResults) => {
-        setUserSaves({ saves: postsResults, loading: false });
-      });
-    } else {
-      if (!user.savesPrivate) {
-        let saves = firebase
-          .firestore()
-          .collection("users")
-          .doc(user.id)
-          .collection("saves")
-          .orderBy("creation", "desc")
-          .get()
-          .then((snapshot) => {
-            let saves = snapshot.docs.map((doc) => {
-              const data = doc.data();
-              const id = doc.id;
-              return { id, ...data };
-            });
-            return saves;
-          });
-
-        let posts = saves.map((save) => {
-          let post = getPostById(save.postId);
-          return post;
-        });
-
-        Promise.all(posts).then((postsResults) => {
-          setUserSaves({ saves: postsResults, loading: false });
-        });
-      } else {
-        setUserSaves({ loading: false });
-      }
+    if (!isOtherUser && !fetched) {
+      dispatch(fetchSaves(setLoading));
+    } else if (!isOtherUser) {
+      setLoading(false);
     }
-  }, [saves]);
+  }, []);
 
-  if (userSaves.loading) {
+  if (isOtherUser) {
     return (
-      <ContentLoader
-        viewBox="0 0 260 230"
-        style={{
-          height: 350,
-          backgroundColor: "white",
-        }}
+      <Tabs.ScrollView
+        nestedScrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
       >
-        <Rect x="1" y="0" rx="0" ry="0" width="85" height="110" />
-        <Rect x="88" y="0" rx="0" ry="0" width="85" height="110" />
-        <Rect x="174" y="0" rx="0" ry="0" width="85" height="110" />
-        <Rect x="1" y="111" rx="0" ry="0" width="85" height="110" />
-        <Rect x="88" y="111" rx="0" ry="0" width="85" height="110" />
-        <Rect x="174" y="111" rx="0" ry="0" width="85" height="110" />
-      </ContentLoader>
-    );
-  }
-
-  if (user.id !== currentUser.id && user.savesPrivate) {
-    return (
-      <ListEmptyBackground>
-        <Text variant="list_empty_title">
-          This user's saved videos are private
-        </Text>
-      </ListEmptyBackground>
+        <PrivateSavesBackground>
+          <Text variant="private_saves_message">
+            This user's saved videos are private
+          </Text>
+        </PrivateSavesBackground>
+      </Tabs.ScrollView>
     );
   }
 
   const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
-        <Text variant="list_empty_title">Save the first video</Text>
-        <Text variant="list_empty_message">
-          Favorite any video you want to save and rewatch later. Saved videos
-          will appear here.
-        </Text>
+        <Text variant="list_empty_title">No Saves</Text>
+        <Spacer size="large" />
+        {isOtherUser ? (
+          <Text variant="list_empty_message">
+            When they save the video, the videos will appear here.
+          </Text>
+        ) : (
+          <Text variant="list_empty_message">
+            Save any video you want and re-watch here later. Saved videos will
+            appear here.
+          </Text>
+        )}
       </ListEmptyBackground>
     );
   };
@@ -112,7 +75,7 @@ export const SavesTab = ({ route }) => {
         <PostContainer>
           <PostThumbnail
             source={{ uri: post.videoThumbnail }}
-            onPress={() => console.log("click post")}
+            onPress={() => navigation.navigate("ViewPost", { post })}
           />
           <BottomSection>
             <Text variant="profile_tab_post_title">{post.title}</Text>
@@ -123,13 +86,20 @@ export const SavesTab = ({ route }) => {
   };
 
   return (
-    <SavesList
-      data={userSaves.saves}
-      ListEmptyComponent={listEmptyComponent}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.title?.toString()}
-      listKey={(item) => item.title?.toString()}
-      numColumns={3}
-    />
+    <>
+      {loading ? (
+        <PostsListLoader />
+      ) : (
+        <Tabs.FlatList
+          data={saves}
+          ListEmptyComponent={listEmptyComponent}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+    </>
   );
 };

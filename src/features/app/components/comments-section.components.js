@@ -8,7 +8,7 @@ import { CommentCard } from "./comment-card.components";
 
 import { useSelector } from "react-redux";
 import { firebase } from "../../../utils/firebase";
-import { sendNotification } from "../../../services/user";
+import { sendNotification } from "../../../services/firebase/notifications";
 
 import {
   ListEmptySection,
@@ -18,7 +18,7 @@ import {
   CommentInputBar,
   CommentTextIcon,
   CommentSendButton,
-} from "../styles/comments-section.styles";
+} from "./styles/comments-section.styles";
 
 export const CommentsSection = ({ postData, user }) => {
   const [comment, setComment] = useState("");
@@ -27,7 +27,7 @@ export const CommentsSection = ({ postData, user }) => {
   const [refresh, setRefresh] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
-  const { currentUser } = useSelector((state) => state.auth);
+  const { currentUser } = useSelector((state) => state.user);
 
   const insets = useSafeAreaInsets();
 

@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  TouchableWithoutFeedback,
+  Pressable,
   Animated,
   StyleSheet,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { Camera } from "expo-camera";
+import { Audio } from "expo-av";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import { openURL } from "expo-linking";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "../../../infrastructure/theme/colors";
 import { Text } from "../../../components/typography/text.components";
@@ -15,84 +19,66 @@ import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { useIsFocused } from "@react-navigation/core";
 
 import {
-  CameraBackground,
-  CameraSafeArea,
-  TopButtonsSection,
+  CameraContainer,
+  VideoCamera,
+  TopBarContainer,
+  NoImages,
+  ProgressBarContainer,
   CameraControlButtonsContainer,
   CloseIcon,
+  IconContainer,
   FrontOrRearIcon,
   FlashOffIcon,
   FlashIcon,
-  BottomButtonsSection,
-  BottomButtonsContainer,
+  BottomBarContainer,
   LibraryIcon,
   Spacer,
   RecordIcon,
   AnimationWrapper,
   AllowCameraAccessSection,
   EnablePermissionsButton,
-} from "../styles//camera.styles";
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+} from "./styles/camera.styles";
 
 export const CameraScreen = ({ navigation }) => {
   const [hasCameraPermissions, setHasCameraPermissions] = useState(false);
+  const [hasAudioPermissions, setHasAudioPermissions] = useState(false);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [cameraFlash, setCameraFlash] = useState(
     Camera.Constants.FlashMode.off
   );
   const [cameraIsRecording, setCameraIsRecording] = useState(false);
-  const cameraRef = useRef();
-  const animation = useRef(new Animated.Value(0));
-  const [progress, setProgress] = useState(0);
+  
+  const cameraRef = useRef(null);
+  const recordAnimation = useRef(null);
+  const progressBar = useRef(new Animated.Value(0.01));
 
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestPermissionsAsync();
       setHasCameraPermissions(cameraStatus.status == "granted");
+
+      const audioStatus = await Audio.requestPermissionsAsync();
+      setHasAudioPermissions(audioStatus.status == "granted");
     })();
   }, []);
 
-  useInterval(
-    () => {
-      if (progress < 100) {
-        setProgress(progress + 1);
-      } else {
-        setCameraIsRecording(false);
-        setProgress(0);
-        cameraRef.current.stopRecording();
-      }
-    },
-    cameraIsRecording ? 100 : null
-  );
-
   useEffect(() => {
-    Animated.timing(animation.current, {
-      toValue: progress,
-      duration: 100,
-      useNativeDriver: false,
-    }).start();
-  }, [progress]);
+    if (cameraIsRecording) {
+      Animated.timing(progressBar.current, {
+        toValue: 100,
+        duration: 10000,
+        useNativeDriver: false,
+      }).start(({ finished }) => {
+        setCameraIsRecording(false);
+        cameraRef.current.stopRecording();
+      });
+    }
+  }, [cameraIsRecording]);
 
-  const width = animation.current.interpolate({
+  const barWidth = progressBar.current.interpolate({
     inputRange: [0, 100],
     outputRange: ["0%", "100%"],
     extrapolate: "clamp",
@@ -114,22 +100,36 @@ export const CameraScreen = ({ navigation }) => {
     );
   };
 
-  const recordVideo = async () => {
+  const onPressRecordVideo = async () => {
     if (cameraRef) {
-      try {
-        const options = {
-          maxDuration: 10,
-          quality: Camera.Constants.VideoQuality["480"],
-        };
-        const videoRecordPromise = cameraRef.current.recordAsync(options);
-        if (videoRecordPromise) {
-          const data = await videoRecordPromise;
-          const source = data.uri;
-          let sourceThumb = await generateThumbnail(source);
-          navigation.navigate("Preview", { source, sourceThumb });
+      if (!cameraIsRecording) {
+        try {
+          const options = {
+            maxDuration: 10,
+            quality:
+              Platform.OS === "ios"
+                ? Camera.Constants.VideoQuality["480"]
+                : Camera.Constants.VideoQuality["480p"],
+          };
+          const videoRecordPromise = cameraRef.current?.recordAsync(options);
+          setCameraIsRecording(true);
+          recordAnimation.current?.play();
+          if (videoRecordPromise) {
+            const data = await videoRecordPromise;
+            const source = data.uri;
+            await generateThumbnail(source).then((sourceThumb) => {
+              recordAnimation.current?.reset();
+              progressBar.current.stopAnimation();
+              progressBar.current.setValue(0.01);
+              navigation.navigate("Preview", { source, sourceThumb });
+            });
+          }
+        } catch (error) {
+          console.warn(error);
         }
-      } catch (error) {
-        console.warn(error);
+      } else {
+        setCameraIsRecording(false);
+        cameraRef.current.stopRecording();
       }
     }
   };
@@ -145,7 +145,7 @@ export const CameraScreen = ({ navigation }) => {
     }
   };
 
-  if (hasCameraPermissions === false) {
+  if (hasCameraPermissions === false || hasAudioPermissions === false) {
     return (
       <SafeArea>
         <CloseIcon
@@ -155,6 +155,7 @@ export const CameraScreen = ({ navigation }) => {
           }}
         />
         <AllowCameraAccessSection>
+          <NoImages source={require("../../../assets/images/no-images.png")} />
           <Text variant="permissions_title">
             Please Allow Access to Your Camera
           </Text>
@@ -171,86 +172,76 @@ export const CameraScreen = ({ navigation }) => {
   }
 
   return (
-    <CameraBackground
-      type={cameraType}
-      ratio={"16:9"}
-      flashMode={cameraFlash}
-      ref={(camera) => (cameraRef.current = camera)}
-    >
-      <CameraSafeArea>
-        {!cameraIsRecording ? (
-          <>
-            <TopButtonsSection>
-              <CloseIcon
-                isPermissions={false}
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              />
-              <CameraControlButtonsContainer>
-                <FrontOrRearIcon
-                  cameraType={cameraType}
-                  onPress={changeCameraType}
-                />
-                {cameraFlash === Camera.Constants.FlashMode.off && (
-                  <FlashOffIcon onPress={changeCameraFlash} />
-                )}
-                {cameraFlash === Camera.Constants.FlashMode.torch && (
-                  <FlashIcon onPress={changeCameraFlash} />
-                )}
-              </CameraControlButtonsContainer>
-            </TopButtonsSection>
-            <BottomButtonsSection>
-              <BottomButtonsContainer>
-                <LibraryIcon onPress={() => navigation.goBack()} />
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setCameraIsRecording(true);
-                    recordVideo();
-                  }}
-                >
-                  <RecordIcon
-                    key="animation"
-                    source={require("../../../assets/lottie/live-icon.json")}
-                  />
-                </TouchableWithoutFeedback>
-                <Spacer />
-              </BottomButtonsContainer>
-            </BottomButtonsSection>
-          </>
-        ) : (
-          <>
-            <AnimationWrapper>
-              <Animated.View
-                style={
-                  ([StyleSheet.absoluteFill],
-                  {
-                    backgroundColor: colors.brand.primary,
-                    width,
-                    borderRadius: 10,
-                  })
-                }
-              />
-            </AnimationWrapper>
-            <BottomButtonsSection>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setCameraIsRecording(false);
-                  setProgress(0);
-                  cameraRef.current.stopRecording();
-                }}
-              >
-                <RecordIcon
-                  key="animation"
-                  autoPlay
-                  loop
-                  source={require("../../../assets/lottie/live-icon.json")}
-                />
-              </TouchableWithoutFeedback>
-            </BottomButtonsSection>
-          </>
-        )}
-      </CameraSafeArea>
-    </CameraBackground>
+    <CameraContainer>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" />
+      {isFocused ? (
+        <VideoCamera
+          type={cameraType}
+          style={{ aspectRatio: 9 / 16 }}
+          ratio={"16:9"}
+          flashMode={cameraFlash}
+          ref={(camera) => (cameraRef.current = camera)}
+        />
+      ) : null}
+
+      <ProgressBarContainer
+        style={{
+          top: insets.top + 10,
+        }}
+      >
+        <AnimationWrapper>
+          <Animated.View
+            style={
+              ([StyleSheet.absoluteFill],
+              {
+                backgroundColor: colors.brand.primary,
+                width: barWidth,
+                borderRadius: 10,
+              })
+            }
+          />
+        </AnimationWrapper>
+      </ProgressBarContainer>
+
+      {!cameraIsRecording && (
+        <TopBarContainer style={{ top: insets.top + 30 }}>
+          <CloseIcon
+            isPermissions={false}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          />
+          <CameraControlButtonsContainer>
+            <FrontOrRearIcon
+              cameraType={cameraType}
+              onPress={changeCameraType}
+            />
+            {cameraFlash === Camera.Constants.FlashMode.off && (
+              <FlashOffIcon onPress={changeCameraFlash} />
+            )}
+            {cameraFlash === Camera.Constants.FlashMode.torch && (
+              <FlashIcon onPress={changeCameraFlash} />
+            )}
+          </CameraControlButtonsContainer>
+        </TopBarContainer>
+      )}
+
+      <BottomBarContainer style={{ bottom: insets.bottom + 10 }}>
+        <IconContainer>
+          {!cameraIsRecording && (
+            <LibraryIcon onPress={() => navigation.navigate("Library")} />
+          )}
+        </IconContainer>
+        <IconContainer>
+          <Pressable onPress={onPressRecordVideo}>
+            <RecordIcon
+              ref={recordAnimation}
+              source={require("../../../assets/lottie/live-icon.json")}
+            />
+          </Pressable>
+        </IconContainer>
+        <Spacer />
+      </BottomBarContainer>
+    </CameraContainer>
   );
 };

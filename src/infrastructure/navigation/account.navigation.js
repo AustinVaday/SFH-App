@@ -2,13 +2,12 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { LoginScreen } from "../../features/account/screens/login.screen";
+import { LoginScreen } from "../../features/account/screens/login/login.screen";
 import { AuthenticationsScreen } from "../../features/account/screens/authentications.screen";
-import { ForgotPasswordScreen } from "../../features/account/screens/forgot-password.screen";
-import { SignupEmailScreen } from "../../features/account/screens/signup-email.screen";
-import { SignupPasswordScreen } from "../../features/account/screens/signup-password.screen";
-import { SignupNameScreen } from "../../features/account/screens/signup-name.screen";
-import { SignupUsernameScreen } from "../../features/account/screens/signup-username.screen";
+import { ForgotPasswordScreen } from "../../features/account/screens/login/forgot-password.screen";
+import { SignupEmailScreen } from "../../features/account/screens/signup/signup-email.screen";
+import { SignupPasswordScreen } from "../../features/account/screens/signup/signup-password.screen";
+import { EmailSentScreen } from "../../features/account/screens/login/email-sent.screen";
 
 import { colors } from "../theme/colors";
 import { Text } from "../../components/typography/text.components";
@@ -32,6 +31,7 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
+        headerLeftContainerStyle: { paddingLeft: 10 },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Login</Text>,
         headerTintColor: colors.text.black,
@@ -43,6 +43,7 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
+        headerLeftContainerStyle: { paddingLeft: 8 },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
         headerTintColor: colors.text.black,
@@ -54,28 +55,7 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerBackTitleVisible: false,
-        headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
-        headerTintColor: colors.text.black,
-      })}
-    />
-    <AccountStack.Screen
-      name="SignupName"
-      component={SignupNameScreen}
-      navigation={props.navigation}
-      options={() => ({
-        headerShown: true,
-        headerBackTitleVisible: false,
-        headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
-        headerTintColor: colors.text.black,
-      })}
-    />
-    <AccountStack.Screen
-      name="SignupUsername"
-      component={SignupUsernameScreen}
-      navigation={props.navigation}
-      options={() => ({
-        headerShown: true,
+        headerLeftContainerStyle: { paddingLeft: 8 },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
         headerTintColor: colors.text.black,
@@ -87,9 +67,19 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
+        headerLeftContainerStyle: { paddingLeft: 8 },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Reset</Text>,
         headerTintColor: colors.text.black,
+      })}
+    />
+    <AccountStack.Screen
+      name="EmailSent"
+      component={EmailSentScreen}
+      navigation={props.navigation}
+      options={() => ({
+        headerShown: false,
+        gestureEnabled: false,
       })}
     />
   </AccountStack.Navigator>

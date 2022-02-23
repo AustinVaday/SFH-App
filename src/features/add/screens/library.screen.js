@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Pressable } from "react-native";
 import {
   requestPermissionsAsync,
   getAssetsAsync,
@@ -8,37 +7,53 @@ import {
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import BigList from "react-native-big-list";
 import { openURL } from "expo-linking";
+import moment from "moment";
+import { StatusBar } from "expo-status-bar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
-import { colors } from "../../../infrastructure/theme/colors";
 
 import {
   CloseIcon,
   EnablePermissionsButton,
-  SmallVideo,
+  NextButton,
+  VideoImage,
   NavBar,
-  PreviewVideoContainer,
+  ImagePressable,
   LibraryBackground,
-  PreviewVideo,
-  PlayIcon,
-  CameraIcon,
+  DurationTextContainer,
+  CheckCircle,
+  CheckCircleContainer,
   AllowPhotosAccessSection,
-} from "../styles/library.styles";
+  ListEmptyBackground,
+  ListEmptyContainer,
+  VideosEmptyImage,
+  BackIcon,
+  ModalVideo,
+  ModalScreen,
+  BackIconContainer,
+} from "./styles/library.styles";
 
 export const LibraryScreen = ({ navigation }) => {
-  const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
-  const [shouldPlay, setShouldPlay] = useState(false);
-  const [selectedGalleryVideo, setSelectedGalleryVideo] = useState(null);
-  const [galleryVideos, setGalleryVideos] = useState(null);
-  const [getLocalUri, setGetLocalUri] = useState("");
+  const [selectedVideo, setSelectedVideo] = useState({ uri: "", id: "" });
+  const [galleryVideos, setGalleryVideos] = useState({
+    videos: [],
+    permissionStatus: false,
+  });
+  const [videoModal, setVideoModal] = useState({ visible: false, uri: "" });
+
+  const insets = useSafeAreaInsets();
+
+  const toggleOverlay = () => {
+    setVideoModal({ visible: !videoModal.visible });
+  };
 
   useEffect(() => {
     (async () => {
       const galleryStatus = await requestPermissionsAsync();
-      setHasGalleryPermissions(galleryStatus.status === "granted");
 
-      if (galleryStatus.status == "granted") {
+      if (galleryStatus.status === "granted") {
         const userGalleryMedia = await getAssetsAsync({
           first: 100,
           sortBy: ["creationTime"],
@@ -53,34 +68,18 @@ export const LibraryScreen = ({ navigation }) => {
             return item;
           });
 
-        if (userGalleryMedia.totalCount !== 0) {
-          setGalleryVideos(userGalleryMedia.assets);
-          setSelectedGalleryVideo(userGalleryMedia.assets[0].uri);
-        }
+        setGalleryVideos({
+          videos: userGalleryMedia.assets,
+          permissionStatus: true,
+        });
       }
     })();
   }, []);
 
-  const handlePlayAndPause = () => {
-    if (shouldPlay) {
-      setShouldPlay(false);
-    } else {
-      setShouldPlay(true);
-    }
-  };
-
-  const handleToSelectVideo = async (uri, id) => {
-    if (shouldPlay) {
-      setShouldPlay(false);
-    }
-    setGetLocalUri(id);
-    setSelectedGalleryVideo(uri);
-  };
-
   const handleSubmit = async () => {
-    const assetLocalUri = await getAssetInfoAsync(getLocalUri);
+    let assetLocalUri = await getAssetInfoAsync(selectedVideo.id);
     let sourceThumb = await generateThumbnail(assetLocalUri.localUri);
-    navigation.navigate("Preview", {
+    navigation.navigate("UploadPost", {
       source: assetLocalUri.localUri,
       sourceThumb,
     });
@@ -97,16 +96,43 @@ export const LibraryScreen = ({ navigation }) => {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <Pressable
+  const onPressSelectVideoHandler = (uri, id) => {
+    if (selectedVideo.uri === uri) {
+      setSelectedVideo({ uri: "", id: "" });
+    } else {
+      setSelectedVideo({ uri: uri, id: id });
+    }
+  };
+
+  const renderItem = ({ item, index }) => (
+    <ImagePressable
       key={item}
-      onPress={() => handleToSelectVideo(item.uri, item.id)}
+      onPress={() => {
+        setVideoModal({ visible: true, uri: item.uri });
+      }}
+      index={index}
     >
-      <SmallVideo source={{ uri: item.uri }} />
-    </Pressable>
+      <VideoImage
+        isSelected={selectedVideo.uri === item.uri}
+        source={{ uri: item.uri }}
+      />
+      <DurationTextContainer>
+        <Text variant="video_duration">
+          {moment
+            .utc(moment.duration(item.duration, "seconds").asMilliseconds())
+            .format("m:ss")}
+        </Text>
+      </DurationTextContainer>
+      <CheckCircleContainer>
+        <CheckCircle
+          onPress={() => onPressSelectVideoHandler(item.uri, item.id)}
+          isSelected={selectedVideo.uri === item.uri}
+        />
+      </CheckCircleContainer>
+    </ImagePressable>
   );
 
-  if (hasGalleryPermissions === false) {
+  if (galleryVideos.permissionStatus === false) {
     return (
       <SafeArea>
         <CloseIcon
@@ -134,39 +160,57 @@ export const LibraryScreen = ({ navigation }) => {
     <LibraryBackground>
       <NavBar
         nav={navigation}
-        rightComponent={{
-          size: 30,
-          icon: "checkbox-marked",
-          type: "material-community",
-          color: colors.icon.primary,
-          onPress: handleSubmit,
-        }}
-        centerComponent={<Text variant="navbar_title">New Post</Text>}
-      />
-      <PreviewVideoContainer>
-        <Pressable onPress={handlePlayAndPause}>
-          <PreviewVideo
-            source={{ uri: selectedGalleryVideo }}
-            isMuted={true}
-            shouldPlay={shouldPlay}
-            isLooping
+        rightComponent={
+          <NextButton
+            title="Next"
+            onPress={handleSubmit}
+            selected={selectedVideo.uri !== ""}
           />
-          <PlayIcon shouldPlay={shouldPlay} />
-        </Pressable>
-        <CameraIcon
-          onPress={() => {
-            navigation.navigate("Camera");
-          }}
-        />
-      </PreviewVideoContainer>
-      <BigList
-        data={galleryVideos}
-        renderItem={renderItem}
-        itemHeight={130}
-        keyExtractor={(item) => item.uri}
-        numColumns={3}
-        showsVerticalScrollIndicator={false}
+        }
+        centerComponent={<Text variant="navbar_title">Videos</Text>}
       />
+
+      {galleryVideos.videos.length === 0 ? (
+        <ListEmptyBackground>
+          <ListEmptyContainer>
+            <VideosEmptyImage
+              source={require("../../../assets/images/no-images.png")}
+            />
+            <Text variant="list_empty_title">No Videos Available </Text>
+          </ListEmptyContainer>
+        </ListEmptyBackground>
+      ) : (
+        <BigList
+          data={galleryVideos.videos}
+          renderItem={renderItem}
+          itemHeight={130}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+
+      <ModalScreen
+        isVisible={videoModal.visible}
+        swipeDirection={["up", "down", "left", "right"]}
+        onSwipeComplete={toggleOverlay}
+        swipeThreshold={200}
+      >
+        <ModalVideo
+          resizeMode="cover"
+          isLooping={true}
+          shouldPlay={true}
+          onReadyForDisplay={() => console.log("ready")}
+          onLoadStart={() => console.log("start")}
+          source={{ uri: videoModal.uri }}
+        />
+        <BackIconContainer style={{ top: insets.top + 10 }}>
+          <BackIcon onPress={toggleOverlay} />
+        </BackIconContainer>
+        <StatusBar style="light" />
+      </ModalScreen>
+
+      <StatusBar style="auto" />
     </LibraryBackground>
   );
 };

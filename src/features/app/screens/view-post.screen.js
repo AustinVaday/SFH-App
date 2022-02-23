@@ -7,7 +7,7 @@ import { SafeArea } from "../../../components/utilities/safe-area.components";
 
 import { useUser } from "../../../services/hooks/useUser";
 
-import { PostContainer, PostVideo } from "../styles/view-post.styles";
+import { PostContainer, PostVideo } from "./styles/view-post.styles";
 
 export const ViewPostScreen = ({ route }) => {
   const videoRef = useRef();

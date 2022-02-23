@@ -1,5 +1,4 @@
 import React from "react";
-import LottieView from "lottie-react-native";
 
 import { Spacer } from "../../../components/spacer/spacer.components";
 import { Text } from "../../../components/typography/text.components";
@@ -7,24 +6,20 @@ import { FacebookAndGoogleButtons } from "../components/fb-and-google-buttons.co
 
 import {
   AuthenticationsBackground,
-  AnimationWrapper,
+  Logo,
+  LogoContainer,
   TitleAndMessageSection,
   BottomButtonsSection,
   LoginButton,
   SignUpButton,
-} from "../styles/authentications.styles";
+} from "./styles/authentications.styles";
 
 export const AuthenticationsScreen = ({ navigation }) => {
   return (
     <AuthenticationsBackground>
-      <AnimationWrapper>
-        <LottieView
-          key="animation"
-          autoPlay
-          loop
-          source={require("../../../assets/lottie/world.json")}
-        />
-      </AnimationWrapper>
+      <LogoContainer>
+        <Logo source={require("../../../assets/icons/sfh-logo.png")} />
+      </LogoContainer>
 
       <TitleAndMessageSection>
         <Text variant="authentications_title">Signs For Humanity</Text>
@@ -32,7 +27,7 @@ export const AuthenticationsScreen = ({ navigation }) => {
         <Text variant="authentications_message">Post and learn sign</Text>
       </TitleAndMessageSection>
 
-      <FacebookAndGoogleButtons />
+      <FacebookAndGoogleButtons navigation={navigation} />
 
       <BottomButtonsSection>
         <LoginButton
@@ -42,7 +37,11 @@ export const AuthenticationsScreen = ({ navigation }) => {
           }}
         />
         <SignUpButton
-          title={<Text variant="authentications_text_button">Sign up with email</Text>}
+          title={
+            <Text variant="authentications_text_button">
+              Sign up with email
+            </Text>
+          }
           onPress={() => {
             navigation.navigate("SignupEmail");
           }}

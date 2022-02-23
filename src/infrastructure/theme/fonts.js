@@ -4,6 +4,7 @@ export const fonts = {
   body_600: "OpenSans_600SemiBold",
   body_700: "OpenSans_700Bold",
   body_800: "OpenSans_800ExtraBold",
+  home_logo: "AlfaSlabOne_400Regular",
 };
 
 export const fontSizes = {

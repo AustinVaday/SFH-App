@@ -1,51 +1,134 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ListItem } from "react-native-elements";
 
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
+import { FollowsListLoader } from "./follows-list-loader.components";
+
+import { firebase } from "../../../utils/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { followUser, unfollowUser } from "../../../services/firebase/follows";
+import { getUserById } from "../../../services/firebase/users";
+import { fetchFollowers } from "../../../services/redux/actions/followers.actions";
 
 import {
   ListEmptyBackground,
   FollowersList,
   FollowButton,
+  FollowingButton,
   UserImage,
-} from "../styles/followers-tab.styles";
+} from "./styles/followers-tab.styles";
 
-export const FollowersTab = ({ route, navigation }) => {
-  const { newitem } = route.params;
+export const FollowersTab = ({ uid, isOtherUser }) => {
+  const followings = useSelector(
+    (state) => state.followings.currentUserFollowings
+  );
+  const followers = useSelector(
+    (state) => state.followers.currentUserFollowers
+  );
+  const fetched = useSelector(
+    (state) => state.followers.isCurrentUserFollowersFetched
+  );
+  const { currentUser } = useSelector((state) => state.user);
+
+  const [followersState, setFollowersState] = useState([]);
+  const [loading, setLoading] = useState([]);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isOtherUser && !fetched) {
+      dispatch(fetchFollowers(setLoading));
+    } else if (!isOtherUser) {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOtherUser) {
+      firebase
+        .firestore()
+        .collection("follows")
+        .doc(uid)
+        .collection("userFollowers")
+        .limit(10)
+        .get()
+        .then((snapshot) => {
+          let followers = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+            return { id, ...data };
+          });
+          setFollowersState(followers);
+          setLoading(false);
+        });
+    }
+  }, []);
 
   const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
         <Text variant="list_empty_title">No Followers</Text>
-        <Text variant="list_empty_message">
-          Someone follows you that will appear here
-        </Text>
+        <Spacer size="large" />
+        {isOtherUser ? (
+          <Text variant="list_empty_message">
+            When someone follow this user, they will appear here.
+          </Text>
+        ) : (
+          <Text variant="list_empty_message">
+            Someone follows you that will appear here
+          </Text>
+        )}
       </ListEmptyBackground>
     );
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item: user }) => {
     return (
-      <ListItem onPress={() => navigation.navigate("ViewProfile")}>
-        <UserImage source={{ uri: item.profilePhoto }} />
+      <ListItem
+        onPress={() =>
+          navigation.navigate("GuestProfile", {
+            uid: user.id,
+            isGuest: true,
+            isOtherUser: currentUser.id !== user.id,
+          })
+        }
+      >
+        <UserImage source={{ uri: user.profilePhoto }} />
         <ListItem.Content>
-          <Text variant="followers_username">{item.username}</Text>
+          <Text variant="followers_username">{user.username}</Text>
         </ListItem.Content>
-        <FollowButton
-          title={<Text variant="follow_textbutton">Follow</Text>}
-          onPress={() => console.log("click unfollow")}
-        />
+        {currentUser.id === user.id ? null : followings.findIndex(
+            (followed) => followed.id === user.id
+          ) > -1 ? (
+          <FollowingButton
+            title={<Text variant="following_textbutton">Following</Text>}
+            onPress={() => unfollowUser(user, currentUser)}
+          />
+        ) : (
+          <FollowButton
+            title={<Text variant="follow_textbutton">Follow</Text>}
+            onPress={() =>
+              getUserById(user.id).then((data) => followUser(data, currentUser))
+            }
+          />
+        )}
       </ListItem>
     );
   };
 
   return (
-    <FollowersList
-      data={newitem}
-      ListEmptyComponent={listEmptyComponent}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      listKey={(item) => item.id}
-    />
+    <>
+      {loading ? (
+        <FollowsListLoader />
+      ) : (
+        <FollowersList
+          data={isOtherUser ? followersState : followers}
+          ListEmptyComponent={listEmptyComponent}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
+    </>
   );
 };

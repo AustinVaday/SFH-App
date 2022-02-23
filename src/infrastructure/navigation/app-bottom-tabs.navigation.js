@@ -1,62 +1,54 @@
 import React from "react";
 import { View } from "react-native";
 import { Icon } from "react-native-elements";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { ProfileScreen } from "../../features/profile/screens/profile.screen";
 import { ChatsScreen } from "../../features/chat/screens/chats.screen";
-import { HomeScreen } from "../../features/home/screens/home.screen";
+import { FeedScreen } from "../../features/home/screens/feed.screen";
 import { DiscoverScreen } from "../../features/discover/screens/discover.screen";
 
 import { colors } from "../theme/colors";
 import { Text } from "../../components/typography/text.components";
+import { APP_NAME } from "../../utils/constants";
 
 import { useSelector } from "react-redux";
 
 const AppTab = createBottomTabNavigator();
 
 const TAB_ICON = {
-  Feed: "ios-home",
-  Discover: "ios-search",
-  Add: "add-circle",
-  Chat: "chatbox-ellipses",
-  Profile: "person-circle-sharp",
-};
-
-const UNFOCUSED_TAB_ICON = {
-  Feed: "ios-home-outline",
-  Discover: "ios-search-outline",
-  Add: "add-circle",
-  Chat: "chatbox-ellipses-outline",
-  Profile: "person-circle-outline",
+  Feed: "home",
+  Discover: "search",
+  Add: "plus-circle",
+  Chat: "comments",
+  Profile: "user",
 };
 
 const TAB_ICON_SIZE = {
   Feed: 30,
-  Discover: 30,
-  Add: 50,
+  Discover: 25,
+  Add: 45,
   Chat: 30,
-  Profile: 30,
+  Profile: 28,
 };
 
 const createScreenOptions = ({ route }) => {
   const iconName = TAB_ICON[route.name];
-  const unfocusedIconName = UNFOCUSED_TAB_ICON[route.name];
   const iconSize = TAB_ICON_SIZE[route.name];
 
   return {
-    tabBarIcon: ({ focused, color }) => (
-      <Ionicons name={focused ? iconName : unfocusedIconName} size={iconSize} color={color} />
+    tabBarIcon: ({ color }) => (
+      <FontAwesome name={iconName} size={iconSize} color={color} />
     ),
     tabBarShowLabel: false,
     tabBarActiveTintColor: colors.icon.primary,
-    tabBarInactiveTintColor: colors.icon.lightergray,
+    tabBarInactiveTintColor: colors.icon.lightestgray,
   };
 };
 
 export const AppTabsNavigator = (props) => {
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   return (
     <AppTab.Navigator
@@ -65,23 +57,24 @@ export const AppTabsNavigator = (props) => {
     >
       <AppTab.Screen
         name="Feed"
-        component={HomeScreen}
+        component={FeedScreen}
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerLeftContainerStyle: { paddingLeft: 8 },
           headerRightContainerStyle: { paddingRight: 8 },
+          headerTitleContainerStyle: { marginHorizontal: -20 },
           headerShown: true,
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
-          headerTitle: () => <Text variant="navbar_title">Explore</Text>,
+          headerTitle: "",
           headerRight: () => (
             <Icon
               name="bell-outline"
               type="material-community"
-              onPress={() => {}}
+              onPress={() => navigation.navigate("Activity")}
             />
           ),
-          headerLeft: () => <Text variant="navbar_title">SFH</Text>,
+          headerLeft: () => <Text variant="home_logo">{APP_NAME}</Text>,
         })}
       />
       <AppTab.Screen
@@ -98,7 +91,7 @@ export const AppTabsNavigator = (props) => {
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             event.preventDefault();
-            navigation.navigate("Library");
+            navigation.navigate("Camera");
           },
         })}
       />
@@ -106,19 +99,33 @@ export const AppTabsNavigator = (props) => {
         name="Chat"
         component={ChatsScreen}
         navigation={props.navigation}
-        options={{ headerShown: false }}
+        options={({ route, navigation }) => ({
+          headerShown: true,
+          headerRightContainerStyle: { paddingRight: 8 },
+          tabBarBadge: null,
+          tabBarBadgeStyle: { minWidth: 18, height: 18 },
+          headerTitle: () => <Text variant="navbar_title">Chat</Text>,
+          headerRight: () => (
+            <Icon
+              name="plus"
+              type="material-community"
+              size={30}
+              onPress={() => navigation.navigate("NewConversation")}
+            />
+          ),
+        })}
       />
       <AppTab.Screen
         name="Profile"
         component={ProfileScreen}
         navigation={props.navigation}
-        options={{ headerShown: false }}
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             event.preventDefault();
             navigation.navigate("Profile", {
               uid: currentUser.id,
-              guestUser: false,
+              isGuest: false,
+              isOtherUser: false,
             });
           },
         })}

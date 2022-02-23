@@ -1,48 +1,9 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Image } from "react-native-elements";
-import { SuccessToast, ErrorToast } from "react-native-toast-message";
 
 import { colors } from "../../infrastructure/theme/colors";
 import { fonts } from "../../infrastructure/theme/fonts";
-
-export const SuccessMessageToast = (props) => (
-  <SuccessToast
-    {...props}
-    contentContainerStyle={{ backgroundColor: colors.bg.success }}
-    leadingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-    leadingIconStyle={{ tintColor: colors.icon.secondary }}
-    trailingIconContainerStyle={{ backgroundColor: colors.bg.success }}
-    trailingIconStyle={{ tintColor: colors.icon.secondary }}
-    text1Style={{
-      fontSize: 15,
-      color: colors.text.secondary,
-    }}
-    text2Style={{
-      fontSize: 15,
-      color: colors.text.secondary,
-    }}
-  />
-);
-
-export const ErrorMessageToast = (props) => (
-  <ErrorToast
-    {...props}
-    contentContainerStyle={{ backgroundColor: colors.bg.error }}
-    leadingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-    leadingIconStyle={{ tintColor: colors.icon.secondary }}
-    trailingIconContainerStyle={{ backgroundColor: colors.bg.error }}
-    trailingIconStyle={{ tintColor: colors.icon.secondary }}
-    text1Style={{
-      fontSize: 15,
-      color: colors.text.secondary,
-    }}
-    text2Style={{
-      fontSize: 15,
-      color: colors.text.secondary,
-    }}
-  />
-);
 
 export const NewMessageToast = (props, onPress) => (
   <Pressable onPress={onPress} style={styles.pressableContainer}>
@@ -67,10 +28,16 @@ export const InfoToast = (props) => (
 );
 
 export const InfoErrorToast = (props) => (
-    <View style={styles.infoErrorContainer}>
-      <Text style={styles.infoText}>{props.message}</Text>
-    </View>
-  );
+  <View style={[styles.infoContainer, { backgroundColor: colors.bg.error }]}>
+    <Text style={styles.infoText}>{props.message}</Text>
+  </View>
+);
+
+export const InfoSuccessToast = (props) => (
+  <View style={[styles.infoContainer, { backgroundColor: colors.bg.success }]}>
+    <Text style={styles.infoText}>{props.message}</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   pressableContainer: {
@@ -99,8 +66,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   infoContainer: {
+    flex: 1,
     flexDirection: "row",
-    height: 35,
     width: "90%",
     borderRadius: 3,
     backgroundColor: colors.bg.darkgray,
@@ -110,19 +77,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     justifyContent: "center",
     alignItems: "center",
-  },
-  infoErrorContainer: {
-    flexDirection: "row",
-    height: 35,
-    width: "90%",
-    borderRadius: 3,
-    backgroundColor: colors.bg.error,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 8,
   },
   infoText: {
     fontSize: 12,

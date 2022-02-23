@@ -5,18 +5,16 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-exports.addFollower = functions.firestore
-    .document("/following/{userId}/userFollowing/{FollowingId}")
+exports.addFollow = functions.firestore
+    .document("/follows/{userId}/userFollowings/{followingId}")
     .onCreate((snap, context) => {
-      return db
-          .collection("users")
-          .doc(context.params.FollowingId)
+      db.collection("users")
+          .doc(context.params.followingId)
           .update({
             followersCount: admin.firestore.FieldValue.increment(1),
           })
           .then(() => {
-            return db
-                .collection("users")
+            db.collection("users")
                 .doc(context.params.userId)
                 .update({
                   followingCount: admin.firestore.FieldValue.increment(1),
@@ -24,18 +22,16 @@ exports.addFollower = functions.firestore
           });
     });
 
-exports.removeFollower = functions.firestore
-    .document("/following/{userId}/userFollowing/{FollowingId}")
+exports.removeFollow = functions.firestore
+    .document("/follows/{userId}/userFollowings/{followingId}")
     .onDelete((snap, context) => {
-      return db
-          .collection("users")
-          .doc(context.params.FollowingId)
+      db.collection("users")
+          .doc(context.params.followingId)
           .update({
             followersCount: admin.firestore.FieldValue.increment(-1),
           })
           .then(() => {
-            return db
-                .collection("users")
+            db.collection("users")
                 .doc(context.params.userId)
                 .update({
                   followingCount: admin.firestore.FieldValue.increment(-1),

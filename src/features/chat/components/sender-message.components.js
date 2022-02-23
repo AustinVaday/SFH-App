@@ -4,7 +4,7 @@ import { Text } from "../../../components/typography/text.components";
 import {
   MessageContainer,
   MessageRowSection,
-} from "../styles/sender-message.styles";
+} from "./styles/sender-message.styles";
 
 export const SenderMessage = ({ message }) => {
   return (

@@ -1,60 +1,82 @@
-import {
-  CURRENT_USER_POSTS_UPDATE,
-  POSTS_DISCOVER,
-  USER_FOLLOWING_STATE_CHANGE,
-  USERS_STATE_CHANGE,
-  USER_CHATS_STATE_CHANGE,
-  CURRENT_USER_NOTIFICATIONS,
-  CURRENT_USER_SAVES,
-} from "../constants";
+import Toast from "react-native-toast-message";
+
+import { postsAction } from "../constants";
 
 const initialState = {
   currentUserPosts: [],
+  feed: [],
   discoverPosts: [],
-  following: [],
-  users: [],
-  chats: [],
-  notifications: [],
-  saves: [],
+  isCurrentUserPostsFetched: false,
 };
 
 export const posts = (state = initialState, action) => {
   switch (action.type) {
-    case CURRENT_USER_POSTS_UPDATE:
+    case postsAction.FETCH_FEED_REQUEST:
       return {
         ...state,
-        currentUserPosts: action.currentUserPosts,
       };
-    case POSTS_DISCOVER:
+    case postsAction.FETCH_FEED_SUCCESS:
       return {
         ...state,
-        discoverPosts: action.discoverPosts,
+        feed: action.posts,
       };
-    case CURRENT_USER_NOTIFICATIONS:
+    case postsAction.FETCH_FEED_FAILURE:
+      const { message } = action.error;
+      Toast.show({
+        type: "infoError",
+        props: {
+          message: message,
+        },
+        visibilityTime: 2000,
+        topOffset: 45,
+      });
       return {
         ...state,
-        notifications: action.notifications,
       };
-    case CURRENT_USER_SAVES:
+    case postsAction.FETCH_CURRENT_USER_POSTS_REQUEST:
       return {
         ...state,
-        saves: action.saves,
       };
-    case USER_FOLLOWING_STATE_CHANGE:
+    case postsAction.FETCH_CURRENT_USER_POSTS_SUCCESS:
       return {
         ...state,
-        following: action.following,
+        currentUserPosts: action.posts,
+        isCurrentUserPostsFetched: action.fetched,
       };
-    case USER_CHATS_STATE_CHANGE: {
+    case postsAction.FETCH_CURRENT_USER_POSTS_FAILURE:
+      const { message2 } = action.error;
+      Toast.show({
+        type: "infoError",
+        props: {
+          message: message2,
+        },
+        visibilityTime: 2000,
+        topOffset: 45,
+      });
       return {
         ...state,
-        chats: action.chats,
       };
-    }
-    case USERS_STATE_CHANGE:
+    case postsAction.FETCH_DISCOVER_POSTS_REQUEST:
       return {
         ...state,
-        users: [...state.users, action.user],
+      };
+    case postsAction.FETCH_DISCOVER_POSTS_SUCCESS:
+      return {
+        ...state,
+        discoverPosts: action.posts,
+      };
+    case postsAction.FETCH_DISCOVER_POSTS_FAILURE:
+      const { message3 } = action.error;
+      Toast.show({
+        type: "infoError",
+        props: {
+          message: message3,
+        },
+        visibilityTime: 2000,
+        topOffset: 45,
+      });
+      return {
+        ...state,
       };
     default:
       return state;
