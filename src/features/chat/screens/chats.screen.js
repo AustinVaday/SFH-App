@@ -5,6 +5,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { ChatRow } from "../components/chat-row.components";
 import { Text } from "../../../components/typography/text.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
+import { LoadingIndicator } from "../../../components/loading/loading-indicator.components";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,10 +15,8 @@ import {
 
 import {
   ChatsBackground,
-  ListEmptyBackground,
   RowHiddenContainer,
   SwipeDeleteButton,
-  ListEmptyContainer,
 } from "./styles/chats.styles";
 
 export const ChatsScreen = ({ navigation }) => {
@@ -25,11 +24,12 @@ export const ChatsScreen = ({ navigation }) => {
   const { otherUsers, currentUserChats } = useSelector((state) => state.chats);
 
   const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchChats());
+    dispatch(fetchChats(setLoading));
   }, []);
 
   useEffect(() => {
@@ -116,24 +116,28 @@ export const ChatsScreen = ({ navigation }) => {
 
   return (
     <ChatsBackground>
-      <SwipeListView
-        data={conversations}
-        ListEmptyComponent={listEmptyComponent}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        disableRightSwipe={true}
-        disableLeftSwipe={Platform.OS === "android" ? true : false}
-        rightOpenValue={-75}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          conversations.length === 0 && {
-            justifyContent: "center",
-            alignItems: "center",
-            flexGrow: 1,
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <SwipeListView
+          data={conversations}
+          ListEmptyComponent={listEmptyComponent}
+          renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          disableRightSwipe={true}
+          disableLeftSwipe={Platform.OS === "android" ? true : false}
+          rightOpenValue={-75}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={
+            conversations.length === 0 && {
+              justifyContent: "center",
+              alignItems: "center",
+              flexGrow: 1,
+            }
           }
-        }
-      />
+        />
+      )}
     </ChatsBackground>
   );
 };

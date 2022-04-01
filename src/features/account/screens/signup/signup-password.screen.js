@@ -6,40 +6,43 @@ import { Spacer } from "../../../../components/spacer/spacer.components";
 import { Text } from "../../../../components/typography/text.components";
 import useLoader from "../../../../services/hooks/loader/useLoader";
 
-import { registerWithEmail, linkWithEmail } from "../../../../services/firebase/auth";
+import { registerWithEmail } from "../../../../services/firebase/auth";
+
+import {
+  VALIDATE_PASSWORD_LETTER,
+  VALIDATE_PASSWORD_NUMBER,
+  VALIDATE_PASSWORD_SPECIAL_CHAR,
+  VALIDATE_PASSWORD_ALL,
+  PASSWORD_MAX_LENGTH,
+} from "../../../../utils/constants";
 
 import {
   SignupBackground,
   PasswordInput,
   FormSection,
-  NextButton,
+  SignupButton,
   RightIconsInputContainer,
   ClearIcon,
   SeeIcon,
-  NextText,
+  TextButton,
   RequirementRow,
   RequirementsList,
   MarkedIcon,
   ItemText,
 } from "./styles/signup-password.styles";
 
-const validationLetter = /^(?=.*[a-zA-Z])/;
-const validationNumber = /^(?=.*[0-9])/;
-const validationSpecialChar = /^(?=.*[!@+=<>~,.:;()\/\-\?\|\\\_\[\]#\$%\^&\*])/;
-const validationAll = /^[a-zA-Z0-9!@+=<>~,.:;()\/\-\?\|\\\_\[\]#\$%\^&\*]+$/;
-
 const validationSchema = object().shape({
   password: string()
     .label("Password")
     .required("Please enter your password")
-    .matches(validationAll, "Invalid")
-    .matches(validationLetter)
-    .matches(validationNumber)
-    .matches(validationSpecialChar)
+    .matches(VALIDATE_PASSWORD_ALL, "Invalid")
+    .matches(VALIDATE_PASSWORD_LETTER)
+    .matches(VALIDATE_PASSWORD_NUMBER)
+    .matches(VALIDATE_PASSWORD_SPECIAL_CHAR)
     .min(8, "Password should be at least 8 characters"),
 });
 
-export const SignupPasswordScreen = ({ navigation, route }) => {
+export const SignupPasswordScreen = ({ route }) => {
   const { email } = route.params;
 
   const [hidePassword, setHidePassword] = useState(true);
@@ -53,12 +56,7 @@ export const SignupPasswordScreen = ({ navigation, route }) => {
 
     showLoader();
 
-    if (route.name === "SignupPassword") {
-      registerWithEmail(email, values.password, hideLoader);
-    } else {
-      linkWithEmail(email, values.password, navigation, hideLoader)
-    }
-    
+    registerWithEmail(email, values.password, hideLoader);
   };
 
   return (
@@ -73,11 +71,11 @@ export const SignupPasswordScreen = ({ navigation, route }) => {
             <PasswordInput
               label="Password"
               placeholder="Set strong password"
-              returnKeyType="next"
+              returnKeyType="done"
               secureTextEntry={hidePassword}
               clearTextOnFocus={true}
               value={values.password}
-              maxLength={30}
+              maxLength={PASSWORD_MAX_LENGTH}
               autoFocus={true}
               blurOnSubmit={false}
               onChangeText={handleChange("password")}
@@ -90,7 +88,7 @@ export const SignupPasswordScreen = ({ navigation, route }) => {
                   {values.password !== "" && (
                     <ClearIcon onPress={() => setFieldValue("password", "")} />
                   )}
-                  <Spacer size="medium" position="left" />
+                  <Spacer size="large" position="left" />
                   <SeeIcon
                     hidePassword={hidePassword}
                     onPress={() => {
@@ -113,22 +111,32 @@ export const SignupPasswordScreen = ({ navigation, route }) => {
             <Text variant="pw_requirement_title">Your password requires:</Text>
             <RequirementsList>
               <RequirementRow>
-                <MarkedIcon check={validationLetter.test(values.password)} />
-                <ItemText check={validationLetter.test(values.password)}>
+                <MarkedIcon
+                  check={VALIDATE_PASSWORD_LETTER.test(values.password)}
+                />
+                <ItemText
+                  check={VALIDATE_PASSWORD_LETTER.test(values.password)}
+                >
                   At least one letter
                 </ItemText>
               </RequirementRow>
               <RequirementRow>
-                <MarkedIcon check={validationNumber.test(values.password)} />
-                <ItemText check={validationNumber.test(values.password)}>
+                <MarkedIcon
+                  check={VALIDATE_PASSWORD_NUMBER.test(values.password)}
+                />
+                <ItemText
+                  check={VALIDATE_PASSWORD_NUMBER.test(values.password)}
+                >
                   At least one number
                 </ItemText>
               </RequirementRow>
               <RequirementRow>
                 <MarkedIcon
-                  check={validationSpecialChar.test(values.password)}
+                  check={VALIDATE_PASSWORD_SPECIAL_CHAR.test(values.password)}
                 />
-                <ItemText check={validationSpecialChar.test(values.password)}>
+                <ItemText
+                  check={VALIDATE_PASSWORD_SPECIAL_CHAR.test(values.password)}
+                >
                   At least one special character
                 </ItemText>
               </RequirementRow>
@@ -147,18 +155,18 @@ export const SignupPasswordScreen = ({ navigation, route }) => {
 
             <Spacer size="large" />
 
-            <NextButton
+            <SignupButton
               enableButton={
                 values.password !== "" && errors.password === undefined
               }
               title={
-                <NextText
+                <TextButton
                   enableButton={
                     values.password !== "" && errors.password === undefined
                   }
                 >
-                  Next
-                </NextText>
+                  {route.name === "SignupPassword" ? "Signup" : "Link"}
+                </TextButton>
               }
               onPress={() => {
                 handleSubmit(values, errors);

@@ -25,7 +25,7 @@ export const chats = (state = initialState, action) => {
         props: {
           message: message,
         },
-        visibilityTime: 2000,
+        visibilityTime: 3000,
         topOffset: 45,
       });
       return {
@@ -47,7 +47,7 @@ export const chats = (state = initialState, action) => {
         props: {
           message: message2,
         },
-        visibilityTime: 2000,
+        visibilityTime: 3000,
         topOffset: 45,
       });
       return {

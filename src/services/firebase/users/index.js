@@ -1,5 +1,5 @@
 import { firebase } from "../../../utils/firebase";
-import { saveMediaToStorage } from "../posts";
+import { saveMediaToStorage } from "../words";
 
 export const saveUserProfileImage = (image) =>
   new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ export const queryUsersAndKeywords = (keyword) =>
 
         firebase
           .firestore()
-          .collection("posts")
+          .collection("words")
           .where("title", ">=", keyword)
           .where("title", "<=", keyword + "~")
           .limit(5)
@@ -86,7 +86,7 @@ export const queryUsersAndKeywords = (keyword) =>
             let titles = snapshot.docs.map((doc) => {
               const data = doc.data();
               const id = doc.id;
-              return { id, ...data, type: "post" };
+              return { id, ...data, type: "word" };
             });
             resolve([...users, ...titles]);
           })

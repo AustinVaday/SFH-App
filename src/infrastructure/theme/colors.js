@@ -16,6 +16,7 @@ export const colors = {
     success: "#138000",
     cultured: "#F1F1F1",
     lightergray: "#CDCDCD",
+    gray: "#9EA0A4",
   },
   bg: {
     primary: "#0095FF",
@@ -57,6 +58,7 @@ export const colors = {
     lighterblue: "#63BEFF",
     foggedglass: "rgba(192, 192, 192, 0.5)",
     lightgreen: "#77F14C",
+    lightred: "#D3684B",
   },
   button: {
     primary: "#0095FF",

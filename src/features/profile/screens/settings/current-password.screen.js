@@ -27,7 +27,7 @@ export const CurrentPasswordScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [hideCurrentPassword, setHideCurrentPassword] = useState(true);
 
-  const handleSubmit = (values, errors) => {
+  const handleSubmit = (values) => {
     const { currentPassword } = values;
 
     if (currentPassword === "") {
@@ -86,9 +86,9 @@ export const CurrentPasswordScreen = ({ navigation }) => {
                       }}
                     />
                   )}
-                  <Spacer size="medium" position="left" />
+                  <Spacer size="large" position="left" />
                   <SeeIcon
-                    hideCurrentPassword={hideCurrentPassword}
+                    hidePassword={hideCurrentPassword}
                     onPress={() => {
                       if (hideCurrentPassword) {
                         setHideCurrentPassword(false);
@@ -114,7 +114,7 @@ export const CurrentPasswordScreen = ({ navigation }) => {
               }
               loading={loading}
               onPress={() => {
-                handleSubmit(values, errors);
+                handleSubmit(values);
               }}
             />
           </FormSection>

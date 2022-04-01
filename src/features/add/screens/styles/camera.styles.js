@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Icon, Button, Image } from "react-native-elements";
+import { Icon, Button } from "react-native-elements";
 import { Camera } from "expo-camera";
 import LottieView from "lottie-react-native";
 
@@ -13,11 +13,6 @@ export const VideoCamera = styled(Camera)`
 
 export const IconContainer = styled.View`
   flex: 1;
-`;
-
-export const NoImages = styled(Image)`
-  width: 300px;
-  height: 250px;
 `;
 
 export const ProgressBarContainer = styled.View`
@@ -46,7 +41,7 @@ export const BottomBarContainer = styled.View`
   position: absolute;
 `;
 
-export const Spacer = styled.View`
+export const EmptySpacer = styled.View`
   flex: 1;
 `;
 
@@ -71,14 +66,19 @@ export const AllowCameraAccessSection = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${(props) => props.theme.space[3]};
-  padding-bottom: 25%;
 `;
 
 export const EnablePermissionsButton = styled(Button).attrs((props) => ({
   type: "clear",
   color: props.theme.colors.text.primary,
-  containerStyle: { marginTop: "20%" },
 }))``;
+
+export const EnablePermissionsButtonContainer = styled.View`
+  padding-top: ${(props) => props.theme.space[3]};
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const CloseIcon = styled(Icon).attrs((props) => ({
   size: 35,
@@ -123,4 +123,11 @@ export const LibraryIcon = styled(Icon).attrs((props) => ({
   name: "filmstrip-box-multiple",
   type: "material-community",
   color: props.theme.colors.icon.secondary,
+}))``;
+
+export const CheckIcon = styled(Icon).attrs((props) => ({
+  type: "font-awesome",
+  name: "check",
+  size: 20,
+  color: props.theme.colors.icon.lightgreen,
 }))``;

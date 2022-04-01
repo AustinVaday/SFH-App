@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ScrollView, Alert, Linking, Platform } from "react-native";
+import { ScrollView, Linking, Platform } from "react-native";
 import { ListItem } from "react-native-elements";
 import { openURL } from "expo-linking";
 import Toast from "react-native-toast-message";
@@ -18,6 +18,8 @@ import {
   ListItemHeader,
   ListItemIcon,
   AlertIcon,
+  GoogleIcon,
+  FacebookIcon,
 } from "./styles/settings.styles";
 
 export const SettingsScreen = ({ navigation }) => {
@@ -29,7 +31,6 @@ export const SettingsScreen = ({ navigation }) => {
   );
 
   const emailVerified = firebase.auth().currentUser?.emailVerified;
-  const providerData = firebase.auth().currentUser?.providerData;
   const emailCensored = currentUser.email?.replace(
     /(\w{2})[\w.-](\w{1})+@([\w.]+\w)/,
     "$1***$2@$3"
@@ -39,36 +40,18 @@ export const SettingsScreen = ({ navigation }) => {
 
   const [visible, setVisible] = useState(false);
   const [emailVisible, setEmailVisible] = useState(false);
-  const [emptyEmailVisible, setEmptyEmailVisible] = useState(false);
-  const [emptyPasswordVisible, setEmptyPasswordVisible] = useState(false);
   const [changePasswordVisible, setChangePasswordVisible] = useState(false);
-  const [unlinkVisible, setUnlinkVisible] = useState(false);
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
 
   const cancelLogoutDialog = () => setVisible(false);
   const cancelEmailDialog = () => setEmailVisible(false);
-  const cancelEmptyEmailDialog = () => setEmptyEmailVisible(false);
-  const cancelEmptyPasswordDialog = () => setEmptyPasswordVisible(false);
   const cancelChangePasswordDialog = () => setChangePasswordVisible(false);
-  const cancelUnlinkDialog = () => setUnlinkVisible(false);
+  const cancelNotificationsDialog = () => setNotificationsVisible(false);
 
-  const handleNotifications = () => {
-    Alert.alert(
-      "Notifications Settings",
-      "Need to turn the noifications on or off?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Go to Settings",
-          onPress: () =>
-            Platform.OS === "ios"
-              ? openURL("app-settings:")
-              : Linking.openSettings(),
-        },
-      ]
-    );
+  const onHandleNotifications = () => {
+    cancelNotificationsDialog();
+
+    Platform.OS === "ios" ? openURL("app-settings:") : Linking.openSettings();
   };
 
   const onLogout = async () => {
@@ -86,7 +69,7 @@ export const SettingsScreen = ({ navigation }) => {
           props: {
             message: "Unable to log out. Try again.",
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
@@ -107,7 +90,7 @@ export const SettingsScreen = ({ navigation }) => {
           props: {
             message: "Email verification was successfully sent.",
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       })
@@ -119,19 +102,10 @@ export const SettingsScreen = ({ navigation }) => {
           props: {
             message: "Unable to send email verification. Try again later.",
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
-  };
-
-  const onLinkEmail = () => {
-    if (emptyPasswordVisible) {
-      cancelEmptyPasswordDialog();
-    } else {
-      cancelEmptyEmailDialog();
-    }
-    navigation.navigate("CreateEmail");
   };
 
   const onChangeEmail = () => {
@@ -156,58 +130,17 @@ export const SettingsScreen = ({ navigation }) => {
     });
   };
 
-  const onUnlinkEmail = () => {
-    if (providerData.length <= 1) {
-      cancelEmailDialog();
-
-      Toast.show({
-        type: "infoMessage",
-        props: {
-          message: "You can't unlink your email due to the account security.",
-        },
-        visibilityTime: 2000,
-        topOffset: 45,
-      });
-    } else {
-      cancelEmailDialog();
-
-      toggleUnlinkDialog();
-    }
-  };
-
-  const onUnlink = () => {
-    cancelUnlinkDialog();
-
-    navigation.navigate("ConfirmationCode", {
-      email: currentUser.email,
-      emailCensored,
-      codeType: "Unlink",
-      routeName: "",
-    });
-  };
-
   const toggleLogoutDialog = () => {
     setVisible(!visible);
   };
-
   const toggleEmailDialog = () => {
-    if (currentUser.email) {
-      setEmailVisible(!emailVisible);
-    } else {
-      setEmptyEmailVisible(!emptyEmailVisible);
-    }
+    setEmailVisible(!emailVisible);
   };
-
   const togglePasswordDialog = () => {
-    if (currentUser.email) {
-      setChangePasswordVisible(!changePasswordVisible);
-    } else {
-      setEmptyPasswordVisible(!emptyPasswordVisible);
-    }
+    setChangePasswordVisible(!changePasswordVisible);
   };
-
-  const toggleUnlinkDialog = () => {
-    setUnlinkVisible(!unlinkVisible);
+  const toggleNotificationsDialog = () => {
+    setNotificationsVisible(!notificationsVisible);
   };
 
   return (
@@ -218,22 +151,38 @@ export const SettingsScreen = ({ navigation }) => {
         <ListItemHeader>
           <Text variant="setting_title">Account</Text>
         </ListItemHeader>
-        <ListItem onPress={toggleEmailDialog}>
-          <ListItemIcon name="email-outline" />
-          <ListItem.Content>
-            <Text variant="setting_button">Email</Text>
-          </ListItem.Content>
-          {!emailVerified && emailCensored && <AlertIcon />}
-          <Text variant="setting_button">{emailCensored}</Text>
-          <ListItem.Chevron />
-        </ListItem>
-        <ListItem onPress={togglePasswordDialog}>
-          <ListItemIcon name="lock-outline" />
-          <ListItem.Content>
-            <Text variant="setting_button">Password</Text>
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
+        {currentUser.email ? (
+          <>
+            <ListItem onPress={toggleEmailDialog}>
+              <ListItemIcon name="email-outline" />
+              <ListItem.Content>
+                <Text variant="setting_button">Email</Text>
+              </ListItem.Content>
+              {!emailVerified && emailCensored && <AlertIcon />}
+              <Text variant="setting_button">{emailCensored}</Text>
+              <ListItem.Chevron />
+            </ListItem>
+            <ListItem onPress={togglePasswordDialog}>
+              <ListItemIcon name="lock-outline" />
+              <ListItem.Content>
+                <Text variant="setting_button">Password</Text>
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem>
+          </>
+        ) : (
+          <ListItem>
+            <ListItemIcon name="cellphone" />
+            <ListItem.Content>
+              <Text variant="setting_button">Federated</Text>
+            </ListItem.Content>
+            {currentUser.providerId === "google" ? (
+              <GoogleIcon />
+            ) : (
+              <FacebookIcon />
+            )}
+          </ListItem>
+        )}
 
         {/* Dialog from email */}
         <InfoDialog
@@ -245,55 +194,25 @@ export const SettingsScreen = ({ navigation }) => {
           }
           message={
             emailVerified
-              ? "Your email is linked to your account. If you need to change or unlink email, you will " +
-                "need to verify your email before change or unlink."
+              ? "Your email is linked to your account. If you need to change, you will get sent " +
+                "the code to verify your email before change."
               : "Your email is linked to your account. Verify it to improve your account safety."
           }
-          fourthButtonText={!emailVerified && "Send verification email"}
-          onPressFourth={!emailVerified && onSendVerification}
-          thirdButtonText={"Change email"}
-          onPressThird={onChangeEmail}
-          secondButtonText={"Unlink email"}
-          onPressSecond={onUnlinkEmail}
+          thirdButtonText={!emailVerified && "Send verification email"}
+          onPressThird={!emailVerified && onSendVerification}
+          secondButtonText={"Change email"}
+          onPressSecond={onChangeEmail}
           firstButtonText={"Cancel"}
           onPressFirst={cancelEmailDialog}
           onPressBackdrop={cancelEmailDialog}
         />
 
-        <InfoDialog
-          displayAlert={emptyEmailVisible}
-          title={"Do you want to link your email to your account?"}
-          message={
-            "You will need to create email and password then link to your account."
-          }
-          secondButtonText={"Link"}
-          onPressSecond={onLinkEmail}
-          firstButtonText={"Cancel"}
-          onPressFirst={cancelEmptyEmailDialog}
-          onPressBackdrop={cancelEmptyEmailDialog}
-        />
-
-        {/* Dialogs from password */}
-        <InfoDialog
-          displayAlert={emptyPasswordVisible}
-          title={
-            "You have not created the email. Do you want to link it to your account?"
-          }
-          message={
-            "You will need to create email and password then link to your account."
-          }
-          secondButtonText={"Link"}
-          onPressSecond={onLinkEmail}
-          firstButtonText={"Cancel"}
-          onPressFirst={cancelEmptyPasswordDialog}
-          onPressBackdrop={cancelEmptyPasswordDialog}
-        />
-
+        {/* Dialog from password */}
         <InfoDialog
           displayAlert={changePasswordVisible}
-          title={"Do you want to change your password?"}
+          title={"Do you need to change your password?"}
           message={
-            "You will need to verify your email and your current password before change the new password."
+            "You will get sent the code to verify your email and your current password before change the new password."
           }
           secondButtonText={"Change password"}
           onPressSecond={onChangePassword}
@@ -302,25 +221,11 @@ export const SettingsScreen = ({ navigation }) => {
           onPressBackdrop={cancelChangePasswordDialog}
         />
 
-        <AlertDialog
-          displayAlert={unlinkVisible}
-          title={"Are you sure you want to unlink?"}
-          message={
-            "If you unlink your email from your account, you " +
-            "will lose:\n\n\u25CF Able to login with email\n\u25CF Manage " +
-            "account security with email\n\u25CF Receive the messages from SFH in email"
-          }
-          positiveButtonText={"Unlink"}
-          negativeButtonText={"Cancel"}
-          onPressPositive={onUnlink}
-          onPressNegative={cancelUnlinkDialog}
-        />
-
         {/* NOTIFICATIONS */}
         <ListItemHeader>
           <Text variant="setting_title">Notifications</Text>
         </ListItemHeader>
-        <ListItem onPress={handleNotifications}>
+        <ListItem onPress={toggleNotificationsDialog}>
           <ListItemIcon name="bell-outline" />
           <ListItem.Content>
             <Text variant="setting_button">Push Notifications</Text>
@@ -330,6 +235,18 @@ export const SettingsScreen = ({ navigation }) => {
           </Text>
           <ListItem.Chevron />
         </ListItem>
+
+        {/* Dialog from notifications */}
+        <InfoDialog
+          displayAlert={notificationsVisible}
+          title={"Push Notifications Settings"}
+          message={"Need to change the push noifications?"}
+          secondButtonText={"Go to Settings"}
+          onPressSecond={onHandleNotifications}
+          firstButtonText={"Cancel"}
+          onPressFirst={cancelNotificationsDialog}
+          onPressBackdrop={cancelNotificationsDialog}
+        />
 
         {/* ABOUT */}
         <ListItemHeader>

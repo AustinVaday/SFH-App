@@ -78,7 +78,7 @@ export const IntroductionScreen = ({ route }) => {
         props: {
           message: error.message,
         },
-        visibilityTime: 2000,
+        visibilityTime: 3000,
         topOffset: 45,
       });
     }

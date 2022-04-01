@@ -37,7 +37,7 @@ export const IdentifyEditScreen = ({ route, navigation }) => {
     navigation.setParams({
       field: field,
       oldValue: currentUser.identify,
-      newValue: selectedItem.length === 0 ? "" : selectedItem[0],
+      newValue: selectedItem.length === 0 ? null : selectedItem[0],
     });
   }, [selectedItem]);
 

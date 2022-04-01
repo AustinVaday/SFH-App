@@ -13,7 +13,7 @@ import { userAuthStateListener } from "../../services/redux/actions/user.actions
 
 const Stack = createStackNavigator();
 
-export const Navigation = (props) => {
+export const Navigation = () => {
   const currentUserObj = useSelector((state) => state.user);
 
   const dispatch = useDispatch();

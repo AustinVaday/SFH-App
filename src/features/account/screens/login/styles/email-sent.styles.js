@@ -11,8 +11,8 @@ export const EmailSentBackground = styled.View`
 `;
 
 export const LoginButton = styled(Button).attrs((props) => ({
-    containerStyle: { width: "80%"},
-  buttonStyle: { height: 50,  },
+  containerStyle: { width: "80%" },
+  buttonStyle: { height: 50 },
   ViewComponent: LinearGradient,
   linearGradientProps: {
     colors: [props.theme.colors.button.primary, props.theme.colors.button.sky],
@@ -22,8 +22,8 @@ export const LoginButton = styled(Button).attrs((props) => ({
 }))``;
 
 export const CheckedIcon = styled(Icon).attrs((props) => ({
-    type: 'ionicon',
-    name: 'checkmark-circle',
-    color: props.theme.colors.icon.success,
-    size: 150
-  }))``;
+  type: "ionicon",
+  name: "checkmark-circle",
+  color: props.theme.colors.icon.success,
+  size: 150,
+}))``;

@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Header } from "react-native-elements";
 import {
   Ionicons,
   MaterialIcons,
@@ -11,31 +10,10 @@ export const ProfileBackground = styled.View`
   flex-grow: 1;
 `;
 
-export const Navbar = styled(Header).attrs((props) => ({
-  leftComponent: props.isGuest && {
-    icon: "arrow-back-ios",
-    type: "material-icon",
-    color: props.theme.colors.icon.black,
-    onPress: () => props.navigation.goBack(),
-  },
-  rightComponent: props.isOtherUser
-    ? {
-        icon: "dots-horizontal",
-        type: "material-community",
-        color: props.theme.colors.icon.black,
-        onPress: () => props.userSettings(),
-      }
-    : !props.isGuest && {
-        icon: "settings-outline",
-        type: "ionicon",
-        color: props.theme.colors.icon.black,
-        onPress: () => props.navigation.navigate("Settings"),
-      },
-  containerStyle: {
-    backgroundColor: props.theme.colors.bg.secondary,
-    position: "absolute",
-  },
-}))``;
+export const CurrentUserIconsContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
 
 export const TabIcon = styled(Ionicons).attrs({
   size: 25,
@@ -61,7 +39,7 @@ export const SettingsIcon = styled(Ionicons).attrs((props) => ({
   margin-right: 10px;
 `;
 
-export const UserSettingsIcon = styled(MaterialCommunityIcons).attrs(
+export const OtherUserSettingsIcon = styled(MaterialCommunityIcons).attrs(
   (props) => ({
     name: "dots-horizontal",
     size: 24,
@@ -69,4 +47,12 @@ export const UserSettingsIcon = styled(MaterialCommunityIcons).attrs(
   })
 )`
   margin-right: 10px;
+`;
+
+export const FavoriteIcon = styled(Ionicons).attrs((props) => ({
+  name: "bookmark-outline",
+  size: 24,
+  color: props.theme.colors.icon.black,
+}))`
+  margin-right: 16px;
 `;

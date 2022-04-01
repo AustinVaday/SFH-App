@@ -9,7 +9,7 @@ import { followUser, unfollowUser } from "../../../services/firebase/follows";
 
 import {
   StatsContainer,
-  PostsStatContainer,
+  WordsStatContainer,
   FollowingStatContainer,
   FollowersStatContainer,
   EditProfileButtonContainer,
@@ -32,12 +32,14 @@ import {
 
 export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
   const { currentUser } = useSelector((state) => state.user);
-  const followings = useSelector((state) => state.followings.currentUserFollowings);
+  const followings = useSelector(
+    (state) => state.followings.currentUserFollowings
+  );
 
   const [followingState, setFollowingState] = useState({
     isFollowing:
       followings.findIndex((followed) => followed.id === user.id) > -1,
-    followingsCount: user.followersCount,
+    followersCount: user.followersCount,
   });
 
   return (
@@ -58,10 +60,10 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
             {user.displayName}
           </Text>
           <StatsContainer>
-            <PostsStatContainer onPress={() => console.log("click posts")}>
-              <Text variant="profile_numbers">{user.postsCount}</Text>
-              <Text variant="profile_labels">Posts</Text>
-            </PostsStatContainer>
+            <WordsStatContainer>
+              <Text variant="profile_numbers">{user.wordsCount}</Text>
+              <Text variant="profile_labels">Words</Text>
+            </WordsStatContainer>
             <Text> | </Text>
             <FollowingStatContainer
               onPress={() => {
@@ -88,7 +90,7 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
               }}
             >
               <Text variant="profile_numbers">
-                {followingState.followingsCount}
+                {followingState.followersCount}
               </Text>
               <Text variant="profile_labels">Followers</Text>
             </FollowersStatContainer>
@@ -96,15 +98,15 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
         </ProfileStatsContainer>
       </TopInfoContainer>
 
-      {(user.identify !== "" || user.languages.length !== 0) && (
+      {(user.identify || user.languages.length !== 0) && (
         <InfoContainer pointerEvents="none">
-          {user.identify !== "" && (
+          {user.identify && (
             <IdentifyContainer>
               <EarIcon />
               <Text variant="profile_info">{user.identify}</Text>
             </IdentifyContainer>
           )}
-          {user.identify !== "" && user.languages.length !== 0 && (
+          {user.identify && user.languages.length !== 0 && (
             <Spacer size="large" position={"left"} />
           )}
           {user.languages.length !== 0 && (
@@ -116,9 +118,11 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
         </InfoContainer>
       )}
 
-      <BioContainer pointerEvents="none">
-        {user.bio !== "" && <Text variant="profile_bio">{user.bio}</Text>}
-      </BioContainer>
+      {user.bio && (
+        <BioContainer pointerEvents="none">
+          <Text variant="profile_bio">{user.bio}</Text>
+        </BioContainer>
+      )}
 
       {isOtherUser ? (
         <GuestUserButtonsSection>
@@ -128,7 +132,7 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
                 unfollowUser(user, currentUser);
                 setFollowingState({
                   isFollowing: false,
-                  followingsCount: followingState.followingsCount - 1,
+                  followersCount: followingState.followersCount - 1,
                 });
               }}
               title={<Text variant="profile_following_button">Following</Text>}
@@ -139,7 +143,7 @@ export const ProfileHeader = ({ user, isOtherUser, navigation }) => {
                 followUser(user, currentUser);
                 setFollowingState({
                   isFollowing: true,
-                  followingsCount: followingState.followingsCount + 1,
+                  followersCount: followingState.followersCount + 1,
                 });
               }}
               title={<Text variant="profile_follow_button">Follow</Text>}

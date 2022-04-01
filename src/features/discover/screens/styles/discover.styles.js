@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { Image, SearchBar, Icon } from "react-native-elements";
 import Modal from "react-native-modal";
+import LottieView from "lottie-react-native";
 
 export const DiscoverBackground = styled.View`
   flex: 1;
@@ -22,7 +23,7 @@ export const UserRow = styled(TouchableOpacity)`
   align-items: center;
 `;
 
-export const PostTitleRow = styled(TouchableOpacity)`
+export const WordTitleRow = styled(TouchableOpacity)`
   flex: 1;
   background-color: white;
   padding: 10px;
@@ -56,6 +57,9 @@ export const Searchbar = styled(SearchBar).attrs((props) => ({
     backgroundColor: props.theme.colors.bg.secondary,
     borderBottomWidth: 0,
     borderTopWidth: 0,
+    marginLeft: 12,
+    marginRight: 12,
+    zIndex: 999,
   },
   inputContainerStyle: {
     backgroundColor: props.theme.colors.input.lightergray,
@@ -63,3 +67,11 @@ export const Searchbar = styled(SearchBar).attrs((props) => ({
     height: 30,
   },
 }))``;
+
+export const RefreshLoadingIcon = styled(LottieView)`
+  position: absolute;
+  top: -5px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;

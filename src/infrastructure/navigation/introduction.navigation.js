@@ -1,4 +1,5 @@
 import React from "react";
+import { Platform } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -12,7 +13,7 @@ import { Text } from "../../components/typography/text.components";
 const IntroductionStack = createStackNavigator();
 
 export const IntroductionNavigator = (props) => (
-  <IntroductionStack.Navigator>
+  <IntroductionStack.Navigator screenOptions={{ headerMode: "screen" }}>
     <IntroductionStack.Screen
       name="CreateName"
       component={CreateNameScreen}
@@ -31,7 +32,9 @@ export const IntroductionNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerLeftContainerStyle: { paddingLeft: 10 },
+        headerLeftContainerStyle: {
+          paddingLeft: Platform.OS === "ios" ? 6 : 0,
+        },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Create Username</Text>,
         headerTintColor: colors.text.black,

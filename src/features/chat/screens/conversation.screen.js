@@ -8,7 +8,10 @@ import React, {
 } from "react";
 import { FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
-import * as Notifications from "expo-notifications";
+import {
+  addNotificationReceivedListener,
+  removeNotificationSubscription,
+} from "expo-notifications";
 import Toast from "react-native-toast-message";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,7 +31,6 @@ import {
   MessageInput,
   SendButton,
   ViewKeyboardAvoiding,
-  Navbar,
   ReportIcon,
   BlockIcon,
   ConversationSettingsIcon,
@@ -98,15 +100,14 @@ export const ConversationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
+    notificationListener.current = addNotificationReceivedListener(
+      (notification) => {
         Toast.hide();
-      });
+      }
+    );
 
     return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
+      removeNotificationSubscription(notificationListener.current);
     };
   }, []);
 

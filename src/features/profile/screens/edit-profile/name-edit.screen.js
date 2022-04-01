@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { DISPLAYNAME_MAX_LENGTH } from "../../../../utils/constants";
+
 import {
   NameEditBackground,
   TextInputContainer,
@@ -19,11 +21,11 @@ export const NameEditScreen = ({ route, navigation }) => {
       <TextInputContainer>
         <NameTextInput
           placeholder="Name"
-          maxLength={30}
+          maxLength={DISPLAYNAME_MAX_LENGTH}
           autoFocus={true}
           clearButtonMode="while-editing"
           value={text}
-          errorMessage={text.length + "/30"}
+          errorMessage={text.length + "/" + DISPLAYNAME_MAX_LENGTH}
           onChangeText={(value) => {
             setText(value);
           }}

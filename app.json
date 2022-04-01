@@ -26,7 +26,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/icons/adaptive-icon.png",
         "backgroundColor": "#FFF"
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan"
     },
     "plugins": [
       [

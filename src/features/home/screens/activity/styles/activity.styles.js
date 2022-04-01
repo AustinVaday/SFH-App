@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components/native";
 import { Pressable } from "react-native";
-import { Image } from "react-native-elements";
 
 const backRightBtn = css`
   align-items: center;
@@ -31,28 +30,8 @@ export const ActivityBackground = styled.View`
   background-color: ${(props) => props.theme.colors.bg.secondary};
 `;
 
-export const Loader = styled.View`
-  flex: 1;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-`;
-
 export const ListEmptyBackground = styled.View`
   flex: 1;
   align-items: center;
-`;
-
-export const ListEmptyContainer = styled.View`
-  padding-top: 25%;
-`;
-
-export const NotificationsEmptyImage = styled(Image)`
-  width: 300px;
-  height: 250px;
-`;
-
-export const LoaderImage = styled(Image)`
-  width: 100px;
-  height: 100px;
+  justify-content: center;
 `;

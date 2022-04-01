@@ -40,87 +40,191 @@ exports.removeFollow = functions.firestore
     });
 
 exports.addComment = functions.firestore
-    .document("/posts/{postId}/comments/{userId}")
+    .document("/words/{wordId}/comments/{userId}")
     .onCreate((snap, context) => {
       return db
-          .collection("posts")
-          .doc(context.params.postId)
+          .collection("words")
+          .doc(context.params.wordId)
           .update({
             commentsCount: admin.firestore.FieldValue.increment(1),
           });
     });
 
 exports.deleteComment = functions.firestore
-    .document("/posts/{postId}/comments/{userId}")
+    .document("/words/{wordId}/comments/{userId}")
     .onDelete((snap, context) => {
       return db
-          .collection("posts")
-          .doc(context.params.postId)
+          .collection("words")
+          .doc(context.params.wordId)
           .update({
             commentsCount: admin.firestore.FieldValue.increment(-1),
           });
     });
 
-exports.addVote = functions.firestore
-    .document("/posts/{postId}/votes/{uid}")
+exports.addWordVote = functions.firestore
+    .document("/word/{wordId}/votes/{uid}")
     .onCreate((snap, context) => {
       const userVote = snap.data();
 
       if (userVote.upvoted) {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(1),
             });
       } else {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(-1),
             });
       }
     });
 
-exports.updateVote = functions.firestore
-    .document("/posts/{postId}/votes/{uid}")
+exports.updateWordVote = functions.firestore
+    .document("/words/{wordId}/votes/{uid}")
     .onUpdate((snap, context) => {
       const newUserVote = snap.after.data();
 
       if (newUserVote.upvoted) {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(2),
             });
       } else {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(-2),
             });
       }
     });
 
-exports.deleteVote = functions.firestore
-    .document("/posts/{postId}/votes/{uid}")
+exports.deleteWordVote = functions.firestore
+    .document("/words/{wordId}/votes/{uid}")
     .onDelete((snap, context) => {
       const userVote = snap.data();
 
       if (userVote.upvoted) {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(-1),
             });
       } else {
         return db
-            .collection("posts")
-            .doc(context.params.postId)
+            .collection("words")
+            .doc(context.params.wordId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(1),
+            });
+      }
+    });
+
+exports.addWordCount = functions.firestore
+    .document("/words/{wordId}")
+    .onCreate((snap, context) => {
+      const wordData = snap.data();
+
+      return db
+          .collection("users")
+          .doc(wordData.creator)
+          .update({
+            wordsCount: admin.firestore.FieldValue.increment(1),
+          });
+    });
+
+exports.deleteWordCount = functions.firestore
+    .document("/words/{wordId}")
+    .onDelete((snap, context) => {
+      const wordData = snap.data();
+
+      return db
+          .collection("users")
+          .doc(wordData.creator)
+          .update({
+            wordsCount: admin.firestore.FieldValue.increment(-1),
+          });
+    });
+
+exports.addCommentVote = functions.firestore
+    .document("/words/{wordId}/comments/{commentId}/votes/{uid}")
+    .onCreate((snap, context) => {
+      const userVote = snap.data();
+
+      if (userVote.upvoted) {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(1),
+            });
+      } else {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-1),
+            });
+      }
+    });
+
+exports.updateCommentVote = functions.firestore
+    .document("/words/{wordId}/comments/{commentId}/votes/{uid}")
+    .onUpdate((snap, context) => {
+      const newUserVote = snap.after.data();
+
+      if (newUserVote.upvoted) {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(2),
+            });
+      } else {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-2),
+            });
+      }
+    });
+
+exports.deleteCommentVote = functions.firestore
+    .document("/words/{wordId}/comments/{commentId}/votes/{uid}")
+    .onDelete((snap, context) => {
+      const userVote = snap.data();
+
+      if (userVote.upvoted) {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
+            .update({
+              votesCount: admin.firestore.FieldValue.increment(-1),
+            });
+      } else {
+        return db
+            .collection("words")
+            .doc(context.params.wordId)
+            .collection("comments")
+            .doc(context.params.commentId)
             .update({
               votesCount: admin.firestore.FieldValue.increment(1),
             });

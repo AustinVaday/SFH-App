@@ -9,6 +9,14 @@ import useLoader from "../../../../services/hooks/loader/useLoader";
 import { changePassword } from "../../../../services/firebase/auth";
 
 import {
+  VALIDATE_PASSWORD_LETTER,
+  VALIDATE_PASSWORD_NUMBER,
+  VALIDATE_PASSWORD_SPECIAL_CHAR,
+  VALIDATE_PASSWORD_ALL,
+  PASSWORD_MAX_LENGTH,
+} from "../../../../utils/constants";
+
+import {
   ChangePasswordBackground,
   NewPasswordInput,
   FormSection,
@@ -23,19 +31,14 @@ import {
   ItemText,
 } from "./styles/change-password.styles";
 
-const validationLetter = /^(?=.*[a-zA-Z])/;
-const validationNumber = /^(?=.*[0-9])/;
-const validationSpecialChar = /^(?=.*[!@+=<>~,.:;()\/\-\?\|\\\_\[\]#\$%\^&\*])/;
-const validationAll = /^[a-zA-Z0-9!@+=<>~,.:;()\/\-\?\|\\\_\[\]#\$%\^&\*]+$/;
-
 const validationSchema = object().shape({
   newPassword: string()
     .label("New Password")
     .required("Please enter your password")
-    .matches(validationAll, "Invalid")
-    .matches(validationLetter)
-    .matches(validationNumber)
-    .matches(validationSpecialChar)
+    .matches(VALIDATE_PASSWORD_ALL, "Invalid")
+    .matches(VALIDATE_PASSWORD_LETTER)
+    .matches(VALIDATE_PASSWORD_NUMBER)
+    .matches(VALIDATE_PASSWORD_SPECIAL_CHAR)
     .min(8, "Password should be at least 8 characters"),
 });
 
@@ -50,8 +53,11 @@ export const ChangePasswordScreen = ({ navigation, route }) => {
   const handleSubmit = (values, errors) => {
     const { newPassword } = values;
 
-    if (!(newPassword !== "" && errors.newPassword === undefined)) {
-      console.log("return");
+    // When user clicks return type in keyboard, checks if any empty values or errors.
+    // If it does, it returns nothing.
+    if (
+      !(newPassword !== "" && errors.newPassword === undefined && error === "")
+    ) {
       return;
     } else if (newPassword === currentPassword) {
       setError(
@@ -80,7 +86,7 @@ export const ChangePasswordScreen = ({ navigation, route }) => {
               secureTextEntry={hideNewPassword}
               clearTextOnFocus={true}
               value={values.newPassword}
-              maxLength={30}
+              maxLength={PASSWORD_MAX_LENGTH}
               autoFocus={true}
               blurOnSubmit={false}
               onChangeText={(newText) => {
@@ -106,7 +112,7 @@ export const ChangePasswordScreen = ({ navigation, route }) => {
                       }}
                     />
                   )}
-                  <Spacer size="medium" position="left" />
+                  <Spacer size="large" position="left" />
                   <SeeIcon
                     hide={hideNewPassword}
                     onPress={() => {
@@ -131,23 +137,35 @@ export const ChangePasswordScreen = ({ navigation, route }) => {
             <Text variant="pw_requirement_title">Your password requires:</Text>
             <RequirementsList>
               <RequirementRow>
-                <MarkedIcon check={validationLetter.test(values.newPassword)} />
-                <ItemText check={validationLetter.test(values.newPassword)}>
+                <MarkedIcon
+                  check={VALIDATE_PASSWORD_LETTER.test(values.newPassword)}
+                />
+                <ItemText
+                  check={VALIDATE_PASSWORD_LETTER.test(values.newPassword)}
+                >
                   At least one letter
                 </ItemText>
               </RequirementRow>
               <RequirementRow>
-                <MarkedIcon check={validationNumber.test(values.newPassword)} />
-                <ItemText check={validationNumber.test(values.newPassword)}>
+                <MarkedIcon
+                  check={VALIDATE_PASSWORD_NUMBER.test(values.newPassword)}
+                />
+                <ItemText
+                  check={VALIDATE_PASSWORD_NUMBER.test(values.newPassword)}
+                >
                   At least one number
                 </ItemText>
               </RequirementRow>
               <RequirementRow>
                 <MarkedIcon
-                  check={validationSpecialChar.test(values.newPassword)}
+                  check={VALIDATE_PASSWORD_SPECIAL_CHAR.test(
+                    values.newPassword
+                  )}
                 />
                 <ItemText
-                  check={validationSpecialChar.test(values.newPassword)}
+                  check={VALIDATE_PASSWORD_SPECIAL_CHAR.test(
+                    values.newPassword
+                  )}
                 >
                   At least one special character
                 </ItemText>

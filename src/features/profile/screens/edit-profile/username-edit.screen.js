@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { USERNAME_MAX_LENGTH } from "../../../../utils/constants";
+
 import {
   UsernameEditBackground,
   TextInputContainer,
@@ -19,10 +21,10 @@ export const UsernameEditScreen = ({ route, navigation }) => {
       <TextInputContainer>
         <UsernameTextInput
           placeholder="Username"
-          maxLength={24}
+          maxLength={USERNAME_MAX_LENGTH}
           autoFocus={true}
           clearButtonMode="while-editing"
-          errorMessage={text.length + "/24"}
+          errorMessage={text.length + "/" + USERNAME_MAX_LENGTH}
           value={text}
           onChangeText={(value) => setText(value)}
         />

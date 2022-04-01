@@ -7,22 +7,20 @@ import {
   StatusBar,
 } from "react-native";
 import { Camera } from "expo-camera";
-import { Audio } from "expo-av";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import { openURL } from "expo-linking";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useIsFocused } from "@react-navigation/core";
 
 import { colors } from "../../../infrastructure/theme/colors";
 import { Text } from "../../../components/typography/text.components";
 import { SafeArea } from "../../../components/utilities/safe-area.components";
-
-import { useIsFocused } from "@react-navigation/core";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
 import {
   CameraContainer,
   VideoCamera,
   TopBarContainer,
-  NoImages,
   ProgressBarContainer,
   CameraControlButtonsContainer,
   CloseIcon,
@@ -32,22 +30,25 @@ import {
   FlashIcon,
   BottomBarContainer,
   LibraryIcon,
-  Spacer,
+  EmptySpacer,
   RecordIcon,
   AnimationWrapper,
   AllowCameraAccessSection,
   EnablePermissionsButton,
+  EnablePermissionsButtonContainer,
+  CheckIcon,
 } from "./styles/camera.styles";
 
 export const CameraScreen = ({ navigation }) => {
   const [hasCameraPermissions, setHasCameraPermissions] = useState(false);
-  const [hasAudioPermissions, setHasAudioPermissions] = useState(false);
+  const [hasMicrophonePermissions, setHasMicrophonePermissions] =
+    useState(false);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [cameraFlash, setCameraFlash] = useState(
     Camera.Constants.FlashMode.off
   );
   const [cameraIsRecording, setCameraIsRecording] = useState(false);
-  
+
   const cameraRef = useRef(null);
   const recordAnimation = useRef(null);
   const progressBar = useRef(new Animated.Value(0.01));
@@ -57,11 +58,11 @@ export const CameraScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      const cameraStatus = await Camera.requestPermissionsAsync();
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setHasCameraPermissions(cameraStatus.status == "granted");
 
-      const audioStatus = await Audio.requestPermissionsAsync();
-      setHasAudioPermissions(audioStatus.status == "granted");
+      const microphoneStatus = await Camera.requestMicrophonePermissionsAsync();
+      setHasMicrophonePermissions(microphoneStatus.status == "granted");
     })();
   }, []);
 
@@ -117,6 +118,7 @@ export const CameraScreen = ({ navigation }) => {
           if (videoRecordPromise) {
             const data = await videoRecordPromise;
             const source = data.uri;
+
             await generateThumbnail(source).then((sourceThumb) => {
               recordAnimation.current?.reset();
               progressBar.current.stopAnimation();
@@ -137,15 +139,16 @@ export const CameraScreen = ({ navigation }) => {
   const generateThumbnail = async (source) => {
     try {
       const { uri } = await getThumbnailAsync(source, {
-        time: 5000,
+        quality: 0.1,
       });
+
       return uri;
     } catch (error) {
       console.warn(error);
     }
   };
 
-  if (hasCameraPermissions === false || hasAudioPermissions === false) {
+  if (hasCameraPermissions === false || hasMicrophonePermissions === false) {
     return (
       <SafeArea>
         <CloseIcon
@@ -155,17 +158,32 @@ export const CameraScreen = ({ navigation }) => {
           }}
         />
         <AllowCameraAccessSection>
-          <NoImages source={require("../../../assets/images/no-images.png")} />
           <Text variant="permissions_title">
             Please Allow Access to Your Camera
           </Text>
           <Text variant="permissions_message">
-            Grant camera access to shoot a video
+            Grant camera and microphone access to shoot a video
           </Text>
-          <EnablePermissionsButton
-            title="Enable Camera Access"
-            onPress={() => openURL("app-settings:")}
-          />
+
+          <Spacer size="huge" />
+
+          <EnablePermissionsButtonContainer>
+            <EnablePermissionsButton
+              title="Enable Camera Access"
+              onPress={() => openURL("app-settings:")}
+              disabled={hasCameraPermissions}
+            />
+            {hasCameraPermissions && <CheckIcon />}
+          </EnablePermissionsButtonContainer>
+
+          <EnablePermissionsButtonContainer>
+            <EnablePermissionsButton
+              title="Enable Microphone Access"
+              onPress={() => openURL("app-settings:")}
+              disabled={hasMicrophonePermissions}
+            />
+            {hasMicrophonePermissions && <CheckIcon />}
+          </EnablePermissionsButtonContainer>
         </AllowCameraAccessSection>
       </SafeArea>
     );
@@ -240,7 +258,7 @@ export const CameraScreen = ({ navigation }) => {
             />
           </Pressable>
         </IconContainer>
-        <Spacer />
+        <EmptySpacer />
       </BottomBarContainer>
     </CameraContainer>
   );

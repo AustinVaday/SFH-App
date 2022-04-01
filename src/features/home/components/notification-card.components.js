@@ -7,7 +7,7 @@ import { Text } from "../../../components/typography/text.components";
 import { timeDifference } from "../../../components/utilities/time-difference.components";
 
 import { useUser } from "../../../services/hooks/useUser";
-import { usePost } from "../../../services/hooks/usePost";
+import { useWord } from "../../../services/hooks/useWord";
 
 import { PostImage, FollowButton } from "./styles/notification-card.styles";
 
@@ -25,21 +25,21 @@ export const NotificationCard = ({
 
   const typeOfNotification = (type) => {
     if (type === "comment") {
-      const post = usePost(notification.postId).data;
+      const word = useWord(notification.wordId).data;
 
       return (
         <PostImage
-          source={{ uri: post?.videoThumbnail }}
-          onPress={() => console.log("click view post")}
+          source={{ uri: word?.videoThumbnail }}
+          onPress={() => console.log("click view word")}
         />
       );
     } else if (type === "upvote") {
-      const post = usePost(notification.postId).data;
+      const word = useWord(notification.wordId).data;
 
       return (
         <PostImage
-          source={{ uri: post?.videoThumbnail }}
-          onPress={() => console.log("click view post")}
+          source={{ uri: word?.videoThumbnail }}
+          onPress={() => console.log("click view word")}
         />
       );
     } else if (type === "follow") {
@@ -54,9 +54,9 @@ export const NotificationCard = ({
 
   const notificationMessage = (type) => {
     if (type === "comment") {
-      return <Text variant="activity_message">commented on your post.</Text>;
+      return <Text variant="activity_message">commented on your word.</Text>;
     } else if (type === "upvote") {
-      return <Text variant="activity_message">upvoted on your post.</Text>;
+      return <Text variant="activity_message">upvoted on your word.</Text>;
     } else if (type === "follow") {
       return <Text variant="activity_message">followed you.</Text>;
     }
@@ -113,9 +113,9 @@ export const NotificationCard = ({
           <Text variant="activity_username">{user?.username}</Text>
           {notificationMessage(notification.type)}
           <Text variant="activity_date">
-            {notification.timestamp === null
+            {notification.creation === null
               ? "now"
-              : timeDifference(new Date(), notification.timestamp.toDate())}
+              : timeDifference(new Date(), notification.creation.toDate())}
           </Text>
         </ListItem.Content>
         {typeOfNotification(notification.type)}

@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
-import { Pressable } from "react-native";
-import { Icon, Button, Header, Image, CheckBox } from "react-native-elements";
+import { Pressable, Platform } from "react-native";
+import { Icon, Button, Image, CheckBox } from "react-native-elements";
 import Modal from "react-native-modal";
 import { Video } from "expo-av";
 
@@ -55,6 +55,9 @@ export const CheckCircle = styled(CheckBox).attrs((props) => ({
 
 export const NextButton = styled(Button).attrs((props) => ({
   type: "solid",
+  containerStyle: {
+    paddingRight: Platform.OS === "android" ? 12 : 0,
+  },
   buttonStyle: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -72,25 +75,7 @@ export const AllowPhotosAccessSection = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  padding: ${(props) => props.theme.space[3]};
 `;
-
-export const NavBar = styled(Header).attrs((props) => ({
-  leftComponent: {
-    size: 30,
-    icon: "close",
-    type: "ionicons",
-    color: props.theme.colors.icon.black,
-    onPress: () => props.nav.goBack(),
-  },
-  leftContainerStyle: { justifyContent: "center" },
-  centerContainerStyle: { justifyContent: "center" },
-  rightContainerStyle: { justifyContent: "center" },
-  containerStyle: {
-    backgroundColor: props.theme.colors.bg.secondary,
-  },
-  barStyle: "light-content",
-}))``;
 
 export const PlayIcon = styled(Icon).attrs((props) => ({
   size: 85,
@@ -129,7 +114,6 @@ export const CloseIcon = styled(Icon).attrs((props) => ({
   color: props.theme.colors.icon.black,
 }))`
   align-items: flex-start;
-  padding-left: 8px;
 `;
 
 export const EnablePermissionsButton = styled(Button).attrs((props) => ({
@@ -140,15 +124,8 @@ export const EnablePermissionsButton = styled(Button).attrs((props) => ({
 export const ListEmptyBackground = styled.View`
   flex: 1;
   align-items: center;
-`;
-
-export const ListEmptyContainer = styled.View`
-  padding-top: 25%;
-`;
-
-export const VideosEmptyImage = styled(Image)`
-  width: 300px;
-  height: 250px;
+  justify-content: center;
+  padding: 20px;
 `;
 
 export const BackIcon = styled(Icon).attrs((props) => ({

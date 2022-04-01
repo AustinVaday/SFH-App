@@ -15,7 +15,7 @@ export const fetchFollowings = () => (dispatch) =>
             const id = doc.id;
             return { id, ...data };
           });
-          console.log("following updateddddddd");
+
           dispatch({
             type: followingsAction.FETCH_CURRENT_USER_FOLLOWINGS_SUCCESS,
             followings,

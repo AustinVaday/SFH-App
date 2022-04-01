@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Image } from "react-native-elements";
+import LottieView from "lottie-react-native";
 
 export const FeedBackground = styled.View`
   flex: 1;
@@ -9,17 +9,18 @@ export const FeedBackground = styled.View`
 export const ListEmptyBackground = styled.View`
   flex: 1;
   align-items: center;
+  justify-content: center;
+  padding: ${(props) => props.theme.space[3]};
 `;
 
-export const ListEmptyContainer = styled.View`
-  padding-top: 25%;
-`;
-
-export const PostCardContainer = styled.View`
+export const CardContainer = styled.View`
   flex: 1;
+  background-color: black;
 `;
 
-export const PostsEmptyImage = styled(Image)`
-  width: 300px;
-  height: 250px;
+export const RefreshLoadingIcon = styled(LottieView)`
+  position: absolute;
+  top: -5px;
+  left: 0;
+  right: 0;
 `;

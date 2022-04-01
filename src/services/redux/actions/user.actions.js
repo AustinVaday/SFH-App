@@ -2,9 +2,8 @@ import { firebase } from "../../../utils/firebase";
 
 import { userAction } from "../constants";
 
-export const userAuthStateListener = () => (dispatch) => {
+export const userAuthStateListener = () => async (dispatch) => {
   firebase.auth().onAuthStateChanged((user) => {
-    console.log("on auth state changed...");
     if (user) {
       dispatch(fetchCurrentUserData(user.uid));
     } else {

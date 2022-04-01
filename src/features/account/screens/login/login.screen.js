@@ -32,6 +32,8 @@ export const LoginScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values) => {
+    // When user clicks return type in keyboard, checks if any empty values or errors.
+    // If it does, it returns nothing.
     if (values.email === "" && values.password === "") {
       return;
     }
@@ -118,7 +120,7 @@ export const LoginScreen = ({ navigation }) => {
                       }}
                     />
                   )}
-                  <Spacer size="medium" position="left" />
+                  <Spacer size="large" position="left" />
                   <SeeIcon
                     hidePassword={hidePassword}
                     onPress={() => {
@@ -132,7 +134,7 @@ export const LoginScreen = ({ navigation }) => {
                 </RightIconsInputContainer>
               }
             />
-            
+
             <Spacer size="small" />
 
             {error !== "" && <Text variant="input_invalid">{error}</Text>}

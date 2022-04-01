@@ -4,11 +4,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BigList from "react-native-big-list";
 
 import { Text } from "../../../../components/typography/text.components";
-import { SmallPost } from "../../components/small-post.components";
+import { SmallPost } from "../../components/card.components";
 
 import { useSelector } from "react-redux";
 import { queryUsersAndKeywords } from "../../../../services/firebase/users";
-import { queryPostsByPostTitle } from "../../../../services/firebase/posts";
+import { queryWordsByWordTitle } from "../../../../services/firebase/words";
 
 import {
   ResultsSearchBackground,
@@ -37,7 +37,7 @@ export const ResultsSearchScreen = ({ navigation, route }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
-    queryPostsByPostTitle(keyword).then(setData);
+    queryWordsByWordTitle(keyword).then(setData);
   }, []);
 
   const renderSearchResultItem = ({ item }) => {
@@ -70,7 +70,7 @@ export const ResultsSearchScreen = ({ navigation, route }) => {
   };
 
   const renderVideoThumbnailItem = ({ item }) => {
-    return <SmallPost post={item} />;
+    return <SmallPost word={item} />;
   };
 
   return (

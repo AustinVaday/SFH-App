@@ -41,7 +41,11 @@ export const EditProfileScreen = ({ navigation }) => {
           <ListItem.Content>
             <Text variant="editprofile_label">Identity</Text>
           </ListItem.Content>
-          <Text variant="editprofile_label">{currentUser.identify}</Text>
+          {currentUser.identify ? (
+            <Text variant="editprofile_label">{currentUser.identify}</Text>
+          ) : (
+            <Text variant="editprofile_empty_label">Add an identify</Text>
+          )}
           <ListItem.Chevron />
         </ListItem>
         <ListItem
@@ -55,7 +59,11 @@ export const EditProfileScreen = ({ navigation }) => {
           <ListItem.Content>
             <Text variant="editprofile_label">Languages</Text>
           </ListItem.Content>
-          <Text variant="editprofile_label">{currentUser.languages}</Text>
+          {currentUser.languages.length !== 0 ? (
+            <Text variant="editprofile_label">{currentUser.languages[0]}</Text>
+          ) : (
+            <Text variant="editprofile_empty_label">Add a language</Text>
+          )}
           <ListItem.Chevron />
         </ListItem>
         <ListItem
@@ -69,9 +77,11 @@ export const EditProfileScreen = ({ navigation }) => {
           <ListItem.Content>
             <Text variant="editprofile_label">Bio</Text>
           </ListItem.Content>
-          <Text variant="editprofile_label">
-            {currentUser.bio !== "" ? "..." : "Add a bio"}
-          </Text>
+          {currentUser.bio ? (
+            <Text variant="editprofile_label">...</Text>
+          ) : (
+            <Text variant="editprofile_empty_label">Add a bio</Text>
+          )}
           <ListItem.Chevron />
         </ListItem>
       </ScrollView>

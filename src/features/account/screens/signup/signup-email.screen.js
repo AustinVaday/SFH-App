@@ -24,7 +24,7 @@ export const SignupEmailScreen = ({ navigation, route }) => {
   const [error, setError] = useState("");
 
   const handleSubmit = (values, errors) => {
-    if (!(values.email !== "" && errors.email === undefined)) {
+    if (!(values.email !== "" && errors.email === undefined && error === "")) {
       return;
     }
 
@@ -39,17 +39,9 @@ export const SignupEmailScreen = ({ navigation, route }) => {
           setError("The email address is already registered.");
           return;
         } else {
-          if (route.name === "SignupEmail") {
-            console.log("signupemail")
-            navigation.navigate("SignupPassword", {
-              email: values.email,
-            });
-          } else {
-            console.log("create password")
-            navigation.navigate("CreatePassword", {
-              email: values.email,
-            });
-          }
+          navigation.navigate("SignupPassword", {
+            email: values.email,
+          });
         }
       });
   };

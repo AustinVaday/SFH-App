@@ -22,7 +22,9 @@ export const setNotificationService = () => async (dispatch, getState) => {
     let finalStatus = existingStatus;
 
     if (existingStatus.status !== "granted") {
+      console.log("request permission notification")
       const status = await requestPermissionsAsync();
+      console.log("status notification: " + JSON.stringify(status))
       finalStatus = status;
     }
 
@@ -80,7 +82,7 @@ export const fetchNotifications = (setLoading) => (dispatch) =>
         .collection("activities")
         .doc(firebase.auth().currentUser.uid)
         .collection("notifications")
-        .orderBy("timestamp", "desc")
+        .orderBy("creation", "desc")
         .onSnapshot((snapshot) => {
           let notifications = snapshot.docs.map((doc) => {
             const data = doc.data();

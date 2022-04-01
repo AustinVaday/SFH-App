@@ -14,9 +14,9 @@ import {
 } from "react-native-collapsible-tab-view";
 import { ListItem } from "react-native-elements";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { StatusBar } from "expo-status-bar";
 
-import { PostsTab } from "../components/posts-tab.components";
-import { SavesTab } from "../components/saves-tab.components";
+import { WordsTab } from "../components/words-tab.components";
 import { ProfileHeader } from "../components/profile-header.components";
 import { Text } from "../../../components/typography/text.components";
 import { colors } from "../../../infrastructure/theme/colors";
@@ -26,13 +26,14 @@ import { useSelector } from "react-redux";
 
 import {
   ProfileBackground,
+  CurrentUserIconsContainer,
   ReportIcon,
   BlockIcon,
   SettingsIcon,
-  UserSettingsIcon,
+  OtherUserSettingsIcon,
   TabIcon,
+  FavoriteIcon,
 } from "./styles/profile.styles";
-
 
 const { width } = Dimensions.get("window");
 
@@ -51,12 +52,15 @@ export const ProfileScreen = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () =>
         isOtherUser ? (
-          <UserSettingsIcon
+          <OtherUserSettingsIcon
             onPress={() => userSettingsSheetRef.current?.present()}
           />
         ) : (
           !isGuest && (
-            <SettingsIcon onPress={() => navigation.navigate("Settings")} />
+            <CurrentUserIconsContainer>
+              <FavoriteIcon onPress={() => navigation.navigate("Favorites")} />
+              <SettingsIcon onPress={() => navigation.navigate("Settings")} />
+            </CurrentUserIconsContainer>
           )
         ),
       headerTitle: () => (
@@ -81,7 +85,7 @@ export const ProfileScreen = ({ route, navigation }) => {
           }
         });
     }
-  }, [currentUser]);
+  }, []);
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -138,29 +142,35 @@ export const ProfileScreen = ({ route, navigation }) => {
             {...props}
             activeColor={colors.icon.primary}
             inactiveColor={colors.icon.lightgray}
-            indicatorStyle={{ width: width / 4, left: width / 8 }}
-            TabItemComponent={(itemProps) => (
-              <MaterialTabItem
-                {...itemProps}
-                label={<TabIcon name={itemProps.label} />}
-              />
-            )}
+            indicatorStyle={{ backgroundColor: "transparent" }}
+            // ***** SAVE THIS *****
+            // indicatorStyle={{ width: width / 4, left: width / 8 }}
+            // TabItemComponent={(itemProps) => (
+            //   <MaterialTabItem
+            //     {...itemProps}
+            //     label={<TabIcon name={itemProps.label} />}
+            //   />
+            // )}
           />
         )}
         lazy={true}
         cancelLazyFadeIn={true}
-        initialTabName="Posts"
+        initialTabName="Words"
         headerContainerStyle={{
           shadowOpacity: 0,
           borderBottomWidth: 0.2,
           borderColor: colors.ui.lightergray,
         }}
       >
-        <Tabs.Tab name="Posts" label="file-tray-full-outline">
-          <PostsTab user={userState.user} isOtherUser={isOtherUser} navigation={navigation} />
-        </Tabs.Tab>
-        <Tabs.Tab name="Saves" label="bookmark-outline">
-          <SavesTab isOtherUser={isOtherUser} navigation={navigation} />
+        <Tabs.Tab
+          name="Words"
+          label={<Text variant="profile_tab_label">WORDS</Text>}
+        >
+          <WordsTab
+            user={userState.user}
+            isOtherUser={isOtherUser}
+            navigation={navigation}
+          />
         </Tabs.Tab>
       </Tabs.Container>
 
@@ -175,6 +185,7 @@ export const ProfileScreen = ({ route, navigation }) => {
         android_keyboardInputMode="adjustResize"
         children={renderUserSettings}
       />
+      <StatusBar style="auto" />
     </ProfileBackground>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { Platform } from "react-native";
 import {
   requestPermissionsAsync,
   getAssetsAsync,
@@ -13,13 +14,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SafeArea } from "../../../components/utilities/safe-area.components";
 import { Text } from "../../../components/typography/text.components";
+import { Spacer } from "../../../components/spacer/spacer.components";
 
 import {
   CloseIcon,
   EnablePermissionsButton,
   NextButton,
   VideoImage,
-  NavBar,
   ImagePressable,
   LibraryBackground,
   DurationTextContainer,
@@ -27,8 +28,6 @@ import {
   CheckCircleContainer,
   AllowPhotosAccessSection,
   ListEmptyBackground,
-  ListEmptyContainer,
-  VideosEmptyImage,
   BackIcon,
   ModalVideo,
   ModalScreen,
@@ -48,6 +47,25 @@ export const LibraryScreen = ({ navigation }) => {
   const toggleOverlay = () => {
     setVideoModal({ visible: !videoModal.visible });
   };
+
+  useLayoutEffect(() => {
+    if (!galleryVideos.permissionStatus) {
+      navigation.setOptions({
+        headerShown: false,
+      });
+    } else {
+      navigation.setOptions({
+        headerShown: true,
+        headerRight: () => (
+          <NextButton
+            title="Next"
+            onPress={handleSubmit}
+            selected={selectedVideo.uri !== ""}
+          />
+        ),
+      });
+    }
+  }, [navigation, selectedVideo, galleryVideos.permissionStatus]);
 
   useEffect(() => {
     (async () => {
@@ -77,10 +95,13 @@ export const LibraryScreen = ({ navigation }) => {
   }, []);
 
   const handleSubmit = async () => {
-    let assetLocalUri = await getAssetInfoAsync(selectedVideo.id);
-    let sourceThumb = await generateThumbnail(assetLocalUri.localUri);
-    navigation.navigate("UploadPost", {
-      source: assetLocalUri.localUri,
+    let assetUri = await getAssetInfoAsync(selectedVideo.id);
+    let sourceThumb = await generateThumbnail(
+      Platform.OS === "android" ? assetUri.uri : assetUri.localUri
+    );
+
+    navigation.navigate("UploadWord", {
+      source: Platform.OS === "android" ? assetUri.uri : assetUri.localUri,
       sourceThumb,
     });
   };
@@ -104,12 +125,22 @@ export const LibraryScreen = ({ navigation }) => {
     }
   };
 
+  const onPressDisplayVideo = async (id) => {
+    let userGalleryMedia = await getAssetInfoAsync(id);
+
+    setVideoModal({
+      visible: true,
+      uri:
+        Platform.OS === "android"
+          ? userGalleryMedia.uri
+          : userGalleryMedia.localUri,
+    });
+  };
+
   const renderItem = ({ item, index }) => (
     <ImagePressable
       key={item}
-      onPress={() => {
-        setVideoModal({ visible: true, uri: item.uri });
-      }}
+      onPress={() => onPressDisplayVideo(item.id)}
       index={index}
     >
       <VideoImage
@@ -134,7 +165,7 @@ export const LibraryScreen = ({ navigation }) => {
 
   if (galleryVideos.permissionStatus === false) {
     return (
-      <SafeArea>
+      <SafeArea style={{ padding: 16 }}>
         <CloseIcon
           onPress={() => {
             navigation.goBack();
@@ -147,37 +178,31 @@ export const LibraryScreen = ({ navigation }) => {
           <Text variant="permissions_message">
             Grant photos access to select your video
           </Text>
+
+          <Spacer size="gigantic" />
+
           <EnablePermissionsButton
             title="Enable Photos Access"
             onPress={() => openURL("app-settings:")}
           />
         </AllowPhotosAccessSection>
+
+        <StatusBar style="auto" />
       </SafeArea>
     );
   }
 
   return (
     <LibraryBackground>
-      <NavBar
-        nav={navigation}
-        rightComponent={
-          <NextButton
-            title="Next"
-            onPress={handleSubmit}
-            selected={selectedVideo.uri !== ""}
-          />
-        }
-        centerComponent={<Text variant="navbar_title">Videos</Text>}
-      />
-
       {galleryVideos.videos.length === 0 ? (
         <ListEmptyBackground>
-          <ListEmptyContainer>
-            <VideosEmptyImage
-              source={require("../../../assets/images/no-images.png")}
-            />
-            <Text variant="list_empty_title">No Videos Available </Text>
-          </ListEmptyContainer>
+          <Text variant="list_empty_title">
+            You have no videos under 10 seconds.
+          </Text>
+          <Spacer size="large" />
+          <Text variant="list_empty_message">
+            Record under 10 seconds and your videos will appear here.
+          </Text>
         </ListEmptyBackground>
       ) : (
         <BigList
@@ -197,11 +222,9 @@ export const LibraryScreen = ({ navigation }) => {
         swipeThreshold={200}
       >
         <ModalVideo
-          resizeMode="cover"
+          resizeMode="stretch"
           isLooping={true}
           shouldPlay={true}
-          onReadyForDisplay={() => console.log("ready")}
-          onLoadStart={() => console.log("start")}
           source={{ uri: videoModal.uri }}
         />
         <BackIconContainer style={{ top: insets.top + 10 }}>

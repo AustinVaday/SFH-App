@@ -3,7 +3,7 @@ import { ListItem } from "react-native-elements";
 
 import { Text } from "../../../components/typography/text.components";
 import { Spacer } from "../../../components/spacer/spacer.components";
-import { FollowsListLoader } from "./follows-list-loader.components";
+import { LoadingIndicator } from "../../../components/loading/loading-indicator.components";
 
 import { useSelector } from "react-redux";
 import { firebase } from "../../../utils/firebase";
@@ -16,6 +16,7 @@ import {
   FollowButton,
   FollowingButton,
   UserImage,
+  LoadingIndicatorContainer,
 } from "./styles/following-tab.styles";
 
 export const FollowingTab = ({ uid, isOtherUser, navigation }) => {
@@ -106,7 +107,9 @@ export const FollowingTab = ({ uid, isOtherUser, navigation }) => {
   return (
     <>
       {followingsState.loading ? (
-        <FollowsListLoader />
+        <LoadingIndicatorContainer>
+          <LoadingIndicator />
+        </LoadingIndicatorContainer>
       ) : (
         <FollowingList
           data={followingsState.followings}
@@ -114,6 +117,11 @@ export const FollowingTab = ({ uid, isOtherUser, navigation }) => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           listKey={(item) => item.id}
+          bounces={
+            isOtherUser
+              ? followingsState.followings.length !== 0
+              : followings.length !== 0
+          }
         />
       )}
     </>

@@ -10,7 +10,6 @@ import {
 } from "./info-dialog.styles";
 
 export default InfoDialog = (props) => {
-  console.log(props.thirdButtonText);
   const onFirstButtonPress = () => {
     props.onPressFirst();
   };

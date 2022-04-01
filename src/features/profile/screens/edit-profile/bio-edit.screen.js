@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Toast from "react-native-toast-message";
+
+import { BIO_MAX_LENGTH, BIO_ROW_LIMIT } from "../../../../utils/constants";
 
 import {
   BioEditBackground,
@@ -8,10 +11,14 @@ import {
 
 export const BioEditScreen = ({ route, navigation }) => {
   const { field, bio } = route.params;
-  const [text, setText] = useState(bio);
+  const [text, setText] = useState(bio ? bio : "");
 
   useEffect(() => {
-    navigation.setParams({ field: field, value: text });
+    navigation.setParams({
+      field: field,
+      oldValue: bio ? bio : "",
+      newValue: text === "" ? null : text,
+    });
   }, [text]);
 
   return (
@@ -19,18 +26,25 @@ export const BioEditScreen = ({ route, navigation }) => {
       <TextInputContainer>
         <BioTextInput
           placeholder="Bio"
-          maxLength={80}
+          maxLength={BIO_MAX_LENGTH}
           multiline={true}
-          numberOfLines={4}
+          numberOfLines={BIO_ROW_LIMIT}
           scrollEnabled={false}
           autoFocus={true}
           value={text}
-          errorMessage={text.length + "/80"}
+          errorMessage={text.length + "/" + BIO_MAX_LENGTH}
           onChangeText={(value) => {
             if (value.split("\n").length < 5) {
               setText(value);
             } else {
-              console.log("Row limit");
+              Toast.show({
+                type: "infoMessage",
+                props: {
+                  message: "Row limit.",
+                },
+                visibilityTime: 2000,
+                topOffset: 45,
+              });
             }
           }}
         />

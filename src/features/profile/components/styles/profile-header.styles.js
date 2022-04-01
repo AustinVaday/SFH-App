@@ -9,7 +9,7 @@ export const StatsContainer = styled.View`
   align-items: center;
 `;
 
-export const PostsStatContainer = styled(Pressable)`
+export const WordsStatContainer = styled(Pressable)`
   flex: 0.75;
   align-items: center;
 `;
@@ -44,9 +44,9 @@ export const InfoContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  border-color: ${(props) => props.theme.colors.ui.lightergray};
-  border-top-width: 0.2px;
-  border-bottom-width: 0.2px;
+  /* border-color: ${(props) => props.theme.colors.ui.lightergray}; */
+  /* border-top-width: 0.2px; */
+  /* border-bottom-width: 0.2px; */
   padding: ${(props) => props.theme.space[2]};
 `;
 

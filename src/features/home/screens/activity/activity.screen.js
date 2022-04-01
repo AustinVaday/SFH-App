@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { NotificationCard } from "../../components/notification-card.components";
 import { Text } from "../../../../components/typography/text.components";
+import { LoadingIndicator } from "../../../../components/loading/loading-indicator.components";
 
 import { deleteNotification } from "../../../../services/firebase/notifications";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,10 +15,6 @@ import {
   RowHiddenContainer,
   ActivityBackground,
   ListEmptyBackground,
-  ListEmptyContainer,
-  NotificationsEmptyImage,
-  Loader,
-  LoaderImage,
 } from "./styles/activity.styles";
 
 export const ActivityScreen = () => {
@@ -33,7 +29,6 @@ export const ActivityScreen = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
 
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!fetched) {
@@ -63,12 +58,7 @@ export const ActivityScreen = () => {
   const listEmptyComponent = () => {
     return (
       <ListEmptyBackground>
-        <ListEmptyContainer>
-          <NotificationsEmptyImage
-            source={require("../../../../assets/images/empty-notifications.png")}
-          />
-          <Text variant="list_empty_title">No Notifications</Text>
-        </ListEmptyContainer>
+        <Text variant="list_empty_title">No Notifications</Text>
       </ListEmptyBackground>
     );
   };
@@ -96,13 +86,7 @@ export const ActivityScreen = () => {
   return (
     <ActivityBackground>
       {loading ? (
-        <Loader
-          style={{
-            paddingBottom: insets.bottom,
-          }}
-        >
-          <LoaderImage source={require("../../../../assets/loading/loader.gif")} />
-        </Loader>
+        <LoadingIndicator />
       ) : (
         <SwipeListView
           data={notifications}
@@ -114,6 +98,7 @@ export const ActivityScreen = () => {
           rightOpenValue={-75}
           keyExtractor={(index) => index.id}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1 }}
         />
       )}
     </ActivityBackground>

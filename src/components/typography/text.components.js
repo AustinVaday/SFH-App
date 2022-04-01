@@ -43,28 +43,28 @@ const appintro_description = (theme) => `
   text-align: center;
 `;
 
-const post_title = (theme) => `
+const word_title = (theme) => `
   font-family: ${theme.fonts.body_800};
   font-size: ${theme.fontSizes.xlarge};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
-const post_description = (theme) => `
+const word_description = (theme) => `
   font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.small};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
-const post_numbers = (theme) => `
+const word_numbers = (theme) => `
   font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.large};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
 const slash = (theme) => `
@@ -75,20 +75,20 @@ const slash = (theme) => `
   text-shadow-radius: 0.5px;
 `;
 
-const post_username = (theme) => `
+const word_username = (theme) => `
   font-size: ${theme.fontSizes.medium};
   font-family: ${theme.fonts.body_600};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
-const post_date = (theme) => `
+const word_date = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.xsmall};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
 const bottomsheet_item = (theme) => `
@@ -111,12 +111,6 @@ const comment_list_empty_title = (theme) => `
 const comment_list_empty_message = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
-  text-align: center;
-`;
-
-const private_saves_message = (theme) => `
-  font-family: ${theme.fonts.body_600};
-  font-size: ${theme.fontSizes.large};
   text-align: center;
 `;
 
@@ -173,12 +167,12 @@ const search_username = (theme) => `
   font-size: ${theme.fontSizes.large};
 `;
 
-const discover_post_title = (theme) => `
+const discover_word_title = (theme) => `
   font-family: ${theme.fonts.body_800};
-  font-size: ${theme.fontSizes.large};
+  font-size: ${theme.fontSizes.xlarge};
   color: ${theme.colors.text.secondary};
   text-shadow-color: black;
-  text-shadow-radius: 0.5px;
+  text-shadow-radius: 3px;
 `;
 
 const profile_display_name = (theme) => `
@@ -187,7 +181,7 @@ const profile_display_name = (theme) => `
 `;
 
 const profile_bio = (theme) => `
-  font-family: ${theme.fonts.body_600};
+  font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
   text-align: center;
 `;
@@ -213,7 +207,7 @@ const profile_message_button = (theme) => `
 const profile_editprofile_button = (theme) => `
   font-family: ${theme.fonts.body_600};
   font-size: ${theme.fontSizes.small};
-  color: ${theme.colors.text.primary}
+  color: ${theme.colors.text.primary};
 `;
 
 const navbar_title = (theme) => `
@@ -224,6 +218,12 @@ const navbar_title = (theme) => `
 const editprofile_label = (theme) => `
   font-family: ${theme.fonts.body_400};
   font-size: ${theme.fontSizes.medium};
+`;
+
+const editprofile_empty_label = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.gray};
 `;
 
 const dialog_title = (theme) => `
@@ -298,7 +298,7 @@ const followers_username = (theme) => `
   font-family: ${theme.fonts.body_700};
 `;
 
-const profile_tab_post_title = (theme) => `
+const profile_tab_word_title = (theme) => `
   font-family: ${theme.fonts.body_800};
   font-size: ${theme.fontSizes.large};
   color: ${theme.colors.text.secondary};
@@ -328,10 +328,11 @@ const permissions_message = (theme) => `
 const discover_list_title = (theme) => `
   font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.xxlarge};
-  padding: 5px;
+  padding-top: 5px;
+  padding-left: 18px;
 `;
 
-const uploadpost_post_button = (theme) => `
+const uploadword_word_button = (theme) => `
   font-family: ${theme.fonts.body_700};
   font-size: ${theme.fontSizes.large};
   color: ${theme.colors.text.secondary}
@@ -613,7 +614,7 @@ const profile_labels = (theme) => `
 `;
 
 const profile_info = (theme) => `
-    font-family: ${theme.fonts.body_400};
+    font-family: ${theme.fonts.body_600};
     font-size: ${theme.fontSizes.medium};
     color: ${theme.colors.text.black};
 `;
@@ -641,6 +642,22 @@ const code_timer = (theme) => `
   color: ${theme.colors.text.darkgray};
 `;
 
+const reauthenticate_title = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.xlarge};
+`;
+
+const reauthenticate_message = (theme) => `
+  font-family: ${theme.fonts.body_400};
+  font-size: ${theme.fontSizes.medium};
+  color: ${theme.colors.text.darkgray};
+`;
+
+const profile_tab_label = (theme) => `
+  font-family: ${theme.fonts.body_700};
+  font-size: ${theme.fontSizes.small};
+`;
+
 const variants = {
   home_logo,
   appintro_next,
@@ -651,11 +668,11 @@ const variants = {
   emailSent_title,
   emailSent_message,
   video_duration,
-  post_title,
-  post_description,
-  post_numbers,
-  post_username,
-  post_date,
+  word_title,
+  word_description,
+  word_numbers,
+  word_username,
+  word_date,
   bottomsheet_item,
   bottomsheet_item_delete,
   comment_list_empty_title,
@@ -692,7 +709,7 @@ const variants = {
   profile_numbers,
   profile_labels,
   profile_info,
-  discover_post_title,
+  discover_word_title,
   profile_display_name,
   profile_bio,
   profile_following_button,
@@ -721,10 +738,10 @@ const variants = {
   following_username,
   follow_textbutton,
   followers_username,
-  profile_tab_post_title,
+  profile_tab_word_title,
   permissions_title,
   permissions_message,
-  uploadpost_post_button,
+  uploadword_word_button,
   authentications_title,
   authentications_message,
   authentications_text_button,
@@ -743,11 +760,14 @@ const variants = {
   info_message,
   slash,
   discover_list_title,
-  private_saves_message,
   code_title,
   code_message,
   code_resend_button,
   code_timer,
+  reauthenticate_title,
+  reauthenticate_message,
+  editprofile_empty_label,
+  profile_tab_label,
 };
 
 export const Text = styled.Text`

@@ -35,7 +35,7 @@ export const ClearIcon = styled(Icon).attrs((props) => ({
 
 export const SeeIcon = styled(Icon).attrs((props) => ({
   type: "material-community",
-  name: props.hideNewPassword ? "eye-off" : "eye",
+  name: props.hidePassword ? "eye-off" : "eye",
   size: 20,
   color: props.theme.colors.icon.gray,
 }))``;

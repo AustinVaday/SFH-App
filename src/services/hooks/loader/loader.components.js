@@ -14,7 +14,12 @@ const Loader = (props) => {
           justifyContent: "space-around",
         }}
       >
-        <View style={{ backgroundColor: "rgba(65, 69, 64, 0.95)", borderRadius: 15 }}>
+        <View
+          style={{
+            backgroundColor: "rgba(65, 69, 64, 0.95)",
+            borderRadius: 15,
+          }}
+        >
           <Image
             source={require("../../../assets/loading/loader.gif")}
             style={{ width: 80, height: 80 }}

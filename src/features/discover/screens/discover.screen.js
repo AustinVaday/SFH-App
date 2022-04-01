@@ -1,86 +1,93 @@
-import React, { useState, useEffect } from "react";
-import { FlatList } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { FlatList, View, Platform, RefreshControl } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BigList from "react-native-big-list";
 
 import { Text } from "../../../components/typography/text.components";
-import { SmallPost } from "../components/small-post.components";
+import { Card } from "../components/card.components";
 import { DiscoverListLoader } from "../components/discover-list-loader.components";
 
 import { useSelector, useDispatch } from "react-redux";
-import { fetchDiscoverPosts } from "../../../services/redux/actions/posts.actions";
+import {
+  fetchDiscoverWords,
+  refreshDiscoverWords,
+} from "../../../services/redux/actions/words.actions";
 import { queryUsersAndKeywords } from "../../../services/firebase/users";
 
 import {
   DiscoverBackground,
   ModalScreen,
   UserRow,
-  PostTitleRow,
+  WordTitleRow,
   SearchIcon,
   ArrowForwardIcon,
   UserImage,
   Searchbar,
+  RefreshLoadingIcon,
 } from "./styles/discover.styles";
 
+const REFRESHINGHEIGHT = 80;
+
 export const DiscoverScreen = ({ navigation }) => {
-  const [fetching, setFetching] = useState(false);
-  const [data, setData] = useState([]);
-  const [videoLength, setVideoLength] = useState(10);
-  const [refreshing, setRefreshing] = useState(false);
   const [textInputFocussed, setTextInputFocussed] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [textInput, setTextInput] = useState("");
   const [searchTimer, setSearchTimer] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [extraPaddingTop, setExtraPaddingTop] = useState(0);
 
   const insets = useSafeAreaInsets();
-
   const dispatch = useDispatch();
 
-  const discoverPosts = useSelector((state) => state.posts.discoverPosts);
+  const discoverWords = useSelector((state) => state.words.discoverWords);
   const currentUser = useSelector((state) => state.user.currentUser);
 
+  const lottieViewRef = useRef(null);
+
   useEffect(() => {
-    dispatch(fetchDiscoverPosts(setLoading));
+    dispatch(fetchDiscoverWords(setLoading));
   }, []);
 
   useEffect(() => {
-    setFetching(true);
-    makeRemoteRequest();
-  }, [discoverPosts]);
+    if (Platform.OS === "ios") {
+      if (isRefreshing) {
+        setExtraPaddingTop(50);
+        lottieViewRef.current.play();
+      } else {
+        setExtraPaddingTop(0);
+      }
+    }
+  }, [isRefreshing]);
 
-  const makeRemoteRequest = () => {
-    const newData = discoverPosts;
-    try {
-      setData(
-        videoLength === 10
-          ? newData.slice(0, videoLength)
-          : [...data, ...newData.slice(videoLength - 10, videoLength)]
-      );
-      setFetching(false);
-      setRefreshing(false);
-    } catch (error) {
-      console.log(error);
-      setFetching(false);
+  const onScroll = (event) => {
+    const { nativeEvent } = event;
+    const { contentOffset } = nativeEvent;
+    const { y } = contentOffset;
+    setOffsetY(y);
+  };
+
+  const onRelease = () => {
+    if (offsetY <= -REFRESHINGHEIGHT && !isRefreshing) {
+      onHandleRefresh();
     }
   };
 
-  const handleOnEndReached = () => {
-    if (textInput.length === 0 && !fetching) {
-      const increaseLength = videoLength + 10;
-      setVideoLength(increaseLength);
-      makeRemoteRequest();
-    }
-  };
+  const onHandleRefresh = () => {
+    setIsRefreshing(true);
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setVideoLength(10);
-    makeRemoteRequest();
+    setTimeout(() => {
+      dispatch(refreshDiscoverWords(setIsRefreshing));
+    }, 2000);
   };
 
   const listHeaderComponent = () => {
     return <Text variant="discover_list_title">Recent Videos</Text>;
+  };
+
+  const listEmptyComponent = () => {
+    return <Text variant="list_empty_title">No Videos</Text>;
   };
 
   const renderSearchResultItem = ({ item }) => {
@@ -98,7 +105,7 @@ export const DiscoverScreen = ({ navigation }) => {
         <UserImage source={{ uri: item.profilePhoto }} />
       </UserRow>
     ) : (
-      <PostTitleRow
+      <WordTitleRow
         onPress={() =>
           navigation.navigate("ResultsSearch", {
             keyword: item.title,
@@ -108,13 +115,18 @@ export const DiscoverScreen = ({ navigation }) => {
         <Text variant="search_username">{item.title}</Text>
         <SearchIcon />
         <ArrowForwardIcon />
-      </PostTitleRow>
+      </WordTitleRow>
     );
   };
 
   const renderVideoThumbnailItem = ({ item }) => {
-    return <SmallPost post={item} />;
+    return <Card word={item} />;
   };
+
+  let progress = 0;
+  if (offsetY < 0 && !isRefreshing) {
+    progress = offsetY / -REFRESHINGHEIGHT;
+  }
 
   return (
     <DiscoverBackground style={{ paddingTop: insets.top }}>
@@ -140,17 +152,50 @@ export const DiscoverScreen = ({ navigation }) => {
       {loading ? (
         <DiscoverListLoader />
       ) : (
-        <FlatList
-          data={data}
-          renderItem={renderVideoThumbnailItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          onEndReachedThreshold={0.01}
-          onEndReached={handleOnEndReached}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          ListHeaderComponent={listHeaderComponent}
-        />
+        <>
+          <View>
+            <RefreshLoadingIcon
+              ref={lottieViewRef}
+              style={{
+                height: REFRESHINGHEIGHT,
+              }}
+              progress={progress}
+              source={require("../../../assets/lottie/pull-refresh-loading.json")}
+            />
+          </View>
+
+          <FlatList
+            data={discoverWords}
+            renderItem={renderVideoThumbnailItem}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            ListHeaderComponent={
+              discoverWords.length !== 0 && listHeaderComponent
+            }
+            ListEmptyComponent={listEmptyComponent}
+            contentContainerStyle={[
+              discoverWords.length === 0 && {
+                justifyContent: "center",
+                alignItems: "center",
+                flexGrow: 1,
+              },
+              {
+                backgroundColor: "white",
+              },
+            ]}
+            onScroll={onScroll}
+            onResponderRelease={onRelease}
+            style={{ paddingTop: extraPaddingTop }}
+            refreshControl={
+              Platform.OS === "android" && (
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onHandleRefresh}
+                />
+              )
+            }
+          />
+        </>
       )}
 
       <ModalScreen

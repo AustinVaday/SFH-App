@@ -1,12 +1,17 @@
 import { firebase } from "../../../utils/firebase";
 
+import { EXPO_NOTIFICATION_API } from "../../../utils/constants";
+
 export const sendNotification = (to, title, body, data) =>
   new Promise((resolve, reject) => {
-    if (to.notificationToken === null) {
+    if (
+      to.notificationToken === null ||
+      to.id === firebase.auth().currentUser.uid
+    ) {
       return;
     }
 
-    fetch("https://exp.host/--/api/v2/push/send", {
+    fetch(EXPO_NOTIFICATION_API, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -30,9 +35,9 @@ export const sendNotification = (to, title, body, data) =>
         .add({
           type: data.type,
           sender: data.user.id,
-          postId: data.postId,
+          wordId: data.wordId,
           commentId: data.commentId,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          creation: firebase.firestore.FieldValue.serverTimestamp(),
         })
         .then(() => resolve())
         .catch(() => reject());
@@ -45,8 +50,8 @@ export const sendNotification = (to, title, body, data) =>
         .add({
           type: data.type,
           sender: data.user.id,
-          postId: data.postId,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          wordId: data.wordId,
+          creation: firebase.firestore.FieldValue.serverTimestamp(),
         })
         .then(() => resolve())
         .catch(() => reject());
@@ -59,21 +64,21 @@ export const sendNotification = (to, title, body, data) =>
         .add({
           type: data.type,
           sender: data.user.id,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          creation: firebase.firestore.FieldValue.serverTimestamp(),
         })
         .then(() => resolve())
         .catch(() => reject());
     }
   });
 
-export const deleteUpvoteNotification = (uid, currentUid, postId) =>
+export const deleteWordUpvoteNotification = (uid, currentUid, wordId) =>
   new Promise((resolve, reject) => {
     firebase
       .firestore()
       .collection("activities")
       .doc(uid)
       .collection("notifications")
-      .where("postId", "==", postId)
+      .where("wordId", "==", wordId)
       .where("type", "==", "upvote")
       .where("sender", "==", currentUid)
       .get()
@@ -105,12 +110,12 @@ export const deleteFollowingNotification = (uid, currentUid) =>
       });
   });
 
-export const deleteCommentNotification = (postCreator, commentId) =>
+export const deleteCommentNotification = (wordCreator, commentId) =>
   new Promise((resolve, reject) => {
     firebase
       .firestore()
       .collection("activities")
-      .doc(postCreator)
+      .doc(wordCreator)
       .collection("notifications")
       .where("commentId", "==", commentId)
       .where("type", "==", "comment")

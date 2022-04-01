@@ -10,6 +10,12 @@ import { Text } from "../../../../components/typography/text.components";
 import { checkAvailableUsername } from "../../../../services/firebase/auth";
 
 import {
+  VALIDATE_USERNAME,
+  VALIDATE_USERNAME_LETTER,
+  USERNAME_MAX_LENGTH,
+} from "../../../../utils/constants";
+
+import {
   SignupBackground,
   UsernameInput,
   FormSection,
@@ -20,19 +26,16 @@ import {
   ClearIcon,
 } from "./styles/create-username.styles";
 
-const validationUsername = /^\w[\w.]{0,23}\w$/;
-const validationLetter = /^(?=.*[a-zA-Z])/;
-
 const validationSchemaYup = object().shape({
   username: string()
     .label("Username")
     .required("")
     .min(2, "Must be at least 2 characters.")
     .matches(
-      validationUsername,
+      VALIDATE_USERNAME,
       "Only numbers, letters, underscores or periods are allowed."
     )
-    .matches(validationLetter, "Numbers only are not allowed."),
+    .matches(VALIDATE_USERNAME_LETTER, "Numbers only are not allowed."),
 });
 
 export const CreateUsernameScreen = ({ route, navigation }) => {
@@ -47,7 +50,13 @@ export const CreateUsernameScreen = ({ route, navigation }) => {
   const [searchTimer, setSearchTimer] = useState(null);
 
   const handleSubmit = (values, errors) => {
-    if (!(values.username !== "" && errors.username === undefined)) {
+    if (
+      !(
+        values.username !== "" &&
+        errors.username === undefined &&
+        usernameValidation.isValidate
+      )
+    ) {
       return;
     }
 
@@ -74,7 +83,7 @@ export const CreateUsernameScreen = ({ route, navigation }) => {
               autoCapitalize="none"
               returnKeyType="done"
               autoCorrect={false}
-              maxLength={25}
+              maxLength={USERNAME_MAX_LENGTH}
               autoFocus={true}
               blurOnSubmit={false}
               value={values.username}
@@ -128,7 +137,7 @@ export const CreateUsernameScreen = ({ route, navigation }) => {
                               props: {
                                 message: error.message,
                               },
-                              visibilityTime: 2000,
+                              visibilityTime: 3000,
                               topOffset: 45,
                             });
 
@@ -139,7 +148,7 @@ export const CreateUsernameScreen = ({ route, navigation }) => {
                               loading: false,
                             });
                           });
-                      }, 1500)
+                      }, 1000)
                     );
                   }
                 });
@@ -151,7 +160,7 @@ export const CreateUsernameScreen = ({ route, navigation }) => {
               rightIcon={
                 <RightIconsInputContainer>
                   {usernameValidation.loading ? (
-                    <ActivityIndicator size="small" />
+                    <ActivityIndicator size="small" color="#999999" />
                   ) : (
                     usernameValidation.isValidate && <CheckIcon />
                   )}

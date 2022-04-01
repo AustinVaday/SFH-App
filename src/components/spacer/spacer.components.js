@@ -6,6 +6,7 @@ const sizeVariant = {
   medium: 2,
   large: 3,
   huge: 4,
+  gigantic: 5,
 };
 
 const positionVariant = {

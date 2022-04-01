@@ -12,7 +12,7 @@ export const SignupBackground = styled(ScrollView).attrs({
   background-color: ${(props) => props.theme.colors.bg.secondary};
 `;
 
-export const NextText = styled(Text).attrs({
+export const TextButton = styled(Text).attrs({
   variant: "signup_button",
 })`
   color: ${(props) =>
@@ -68,7 +68,7 @@ export const ItemText = styled(Text).attrs({
       : props.theme.colors.text.darkgray};
 `;
 
-export const NextButton = styled(Button).attrs((props) => ({
+export const SignupButton = styled(Button).attrs((props) => ({
   disabled: props.enableButton ? false : true,
   disabledStyle: { backgroundColor: props.theme.colors.button.lightergray },
   buttonStyle: { height: 45 },

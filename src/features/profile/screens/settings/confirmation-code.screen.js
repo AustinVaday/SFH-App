@@ -117,16 +117,10 @@ export const ConfirmationCodeScreen = ({ route, navigation }) => {
           }
 
           if (newText.length === CELL_COUNT) {
-            console.log(type);
-            console.log(codeType);
             if (newText === code && type === codeType) {
               dispatch(confirmedCodeSuccess());
 
-              if (routeName === "") {
-                navigation.pop(1);
-              } else {
-                navigation.navigate(routeName);
-              }
+              navigation.navigate(routeName);
             } else {
               setError("Incorrect code. Try again or click Resend code.");
             }

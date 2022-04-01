@@ -22,9 +22,7 @@ export const Dialog = styled(Overlay).attrs({
 })``;
 
 export const DialogButtonsContainer = styled.View`
-  /* flex-direction: row; */
   align-items: center;
   justify-content: center;
   padding: 0;
-  /* flex-grow: 1; */
 `;

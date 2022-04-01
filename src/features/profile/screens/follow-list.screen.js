@@ -23,7 +23,7 @@ export const FollowListScreen = ({ route, navigation }) => {
       )}
       lazy={true}
       containerStyle={{ backgroundColor: colors.bg.secondary }}
-      // cancelLazyFadeIn={true}
+      cancelLazyFadeIn={true}
       initialTabName={tab}
       headerContainerStyle={{
         shadowOpacity: 0,

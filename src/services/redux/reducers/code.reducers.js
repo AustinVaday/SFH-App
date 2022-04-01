@@ -18,7 +18,7 @@ export const code = (state = initialState, action) => {
     case codeAction.CONFIRMATION_CODE_SUCCESS:
       return {
         ...state,
-        confirmationCode: action.code,
+        confirmationCode: action.code.toString(),
         codeType: action.codeType,
       };
     case codeAction.CONFIRMATION_CODE_FAILURE:

@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Dimensions } from "react-native";
 import { Button, Image } from "react-native-elements";
 import { Tabs } from "react-native-collapsible-tab-view";
 
@@ -7,7 +6,7 @@ export const ListEmptyBackground = styled.View`
   align-items: center;
   justify-content: center;
   padding: 20px;
-  height: ${Dimensions.get("window").height / 2}px;
+  flex: 1;
 `;
 
 export const FollowingList = styled(Tabs.FlatList)`
@@ -31,3 +30,8 @@ export const UserImage = styled(Image)`
   width: 40px;
   border-radius: 20px;
 `;
+
+export const LoadingIndicatorContainer = styled(Tabs.ScrollView).attrs({
+  scrollEnabled: false,
+  contentContainerStyle: { flexGrow: 1 },
+})``;

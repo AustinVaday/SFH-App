@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { LoginScreen } from "../../features/account/screens/login/login.screen";
@@ -15,14 +15,13 @@ import { Text } from "../../components/typography/text.components";
 const AccountStack = createStackNavigator();
 
 export const AccountNavigator = (props) => (
-  <AccountStack.Navigator>
+  <AccountStack.Navigator screenOptions={{ headerMode: "screen" }}>
     <AccountStack.Screen
       name="Authentications"
       component={AuthenticationsScreen}
       navigation={props.navigation}
       options={{
         headerShown: false,
-        animationEnabled: false,
       }}
     />
     <AccountStack.Screen
@@ -31,7 +30,9 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerLeftContainerStyle: { paddingLeft: 10 },
+        headerLeftContainerStyle: {
+          paddingLeft: Platform.OS === "ios" ? 6 : 0,
+        },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Login</Text>,
         headerTintColor: colors.text.black,
@@ -43,7 +44,9 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerLeftContainerStyle: { paddingLeft: 8 },
+        headerLeftContainerStyle: {
+          paddingLeft: Platform.OS === "ios" ? 6 : 0,
+        },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
         headerTintColor: colors.text.black,
@@ -55,7 +58,9 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerLeftContainerStyle: { paddingLeft: 8 },
+        headerLeftContainerStyle: {
+          paddingLeft: Platform.OS === "ios" ? 6 : 0,
+        },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Sign up</Text>,
         headerTintColor: colors.text.black,
@@ -67,7 +72,9 @@ export const AccountNavigator = (props) => (
       navigation={props.navigation}
       options={() => ({
         headerShown: true,
-        headerLeftContainerStyle: { paddingLeft: 8 },
+        headerLeftContainerStyle: {
+          paddingLeft: Platform.OS === "ios" ? 6 : 0,
+        },
         headerBackTitleVisible: false,
         headerTitle: () => <Text variant="navbar_title">Reset</Text>,
         headerTintColor: colors.text.black,

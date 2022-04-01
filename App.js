@@ -1,4 +1,5 @@
 import React from "react";
+import { LogBox } from "react-native";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 
 import { Provider } from "react-redux";
@@ -33,6 +34,11 @@ import {
 import { AlfaSlabOne_400Regular } from "@expo-google-fonts/alfa-slab-one";
 
 import { theme } from "./src/infrastructure/theme";
+
+// this is just temporary due to upgraded Expo 43, this warning
+// keeps appearing, its annoying as doing code. Even tho,
+// I did not use AsyncStorage. This will be removed if its fixed
+LogBox.ignoreLogs(["AsyncStorage"]);
 
 const toastConfig = {
   newMessage: ({ props, onPress }) => NewMessageToast(props, onPress),
@@ -83,7 +89,7 @@ export default function App() {
           </SafeAreaProvider>
         </ThemeProvider>
 
-        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+        <Toast config={toastConfig} />
         <ExpoStatusBar animated={true} style="auto" />
       </>
     );

@@ -1,5 +1,9 @@
 import styled from "styled-components";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  Feather,
+  FontAwesome,
+} from "@expo/vector-icons";
 
 export const SettingsBackground = styled.View`
   flex: 1;
@@ -23,4 +27,16 @@ export const AlertIcon = styled(Feather).attrs((props) => ({
   size: 15,
   color: props.theme.colors.icon.error,
   name: "alert-triangle",
+}))``;
+
+export const GoogleIcon = styled(FontAwesome).attrs((props) => ({
+  size: 20,
+  color: props.theme.colors.icon.gray,
+  name: "google",
+}))``;
+
+export const FacebookIcon = styled(FontAwesome).attrs((props) => ({
+  size: 20,
+  color: props.theme.colors.icon.gray,
+  name: "facebook",
 }))``;

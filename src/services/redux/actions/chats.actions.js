@@ -2,7 +2,7 @@ import { firebase } from "../../../utils/firebase";
 
 import { chatsAction } from "../constants";
 
-export const fetchChats = () => (dispatch, getState) => {
+export const fetchChats = (setLoading) => (dispatch, getState) => {
   new Promise((resolve, reject) => {
     try {
       firebase
@@ -38,9 +38,12 @@ export const fetchChats = () => (dispatch, getState) => {
             type: chatsAction.FETCH_CURRENT_USER_CHATS_SUCCESS,
             chats,
           });
+
+          setLoading(false);
         });
     } catch (error) {
       dispatch({ type: chatsAction.FETCH_CURRENT_USER_CHATS_FAILURE, error });
+      setLoading(false);
     }
   });
 };

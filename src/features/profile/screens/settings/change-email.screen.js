@@ -26,7 +26,7 @@ const validationSchema = object().shape({
   password: string().label("Password").required(""),
 });
 
-export const ChangeEmailScreen = ({ navigation, route }) => {
+export const ChangeEmailScreen = ({ navigation }) => {
   const [error, setError] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
@@ -35,6 +35,8 @@ export const ChangeEmailScreen = ({ navigation, route }) => {
   const handleSubmit = (values, errors) => {
     const { newEmail, password } = values;
 
+    // When user clicks return type in keyboard, checks if any empty values or errors. 
+    // If it does, it returns nothing.
     if (newEmail === "" && password === "") {
       return;
     } else if (errors?.newEmail !== undefined) {

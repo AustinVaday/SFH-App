@@ -15,7 +15,7 @@ import {
 
 import { NewConversationScreen } from "../../features/chat/screens/new-conversation.screen";
 import { ConversationScreen } from "../../features/chat/screens/conversation.screen";
-import { ViewPostScreen } from "../../features/app/screens/view-post.screen";
+import { ViewWordScreen } from "../../features/app/screens/view-word.screen";
 import { SettingsScreen } from "../../features/profile/screens/settings/settings.screen";
 import { FollowListScreen } from "../../features/profile/screens/follow-list.screen";
 import { EditProfileScreen } from "../../features/profile/screens/edit-profile/edit-profile.screen";
@@ -26,17 +26,16 @@ import { ProfileScreen } from "../../features/profile/screens/profile.screen";
 import { ActivityScreen } from "../../features/home/screens/activity/activity.screen";
 import { LibraryScreen } from "../../features/add/screens/library.screen";
 import { CameraScreen } from "../../features/add/screens/camera.screen";
-import { UploadPostScreen } from "../../features/add/screens/upload-post.screen";
+import { UploadWordScreen } from "../../features/add/screens/upload-word.screen";
 import { PreviewScreen } from "../../features/add/screens/preview.screen";
 import { ResultsSearchScreen } from "../../features/discover/screens/search/results-search.screen";
 import { LanguagesEditScreen } from "../../features/profile/screens/edit-profile/languages-edit.screen";
 import { IdentifyEditScreen } from "../../features/profile/screens/edit-profile/identify-edit.screen";
-import { SignupEmailScreen } from "../../features/account/screens/signup/signup-email.screen";
-import { SignupPasswordScreen } from "../../features/account/screens/signup/signup-password.screen";
 import { ConfirmationCodeScreen } from "../../features/profile/screens/settings/confirmation-code.screen";
 import { ChangeEmailScreen } from "../../features/profile/screens/settings/change-email.screen";
 import { ChangePasswordScreen } from "../../features/profile/screens/settings/change-password.screen";
 import { CurrentPasswordScreen } from "../../features/profile/screens/settings/current-password.screen";
+import { FavoritesScreen } from "../../features/profile/screens/favorites.screen";
 
 import { SaveRightHeader } from "../components/save-right-header.components";
 import { colors } from "../theme/colors";
@@ -109,7 +108,7 @@ export const AppNavigator = (props) => {
   }, []);
 
   return (
-    <AppStack.Navigator>
+    <AppStack.Navigator screenOptions={{ headerMode: "screen" }}>
       <AppStack.Screen
         name="Home"
         component={AppTabsNavigator}
@@ -122,15 +121,17 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTitle: () => <Text variant="navbar_title">Activity</Text>,
           headerTintColor: colors.text.black,
         })}
       />
       <AppStack.Screen
-        name="ViewPost"
-        component={ViewPostScreen}
+        name="ViewWord"
+        component={ViewWordScreen}
         navigation={props.navigation}
         options={{ headerShown: false }}
       />
@@ -140,7 +141,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTitle: () => <Text variant="navbar_title">New Chat</Text>,
           headerTintColor: colors.text.black,
@@ -152,8 +155,10 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
-          headerRightContainerStyle: { paddingRight: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: { paddingRight: 6 },
           headerBackTitleVisible: false,
           headerTitle: () => (
             <Text variant="navbar_title">{route.params.user.username}</Text>
@@ -166,6 +171,12 @@ export const AppNavigator = (props) => {
         component={ProfileScreen}
         navigation={props.navigation}
         options={{
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: {
+            paddingRight: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
         }}
@@ -176,36 +187,12 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Settings</Text>,
-        })}
-      />
-      <AppStack.Screen
-        name="CreateEmail"
-        component={SignupEmailScreen}
-        navigation={props.navigation}
-        options={() => ({
-          headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
-          headerBackTitleVisible: false,
-          headerTintColor: colors.text.black,
-          headerTitle: () => <Text variant="navbar_title">Create Email</Text>,
-        })}
-      />
-      <AppStack.Screen
-        name="CreatePassword"
-        component={SignupPasswordScreen}
-        navigation={props.navigation}
-        options={() => ({
-          headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
-          headerBackTitleVisible: false,
-          headerTintColor: colors.text.black,
-          headerTitle: () => (
-            <Text variant="navbar_title">Create Password</Text>
-          ),
         })}
       />
       <AppStack.Screen
@@ -214,7 +201,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: "",
@@ -226,7 +215,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Change Email</Text>,
@@ -238,7 +229,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => (
@@ -252,7 +245,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => (
@@ -266,7 +261,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => (
@@ -275,12 +272,28 @@ export const AppNavigator = (props) => {
         })}
       />
       <AppStack.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        navigation={props.navigation}
+        options={() => ({
+          headerShown: true,
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerBackTitleVisible: false,
+          headerTintColor: colors.text.black,
+          headerTitle: () => <Text variant="navbar_title">Favorites</Text>,
+        })}
+      />
+      <AppStack.Screen
         name="EditProfile"
         component={EditProfileScreen}
         navigation={props.navigation}
         options={() => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Edit Profile</Text>,
@@ -292,7 +305,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Name</Text>,
@@ -310,7 +325,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Username</Text>,
@@ -328,7 +345,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Identify</Text>,
@@ -346,7 +365,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Languages</Text>,
@@ -364,7 +385,9 @@ export const AppNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerLeftContainerStyle: { paddingLeft: 8 },
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
           headerBackTitleVisible: false,
           headerTintColor: colors.text.black,
           headerTitle: () => <Text variant="navbar_title">Bio</Text>,
@@ -381,7 +404,16 @@ export const AppNavigator = (props) => {
         component={LibraryScreen}
         navigation={props.navigation}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: {
+            paddingRight: Platform.OS === "ios" ? 12 : 0,
+          },
+          headerBackTitleVisible: false,
+          headerTintColor: colors.text.black,
+          headerTitle: () => <Text variant="navbar_title">Videos</Text>,
           cardStyleInterpolator:
             Platform.OS === "ios"
               ? CardStyleInterpolators.forVerticalIOS
@@ -404,13 +436,35 @@ export const AppNavigator = (props) => {
         name="Preview"
         component={PreviewScreen}
         navigation={props.navigation}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: true,
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: {
+            paddingRight: Platform.OS === "ios" ? 12 : 0,
+          },
+          headerBackTitleVisible: false,
+          headerTintColor: colors.text.black,
+          headerTitle: () => <Text variant="navbar_title">Preview</Text>,
+        }}
       />
       <AppStack.Screen
-        name="UploadPost"
-        component={UploadPostScreen}
+        name="UploadWord"
+        component={UploadWordScreen}
         navigation={props.navigation}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: true,
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: {
+            paddingRight: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerBackTitleVisible: false,
+          headerTintColor: colors.text.black,
+          headerTitle: () => <Text variant="navbar_title">Upload</Text>,
+        }}
       />
       <AppStack.Screen
         name="ResultsSearch"

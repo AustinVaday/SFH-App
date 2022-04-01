@@ -23,18 +23,22 @@ export const registerWithEmail = (email, password, hideLoader) =>
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
         firebase.firestore().collection("users").doc(user.user.uid).set({
-          profilePhoto: null,
-          username: "",
+          // this is temporary for profile photo. This will be removed
+          // when found using service to stream videos and pictures
+          profilePhoto:
+            "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/271deea8-e28c-41a3-aaf5-2913f5f48be6/de7834s-6515bd40-8b2c-4dc6-a843-5ac1a95a8b55.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzI3MWRlZWE4LWUyOGMtNDFhMy1hYWY1LTI5MTNmNWY0OGJlNlwvZGU3ODM0cy02NTE1YmQ0MC04YjJjLTRkYzYtYTg0My01YWMxYTk1YThiNTUuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.BopkDn1ptIwbmcKHdAOlYHyAOOACXW0Zfgbs0-6BY-E",
+          username: null,
           email,
-          displayName: "",
+          displayName: null,
           followingCount: 0,
           followersCount: 0,
-          postsCount: 0,
-          savesPrivate: true,
-          bio: "",
-          identify: "",
+          wordsCount: 0,
+          bio: null,
+          identify: null,
           languages: [],
+          providerId: "password",
           isNewUser: user.additionalUserInfo.isNewUser,
+          creation: firebase.firestore.FieldValue.serverTimestamp(),
         });
 
         user.user.sendEmailVerification();
@@ -49,63 +53,7 @@ export const registerWithEmail = (email, password, hideLoader) =>
           props: {
             message: error.message,
           },
-          visibilityTime: 2000,
-          topOffset: 45,
-        });
-      });
-  });
-
-export const linkWithEmail = (email, password, navigation, hideLoader) =>
-  new Promise((resolve, reject) => {
-    const credential = firebase.auth.EmailAuthProvider.credential(
-      email,
-      password
-    );
-
-    firebase
-      .auth()
-      .currentUser.linkWithCredential(credential)
-      .then((userCred) => {
-        console.log("isnewuser " + userCred.additionalUserInfo.isNewUser);
-        console.log("email " + userCred.user.email);
-        console.log("emailverified " + userCred.user.emailVerified);
-
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(userCred.user.uid)
-          .update({
-            email: userCred.user.email,
-          })
-          .then(() => {
-            userCred.user.sendEmailVerification();
-
-            hideLoader();
-
-            navigation.pop(2);
-          })
-          .catch((error) => {
-            hideLoader();
-
-            Toast.show({
-              type: "infoError",
-              props: {
-                message: error.message,
-              },
-              visibilityTime: 2000,
-              topOffset: 45,
-            });
-          });
-      })
-      .catch((error) => {
-        hideLoader();
-
-        Toast.show({
-          type: "infoError",
-          props: {
-            message: error.message,
-          },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
@@ -226,7 +174,7 @@ export const changePassword = (newPassword, navigation, hideLoader) =>
           props: {
             message: error.message,
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
@@ -269,7 +217,7 @@ export const updateUser = (displayName, username, hideLoader) =>
           props: {
             message: error.message,
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
@@ -313,29 +261,29 @@ export const onGoogleSignIn = (idToken, hideLoader) =>
     const googleUser = jwt_decode(idToken);
 
     // to change the image sizing for clear picture on profile photo
-    const googlePhoto = googleUser.picture.slice(0, googleUser.picture.lastIndexOf("=")) + "=s200-c";
-  
-    console.log(googlePhoto)
+    const googlePhoto =
+      googleUser.picture.slice(0, googleUser.picture.lastIndexOf("=")) +
+      "=s200-c";
+
     firebase
       .auth()
       .signInWithCredential(credential)
       .then((user) => {
-        console.log(user.user.email);
-        console.log(user.user.emailVerified);
         if (user.additionalUserInfo.isNewUser) {
           firebase.firestore().collection("users").doc(user.user.uid).set({
             profilePhoto: googlePhoto,
-            username: "",
+            username: null,
             email: null,
-            displayName: "",
+            displayName: null,
             followingCount: 0,
             followersCount: 0,
-            postsCount: 0,
-            savesPrivate: true,
-            bio: "",
-            identify: "",
+            wordsCount: 0,
+            bio: null,
+            identify: null,
             languages: [],
+            providerId: "google",
             isNewUser: user.additionalUserInfo.isNewUser,
+            creation: firebase.firestore.FieldValue.serverTimestamp(),
           });
         }
         hideLoader();
@@ -348,7 +296,7 @@ export const onGoogleSignIn = (idToken, hideLoader) =>
           props: {
             message: error.message,
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });
@@ -363,8 +311,6 @@ export const onFacebookSignIn = (accessToken, hideLoader) =>
       .auth()
       .signInWithCredential(credential)
       .then((user) => {
-        console.log(user.user.email);
-        console.log(user.user.emailVerified);
         if (user.additionalUserInfo.isNewUser) {
           axios
             .get(
@@ -377,17 +323,18 @@ export const onFacebookSignIn = (accessToken, hideLoader) =>
                 .doc(user.user.uid)
                 .set({
                   profilePhoto: response.data.picture.data.url,
-                  username: "",
+                  username: null,
                   email: null,
-                  displayName: "",
+                  displayName: null,
                   followingCount: 0,
                   followersCount: 0,
-                  postsCount: 0,
-                  savesPrivate: true,
-                  bio: "",
-                  identify: "",
+                  wordsCount: 0,
+                  bio: null,
+                  identify: null,
                   languages: [],
+                  providerId: "facebook",
                   isNewUser: user.additionalUserInfo.isNewUser,
+                  creation: firebase.firestore.FieldValue.serverTimestamp(),
                 })
                 .catch((error) => {
                   Toast.show({
@@ -395,7 +342,7 @@ export const onFacebookSignIn = (accessToken, hideLoader) =>
                     props: {
                       message: error.message,
                     },
-                    visibilityTime: 2000,
+                    visibilityTime: 3000,
                     topOffset: 45,
                   });
                 });
@@ -411,7 +358,7 @@ export const onFacebookSignIn = (accessToken, hideLoader) =>
           props: {
             message: error.message,
           },
-          visibilityTime: 2000,
+          visibilityTime: 3000,
           topOffset: 45,
         });
       });

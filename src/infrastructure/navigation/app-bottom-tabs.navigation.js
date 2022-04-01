@@ -60,8 +60,8 @@ export const AppTabsNavigator = (props) => {
         component={FeedScreen}
         navigation={props.navigation}
         options={({ route, navigation }) => ({
-          headerLeftContainerStyle: { paddingLeft: 8 },
-          headerRightContainerStyle: { paddingRight: 8 },
+          headerLeftContainerStyle: { paddingLeft: 12 },
+          headerRightContainerStyle: { paddingRight: 12 },
           headerTitleContainerStyle: { marginHorizontal: -20 },
           headerShown: true,
           headerBackTitleVisible: false,
@@ -101,7 +101,7 @@ export const AppTabsNavigator = (props) => {
         navigation={props.navigation}
         options={({ route, navigation }) => ({
           headerShown: true,
-          headerRightContainerStyle: { paddingRight: 8 },
+          headerRightContainerStyle: { paddingRight: 6 },
           tabBarBadge: null,
           tabBarBadgeStyle: { minWidth: 18, height: 18 },
           headerTitle: () => <Text variant="navbar_title">Chat</Text>,
@@ -119,6 +119,14 @@ export const AppTabsNavigator = (props) => {
         name="Profile"
         component={ProfileScreen}
         navigation={props.navigation}
+        options={{
+          headerLeftContainerStyle: {
+            paddingLeft: Platform.OS === "ios" ? 6 : 0,
+          },
+          headerRightContainerStyle: {
+            paddingRight: Platform.OS === "ios" ? 6 : 0,
+          },
+        }}
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             event.preventDefault();

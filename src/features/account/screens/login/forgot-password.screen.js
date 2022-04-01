@@ -25,7 +25,9 @@ export const ForgotPasswordScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values, errors) => {
-    if (!(values.email !== "" && errors.email === undefined)) {
+    // When user clicks return type in keyboard, checks if any empty values or errors.
+    // If it does, it returns nothing.
+    if (!(values.email !== "" && errors.email === undefined && error === "")) {
       return;
     }
 

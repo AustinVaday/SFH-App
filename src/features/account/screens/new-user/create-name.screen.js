@@ -7,6 +7,11 @@ import { colors } from "../../../../infrastructure/theme/colors";
 import { Text } from "../../../../components/typography/text.components";
 
 import {
+  VALIDATE_DISPLAYNAME,
+  DISPLAYNAME_MAX_LENGTH,
+} from "../../../../utils/constants";
+
+import {
   SignupBackground,
   NameInput,
   FormSection,
@@ -14,14 +19,12 @@ import {
   NextText,
 } from "./styles/create-name.styles";
 
-const validationName = /^[a-zA-Z\s]+$/;
-
 const validationSchema = object().shape({
   displayName: string()
     .label("DisplayName")
     .required("")
-    .matches(validationName, "Invalid")
-    .min(2, "Display name must contain at least 2 characters"),
+    .matches(VALIDATE_DISPLAYNAME, "Invalid")
+    .min(1, "Display name must contain at least 1 character"),
 });
 
 export const CreateNameScreen = ({ navigation }) => {
@@ -49,7 +52,7 @@ export const CreateNameScreen = ({ navigation }) => {
               returnKeyType="next"
               blurOnSubmit={false}
               autoFocus={true}
-              maxLength={40}
+              maxLength={DISPLAYNAME_MAX_LENGTH}
               value={values.displayName}
               onChangeText={handleChange("displayName")}
               onBlur={handleBlur("displayName")}
